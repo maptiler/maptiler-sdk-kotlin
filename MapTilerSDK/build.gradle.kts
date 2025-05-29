@@ -1,6 +1,25 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("org.jlleitschuh.gradle.ktlint")
+}
+
+tasks.named("ktlintFormat") {
+    enabled = false
+}
+
+tasks.register<Copy>("copyPreCommitHook") {
+    description = "Copy pre-commit git hook from the scripts to the .git/hooks folder."
+    group = "git hooks"
+    outputs.upToDateWhen { false }
+
+    val root = rootProject.projectDir
+    from("$root/scripts/pre-commit")
+    into("$root/.git/hooks/")
+}
+
+tasks.preBuild {
+    dependsOn("copyPreCommitHook")
 }
 
 android {
@@ -19,7 +38,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
