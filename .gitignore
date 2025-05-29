@@ -47,3 +47,5 @@ reports
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
+
+!/gradle/wrapper/gradle-wrapper.jar
