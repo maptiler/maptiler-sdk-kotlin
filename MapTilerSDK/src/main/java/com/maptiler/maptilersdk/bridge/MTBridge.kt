@@ -20,7 +20,5 @@ internal sealed class MTBridge(
         const val STYLE_OBJECT: JSString = "MapStyle"
     }
 
-    suspend fun execute(command: MTCommand): MTBridgeReturnType? {
-        return executor?.execute(command)
-    }
+    suspend fun execute(command: MTCommand): MTBridgeReturnType? = executor?.execute(command)
 }

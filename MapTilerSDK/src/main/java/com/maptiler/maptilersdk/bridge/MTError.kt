@@ -22,28 +22,36 @@ sealed class MTError : Exception() {
      *
      * @param body Exception details.
      */
-    data class ExceptionError(val body: MTException) : MTError()
+    data class ExceptionError(
+        val body: MTException,
+    ) : MTError()
 
     /**
      * Method execution returned an invalid result.
      *
      * @param description Debug description of the return type.
      */
-    data class InvalidResultType(val description: String) : MTError()
+    data class InvalidResultType(
+        val description: String,
+    ) : MTError()
 
     /**
      * Method execution returned unsupported type.
      *
      * @param description Debug description of the command that returned unsupported type.
      */
-    data class UnsupportedReturnType(val description: String) : MTError()
+    data class UnsupportedReturnType(
+        val description: String,
+    ) : MTError()
 
     /**
      * Method execution resulted in an unknown error.
      *
      * @param description  Debug description of error.
      */
-    data class Unknown(val description: String) : MTError()
+    data class Unknown(
+        val description: String,
+    ) : MTError()
 
     /**
      * Method execution halted. Bridge and/or Map are not loaded.

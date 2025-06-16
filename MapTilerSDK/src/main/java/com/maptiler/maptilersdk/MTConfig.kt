@@ -67,9 +67,7 @@ object MTConfig {
     /**
      * Returns the MapTiler API key.
      */
-    fun getAPIKey(): String {
-        return this.apiKey
-    }
+    fun getAPIKey(): String = this.apiKey
 
     /**
      * Sets the caching mechanism.
@@ -108,9 +106,7 @@ object MTConfig {
     /**
      * Returns the unit of measurement.
      */
-    fun getUnit(): MTUnit {
-        return this.unit
-    }
+    fun getUnit(): MTUnit = this.unit
 
     /**
      * Sets the telemetry.

@@ -23,23 +23,23 @@ sealed class MTLogLevel {
     /**
      * All logs will be printed.
      */
-    data class Debug(val verbose: Boolean = false) : MTLogLevel()
+    data class Debug(
+        val verbose: Boolean = false,
+    ) : MTLogLevel()
 
-    override fun equals(other: Any?): Boolean {
-        return when {
+    override fun equals(other: Any?): Boolean =
+        when {
             this === other -> true
             this is None && other is None -> true
             this is Info && other is Info -> true
             this is Debug && other is Debug -> this.verbose == other.verbose
             else -> false
         }
-    }
 
-    override fun hashCode(): Int {
-        return when (this) {
+    override fun hashCode(): Int =
+        when (this) {
             is None -> 0
             is Info -> 1
             is Debug -> 2 + verbose.hashCode()
         }
-    }
 }
