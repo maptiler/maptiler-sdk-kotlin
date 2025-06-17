@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("org.jlleitschuh.gradle.ktlint")
     id("org.jetbrains.dokka")
+    kotlin("plugin.serialization") version "2.1.21"
 }
 
 tasks.named("ktlintFormat") {
@@ -60,4 +61,5 @@ dependencies {
     testImplementation("io.mockk:mockk:1.14.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
 }
