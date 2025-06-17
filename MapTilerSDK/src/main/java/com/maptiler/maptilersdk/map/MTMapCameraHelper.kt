@@ -6,9 +6,12 @@
 
 package com.maptiler.maptilersdk.map
 
+import kotlinx.serialization.Serializable
+
 /**
  * A geographical location which contains a latitude, longitude pair.
  */
+@Serializable
 data class LatLng(
     val latitude: Double,
     val longitude: Double,
