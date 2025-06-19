@@ -22,7 +22,8 @@ internal interface WebViewExecutorDelegate {
 
 internal class WebViewExecutor(
     context: Context,
-) : WebViewManagerDelegate {
+) : WebViewManagerDelegate,
+    MTCommandExecutable {
     private val exceptionKey = "WKJavaScriptExceptionMessage"
     private var webView: WebView? = null
     private val webViewManager: WebViewManager =
@@ -39,7 +40,7 @@ internal class WebViewExecutor(
 
     fun getWebView(): WebView? = webView
 
-    suspend fun execute(command: MTCommand): MTBridgeReturnType =
+    override suspend fun execute(command: MTCommand): MTBridgeReturnType =
         withContext(Dispatchers.Main) {
             val webView = webView ?: throw MTError.BridgeNotLoaded
             val isVerbose = MTConfig.logLevel == MTLogLevel.Debug(true)

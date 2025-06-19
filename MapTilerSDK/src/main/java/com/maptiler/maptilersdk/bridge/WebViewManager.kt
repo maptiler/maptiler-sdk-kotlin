@@ -72,4 +72,8 @@ internal class WebViewManager(
 
         return webView!!
     }
+
+    fun destroy() {
+        webView?.destroy()
+    }
 }
