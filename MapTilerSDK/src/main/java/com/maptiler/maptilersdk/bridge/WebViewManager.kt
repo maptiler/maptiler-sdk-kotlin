@@ -8,7 +8,9 @@ package com.maptiler.maptilersdk.bridge
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.view.ViewGroup
 import android.webkit.WebChromeClient
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 
@@ -52,8 +54,11 @@ internal class WebViewManager(
             webView =
                 WebView(context).apply {
                     settings.javaScriptEnabled = true
-                    settings.allowFileAccess = false
-                    settings.allowContentAccess = false
+                    settings.allowFileAccess = true
+                    settings.domStorageEnabled = true
+                    settings.cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
+                    settings.useWideViewPort = true
+                    settings.loadWithOverviewMode = true
 
                     webChromeClient = WebChromeClient()
                     webViewClient =
@@ -66,10 +71,20 @@ internal class WebViewManager(
                             }
                         }
 
+                    layoutParams =
+                        ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                        )
+
                     loadUrl("file:///android_asset/${Constants.JSResources.MAPTILER_MAP}.${Constants.JSResources.HTML_EXTENSION}")
                 }
         }
 
         return webView!!
+    }
+
+    fun destroy() {
+        webView?.destroy()
     }
 }

@@ -22,10 +22,11 @@ internal interface WebViewExecutorDelegate {
 
 internal class WebViewExecutor(
     context: Context,
-) : WebViewManagerDelegate {
+) : WebViewManagerDelegate,
+    MTCommandExecutable {
     private val exceptionKey = "WKJavaScriptExceptionMessage"
     private var webView: WebView? = null
-    private val webViewManager: WebViewManager =
+    val webViewManager: WebViewManager =
         WebViewManager(context).apply {
             delegate = this@WebViewExecutor
         }
@@ -39,15 +40,16 @@ internal class WebViewExecutor(
 
     fun getWebView(): WebView? = webView
 
-    suspend fun execute(command: MTCommand): MTBridgeReturnType =
+    override suspend fun execute(command: MTCommand): MTBridgeReturnType =
         withContext(Dispatchers.Main) {
             val webView = webView ?: throw MTError.BridgeNotLoaded
             val isVerbose = MTConfig.logLevel == MTLogLevel.Debug(true)
 
             val deferred = CompletableDeferred<MTBridgeReturnType>()
+
             webView.evaluateJavascript(command.toJS()) { result ->
                 try {
-                    if (result == null) {
+                    if (result == null || result == "null") {
                         if (isVerbose) {
                             MTLogger.log("$command completed with unsupported return type.", MTLogType.WARNING)
                         }

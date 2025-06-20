@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("org.jlleitschuh.gradle.ktlint")
     id("org.jetbrains.dokka")
+    id("org.jetbrains.kotlin.plugin.compose") version "2.1.21"
     kotlin("plugin.serialization") version "2.1.21"
 }
 
@@ -51,12 +52,19 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+    buildFeatures {
+        compose = true
+    }
 }
 
 dependencies {
     implementation("androidx.core:core-ktx:1.16.0")
-    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.compose.runtime:runtime-android:1.8.3")
+    implementation("androidx.compose.ui:ui-android:1.8.3")
+    implementation("androidx.compose.foundation:foundation-android:1.8.3")
     testImplementation("junit:junit:4.13.2")
     testImplementation("io.mockk:mockk:1.14.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
