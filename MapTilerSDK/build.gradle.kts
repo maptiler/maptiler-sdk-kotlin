@@ -64,6 +64,7 @@ dependencies {
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.compose.runtime:runtime-android:1.8.3")
     implementation("androidx.compose.ui:ui-android:1.8.3")
+    implementation("androidx.compose.foundation:foundation-android:1.8.3")
     testImplementation("junit:junit:4.13.2")
     testImplementation("io.mockk:mockk:1.14.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")

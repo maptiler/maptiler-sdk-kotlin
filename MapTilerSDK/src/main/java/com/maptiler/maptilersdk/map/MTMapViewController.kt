@@ -12,23 +12,29 @@ import com.maptiler.maptilersdk.MTConfig
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.WebViewExecutor
 import com.maptiler.maptilersdk.bridge.WebViewExecutorDelegate
-import com.maptiler.maptilersdk.bridge.WebViewManager
 import com.maptiler.maptilersdk.commands.InitializeMap
+import com.maptiler.maptilersdk.logging.MTLogType
+import com.maptiler.maptilersdk.logging.MTLogger
+import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
+import com.maptiler.maptilersdk.map.style.MTMapStyleVariant
 import com.maptiler.maptilersdk.map.style.MTStyle
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MTMapViewController(
     private val context: Context,
 ) : WebViewExecutorDelegate {
-    private val webViewManager = WebViewManager(context)
     private var coroutineScope: CoroutineScope? = null
 
     var style: MTStyle? = null
     var options: MTMapOptions? = null
 
     private var bridge: MTBridge? = null
-    private var webViewExecutor: WebViewExecutor? = null
+    private var webViewExecutor: WebViewExecutor? =
+        WebViewExecutor(context).apply {
+            delegate = this@MTMapViewController
+        }
 
     init {
         webViewExecutor = WebViewExecutor(context)
@@ -43,6 +49,8 @@ class MTMapViewController(
         }
 
         val isSessionLogicEnabled = MTConfig.isSessionLogicEnabled
+
+        style = MTStyle(MTMapReferenceStyle.STREETS, MTMapStyleVariant.DEFAULT_VARIANT)
 
         bridge!!.execute(
             InitializeMap(
@@ -60,14 +68,18 @@ class MTMapViewController(
     }
 
     fun destroy() {
-        webViewManager.destroy()
+        webViewExecutor?.webViewManager!!.destroy()
     }
 
-    fun getAttachableWebView(): WebView = getAttachableWebView()
+    fun getAttachableWebView(): WebView = webViewExecutor?.webViewManager!!.getAttachableWebView()
 
     override fun onNavigationFinished(url: String) {
-        coroutineScope?.launch {
-            initializeMap()
+        coroutineScope?.launch(Dispatchers.Default) {
+            try {
+                initializeMap()
+            } catch (error: Exception) {
+                MTLogger.log("Map Init error $error", MTLogType.ERROR)
+            }
         }
     }
 }
