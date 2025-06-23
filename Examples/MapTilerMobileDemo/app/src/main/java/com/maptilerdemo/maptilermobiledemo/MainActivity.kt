@@ -20,6 +20,8 @@ import com.maptiler.maptilersdk.map.MTMapViewController
 import com.maptiler.maptilersdk.map.MTMapViewDelegate
 import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
 import com.maptiler.maptilersdk.map.style.MTMapStyleVariant
+import com.maptiler.maptilersdk.map.types.MTLanguage
+import com.maptiler.maptilersdk.map.types.MTSpecialLanguage
 
 class MainActivity : ComponentActivity() {
     private var mapController: MapController? = null
@@ -36,10 +38,17 @@ class MainActivity : ComponentActivity() {
             MaterialTheme {
                 MTMapView(
                     MTMapReferenceStyle.STREETS,
-                    MTMapOptions(LatLng(0.0, 0.0), 1.0),
+                    MTMapOptions(
+                        LatLng(0.0, 0.0),
+                        1.0,
+                        language =
+                            MTLanguage
+                                .Special(MTSpecialLanguage.AUTO),
+                    ),
                     mapController!!.controller,
-                    modifier = Modifier
-                        .fillMaxSize(),
+                    modifier =
+                        Modifier
+                            .fillMaxSize(),
                     MTMapStyleVariant.DEFAULT_VARIANT,
                 )
             }
@@ -49,7 +58,7 @@ class MainActivity : ComponentActivity() {
 
 class MapController(
     private val context: Context,
-): MTMapViewDelegate {
+) : MTMapViewDelegate {
     val controller: MTMapViewController =
         MTMapViewController(context).apply {
             delegate = this@MapController

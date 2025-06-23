@@ -24,6 +24,10 @@ interface MTMapViewDelegate {
     fun onMapViewInitialized()
 }
 
+/**
+ * Object exposing methods and properties that enable changes to the map,
+ * and events that can be interacted with.
+ */
 class MTMapViewController(
     private val context: Context,
 ) : WebViewExecutorDelegate {
@@ -35,9 +39,19 @@ class MTMapViewController(
             delegate = this@MTMapViewController
         }
 
+    /**
+     * Proxy style object of the map.
+     */
     var style: MTStyle? = null
+
+    /**
+     * Current options of the map object.
+     */
     var options: MTMapOptions? = null
 
+    /**
+     * Delegate object responsible for event propagation
+     */
     var delegate: MTMapViewDelegate? = null
 
     init {
@@ -75,7 +89,7 @@ class MTMapViewController(
         webViewExecutor?.webViewManager!!.destroy()
     }
 
-    fun getAttachableWebView(): WebView = webViewExecutor?.webViewManager!!.getAttachableWebView()
+    internal fun getAttachableWebView(): WebView = webViewExecutor?.webViewManager!!.getAttachableWebView()
 
     override fun onNavigationFinished(url: String) {
         coroutineScope?.launch(Dispatchers.Default) {

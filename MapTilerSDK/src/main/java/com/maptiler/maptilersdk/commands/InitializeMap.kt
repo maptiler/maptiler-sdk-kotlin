@@ -12,6 +12,7 @@ import com.maptiler.maptilersdk.bridge.MTCommand
 import com.maptiler.maptilersdk.map.MTMapOptions
 import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
 import com.maptiler.maptilersdk.map.style.MTMapStyleVariant
+import com.maptiler.maptilersdk.map.types.MTLanguage
 import kotlinx.serialization.json.Json
 
 data class InitializeMap(
@@ -41,7 +42,15 @@ data class InitializeMap(
             styleString = "${MTBridge.SDK_OBJECT}.${MTBridge.STYLE_OBJECT}.$style"
         }
 
-        val optionsString: JSString = Json.encodeToString(options)
+        var optionsString: JSString = Json.encodeToString(options)
+
+        if (options?.language is MTLanguage.Special) {
+            optionsString =
+                optionsString.trimIndent().replace(
+                    Regex("""("language":\s*)"([^"]*)""""),
+                    "$1$2",
+                )
+        }
 
         return "initializeMap('$apiKey', $styleString, $optionsString, $isSessionLogicEnabled);"
     }
