@@ -15,20 +15,19 @@ import com.maptiler.maptilersdk.bridge.WebViewExecutorDelegate
 import com.maptiler.maptilersdk.commands.InitializeMap
 import com.maptiler.maptilersdk.logging.MTLogType
 import com.maptiler.maptilersdk.logging.MTLogger
-import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
-import com.maptiler.maptilersdk.map.style.MTMapStyleVariant
 import com.maptiler.maptilersdk.map.style.MTStyle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+interface MTMapViewDelegate {
+    fun onMapViewInitialized()
+}
+
 class MTMapViewController(
     private val context: Context,
 ) : WebViewExecutorDelegate {
     private var coroutineScope: CoroutineScope? = null
-
-    var style: MTStyle? = null
-    var options: MTMapOptions? = null
 
     private var bridge: MTBridge? = null
     private var webViewExecutor: WebViewExecutor? =
@@ -36,12 +35,17 @@ class MTMapViewController(
             delegate = this@MTMapViewController
         }
 
+    var style: MTStyle? = null
+    var options: MTMapOptions? = null
+
+    var delegate: MTMapViewDelegate? = null
+
     init {
         webViewExecutor = WebViewExecutor(context)
         bridge = MTBridge(webViewExecutor)
     }
 
-    suspend fun initializeMap() {
+    private suspend fun initializeMap() {
         val apiKey = MTConfig.getAPIKey()
 
         if (options != null) {
@@ -49,8 +53,6 @@ class MTMapViewController(
         }
 
         val isSessionLogicEnabled = MTConfig.isSessionLogicEnabled
-
-        style = MTStyle(MTMapReferenceStyle.STREETS, MTMapStyleVariant.DEFAULT_VARIANT)
 
         bridge!!.execute(
             InitializeMap(
@@ -61,6 +63,8 @@ class MTMapViewController(
                 isSessionLogicEnabled,
             ),
         )
+
+        delegate?.onMapViewInitialized()
     }
 
     fun bind(scope: CoroutineScope) {

@@ -12,19 +12,27 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
+import com.maptiler.maptilersdk.map.style.MTMapStyleVariant
+import com.maptiler.maptilersdk.map.style.MTStyle
 
 @Suppress("FunctionName")
 @Composable
 fun MTMapView(
+    referenceStyle: MTMapReferenceStyle,
     options: MTMapOptions,
     controller: MTMapViewController,
     modifier: Modifier = Modifier,
+    styleVariant: MTMapStyleVariant? = null,
 ) {
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         controller.bind(scope)
         controller.options = options
+
+        val style = MTStyle(referenceStyle, styleVariant)
+        controller.style = style
     }
 
     DisposableEffect(Unit) {
