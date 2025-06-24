@@ -16,6 +16,9 @@ import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
 import com.maptiler.maptilersdk.map.style.MTMapStyleVariant
 import com.maptiler.maptilersdk.map.style.MTStyle
 
+/**
+ * Object representing the map on the screen.
+ */
 @Suppress("FunctionName")
 @Composable
 fun MTMapView(

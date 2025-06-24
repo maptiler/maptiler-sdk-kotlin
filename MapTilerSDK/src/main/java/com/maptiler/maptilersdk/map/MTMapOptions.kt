@@ -6,6 +6,8 @@
 
 package com.maptiler.maptilersdk.map
 
+import com.maptiler.maptilersdk.map.types.MTLanguage
+import com.maptiler.maptilersdk.map.types.MTLanguageSerializer
 import com.maptiler.maptilersdk.map.types.MTMapCorner
 import com.maptiler.maptilersdk.map.types.MTProjectionType
 import kotlinx.serialization.SerialName
@@ -16,6 +18,13 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 class MTMapOptions {
+    /**
+     * The language of the map.
+     */
+    @Serializable(with = MTLanguageSerializer::class)
+    var language: MTLanguage? = null
+        private set
+
     /**
      * The geographical centerpoint of the map.
      *
@@ -352,6 +361,13 @@ class MTMapOptions {
     constructor(center: LatLng?, zoom: Double?) {
         this.center = center
         this.zoom = zoom
+    }
+
+    /** Initializes map options with center, zoom and language. */
+    constructor(center: LatLng?, zoom: Double?, language: MTLanguage) {
+        this.center = center
+        this.zoom = zoom
+        this.language = language
     }
 
     /** Initializes map options with center, zoom and terrain. */
