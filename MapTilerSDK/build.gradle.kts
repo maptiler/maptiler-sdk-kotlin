@@ -3,7 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("org.jlleitschuh.gradle.ktlint")
     id("org.jetbrains.dokka")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.1.21"
+    id("org.jetbrains.kotlin.plugin.compose")
     kotlin("plugin.serialization") version "2.1.21"
 }
 
@@ -59,6 +59,15 @@ android {
 }
 
 dependencies {
+    val composeBom = platform("androidx.compose:compose-bom:2025.05.00")
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
+
+    implementation("androidx.compose.material3:material3")
+
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+
     implementation("androidx.core:core-ktx:1.16.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("com.google.android.material:material:1.12.0")

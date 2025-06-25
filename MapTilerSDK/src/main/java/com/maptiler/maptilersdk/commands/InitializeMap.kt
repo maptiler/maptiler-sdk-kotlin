@@ -9,11 +9,11 @@ package com.maptiler.maptilersdk.commands
 import com.maptiler.maptilersdk.bridge.JSString
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTCommand
+import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.map.MTMapOptions
 import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
 import com.maptiler.maptilersdk.map.style.MTMapStyleVariant
 import com.maptiler.maptilersdk.map.types.MTLanguage
-import kotlinx.serialization.json.Json
 
 data class InitializeMap(
     val apiKey: String,
@@ -42,7 +42,7 @@ data class InitializeMap(
             styleString = "${MTBridge.SDK_OBJECT}.${MTBridge.STYLE_OBJECT}.$style"
         }
 
-        var optionsString: JSString = Json.encodeToString(options)
+        var optionsString: JSString = JsonConfig.json.encodeToString(options)
 
         if (options?.language is MTLanguage.Special) {
             optionsString =

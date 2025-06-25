@@ -386,7 +386,7 @@ class MTMapOptions {
     }
 
     /** Full constructor with optional parameters for all properties. */
-    constructor(init: MTMapOptions.() -> Unit) {
-        this.apply(init)
+    constructor() {
+        // Defaults
     }
 }
