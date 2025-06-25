@@ -17,6 +17,7 @@ pluginManagement {
         id("org.jetbrains.kotlin.android") version "2.0.0"
         id("org.jlleitschuh.gradle.ktlint") version "12.3.0"
         id("org.jetbrains.dokka") version "2.0.0"
+        id("org.jetbrains.kotlin.plugin.compose") version "2.1.21"
     }
 }
 dependencyResolutionManagement {
