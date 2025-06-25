@@ -38,18 +38,11 @@ class MainActivity : ComponentActivity() {
             MaterialTheme {
                 MTMapView(
                     MTMapReferenceStyle.STREETS,
-                    MTMapOptions(
-                        LatLng(0.0, 0.0),
-                        1.0,
-                        language =
-                            MTLanguage
-                                .Special(MTSpecialLanguage.AUTO),
-                    ),
+                    MTMapOptions(),
                     mapController!!.controller,
                     modifier =
                         Modifier
                             .fillMaxSize(),
-                    MTMapStyleVariant.DEFAULT_VARIANT,
                 )
             }
         }
