@@ -7,12 +7,15 @@
 package com.maptilerdemo.maptilermobiledemo
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.maptiler.maptilersdk.map.MTMapOptions
 import com.maptiler.maptilersdk.map.MTMapView
+import com.maptiler.maptilersdk.map.MTMapViewController
+import com.maptiler.maptilersdk.map.MTMapViewDelegate
 import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
 
 @Composable
@@ -30,4 +33,17 @@ fun HomeScreen(
             Modifier
                 .fillMaxSize(),
     )
+}
+
+class MapController(
+    private val context: Context,
+) : MTMapViewDelegate {
+    val controller: MTMapViewController =
+        MTMapViewController(context).apply {
+            delegate = this@MapController
+        }
+
+    override fun onMapViewInitialized() {
+        Log.i("Demo App", "Map View Initialized.")
+    }
 }

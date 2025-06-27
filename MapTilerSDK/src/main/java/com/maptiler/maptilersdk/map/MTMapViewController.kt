@@ -17,6 +17,8 @@ import com.maptiler.maptilersdk.logging.MTLogType
 import com.maptiler.maptilersdk.logging.MTLogger
 import com.maptiler.maptilersdk.map.gestures.MTGestureService
 import com.maptiler.maptilersdk.map.style.MTStyle
+import com.maptiler.maptilersdk.map.workers.zoomable.MTZoomable
+import com.maptiler.maptilersdk.map.workers.zoomable.ZoomableWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,14 +33,17 @@ interface MTMapViewDelegate {
  */
 class MTMapViewController(
     private val context: Context,
-) : WebViewExecutorDelegate {
-    private var coroutineScope: CoroutineScope? = null
+) : WebViewExecutorDelegate,
+    MTZoomable {
+    var coroutineScope: CoroutineScope? = null
 
     private var bridge: MTBridge? = null
     private var webViewExecutor: WebViewExecutor? =
         WebViewExecutor(context).apply {
             delegate = this@MTMapViewController
         }
+
+    private lateinit var zoomableWorker: ZoomableWorker
 
     /**
      * Proxy style object of the map.
@@ -65,6 +70,8 @@ class MTMapViewController(
         bridge = MTBridge(webViewExecutor)
 
         gestureService = MTGestureService.create(bridge!!, this)
+
+        initializeWorkers()
     }
 
     private suspend fun initializeMap() {
@@ -89,6 +96,10 @@ class MTMapViewController(
         delegate?.onMapViewInitialized()
     }
 
+    private fun initializeWorkers() {
+        zoomableWorker = ZoomableWorker(bridge!!)
+    }
+
     fun bind(scope: CoroutineScope) {
         coroutineScope = scope
     }
@@ -108,4 +119,16 @@ class MTMapViewController(
             }
         }
     }
+
+    override suspend fun zoomIn() = zoomableWorker.zoomIn()
+
+    override suspend fun zoomOut() = zoomableWorker.zoomOut()
+
+    override suspend fun getZoom(): Double = zoomableWorker.getZoom()
+
+    override suspend fun setZoom(zoom: Double) = zoomableWorker.setZoom(zoom)
+
+    override suspend fun setMaxZoom(maxZoom: Double) = zoomableWorker.setMaxZoom(maxZoom)
+
+    override suspend fun setMinZoom(minZoom: Double) = zoomableWorker.setMinZoom(minZoom)
 }
