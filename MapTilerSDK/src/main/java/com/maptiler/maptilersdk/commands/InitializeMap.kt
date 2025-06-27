@@ -15,7 +15,7 @@ import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
 import com.maptiler.maptilersdk.map.style.MTMapStyleVariant
 import com.maptiler.maptilersdk.map.types.MTLanguage
 
-data class InitializeMap(
+internal data class InitializeMap(
     val apiKey: String,
     val options: MTMapOptions?,
     val referenceStyle: MTMapReferenceStyle,

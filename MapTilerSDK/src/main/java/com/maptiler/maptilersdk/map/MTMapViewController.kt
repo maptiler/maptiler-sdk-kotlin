@@ -15,6 +15,7 @@ import com.maptiler.maptilersdk.bridge.WebViewExecutorDelegate
 import com.maptiler.maptilersdk.commands.InitializeMap
 import com.maptiler.maptilersdk.logging.MTLogType
 import com.maptiler.maptilersdk.logging.MTLogger
+import com.maptiler.maptilersdk.map.gestures.MTGestureService
 import com.maptiler.maptilersdk.map.style.MTStyle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -54,9 +55,16 @@ class MTMapViewController(
      */
     var delegate: MTMapViewDelegate? = null
 
+    /**
+     * Service responsible for gestures handling
+     */
+    var gestureService: MTGestureService? = null
+
     init {
         webViewExecutor = WebViewExecutor(context)
         bridge = MTBridge(webViewExecutor)
+
+        gestureService = MTGestureService.create(bridge!!, this)
     }
 
     private suspend fun initializeMap() {
