@@ -12,8 +12,8 @@ import kotlinx.serialization.Serializable
  * A geographical location which contains a latitude, longitude pair.
  */
 @Serializable
-data class LatLng(
-    val lon: Double,
+data class LngLat(
+    val lng: Double,
     val lat: Double,
 )
 
@@ -21,7 +21,7 @@ data class LatLng(
  * Sets combination of center, bearing and pitch, as well as roll and elevation.
  */
 class MTMapCameraHelper private constructor(
-    val centerCoordinate: LatLng? = null,
+    val centerCoordinate: LngLat? = null,
     val bearing: Double? = null,
     val pitch: Double? = null,
     val roll: Double? = null,
@@ -33,7 +33,7 @@ class MTMapCameraHelper private constructor(
          */
         fun getCamera(): MTMapCameraHelper =
             MTMapCameraHelper(
-                centerCoordinate = LatLng(0.0, 0.0),
+                centerCoordinate = LngLat(0.0, 0.0),
                 bearing = 0.0,
                 pitch = 0.0,
                 roll = 0.0,
@@ -51,7 +51,7 @@ class MTMapCameraHelper private constructor(
          * Returns camera object with the given center coordinate, bearing, pitch, roll and elevation.
          */
         fun cameraLookingAtCenterCoordinate(
-            centerCoordinate: LatLng,
+            centerCoordinate: LngLat,
             bearing: Double,
             pitch: Double,
             roll: Double,
@@ -72,7 +72,7 @@ class MTMapCameraHelper private constructor(
          * If they are not specified in the style, they will default to 0.
          */
         fun cameraLookingAtCenterCoordinate(
-            centerCoordinate: LatLng,
+            centerCoordinate: LngLat,
             bearing: Double,
             pitch: Double,
         ): MTMapCameraHelper =

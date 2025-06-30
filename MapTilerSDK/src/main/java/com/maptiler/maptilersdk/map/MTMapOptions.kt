@@ -31,7 +31,7 @@ class MTMapOptions {
      * If center is not specified, SDK will look for it in the map style object.
      * If it is not specified in the style, it will default to (latitude: 0.0, longitude: 0.0).
      */
-    var center: LatLng? = null
+    var center: LngLat? = null
         private set
 
     /**
@@ -350,7 +350,7 @@ class MTMapOptions {
         private set
 
     /** Initializes map options with center, zoom, bearing, and pitch. */
-    constructor(center: LatLng?, zoom: Double?, bearing: Double?, pitch: Double?) {
+    constructor(center: LngLat?, zoom: Double?, bearing: Double?, pitch: Double?) {
         this.center = center
         this.zoom = zoom
         this.bearing = bearing
@@ -358,20 +358,20 @@ class MTMapOptions {
     }
 
     /** Initializes map options with center and zoom. */
-    constructor(center: LatLng?, zoom: Double?) {
+    constructor(center: LngLat?, zoom: Double?) {
         this.center = center
         this.zoom = zoom
     }
 
     /** Initializes map options with center, zoom and language. */
-    constructor(center: LatLng?, zoom: Double?, language: MTLanguage) {
+    constructor(center: LngLat?, zoom: Double?, language: MTLanguage) {
         this.center = center
         this.zoom = zoom
         this.language = language
     }
 
     /** Initializes map options with center, zoom and terrain. */
-    constructor(center: LatLng?, zoom: Double?, terrainIsEnabled: Boolean?, terrainExaggeration: Double?) {
+    constructor(center: LngLat?, zoom: Double?, terrainIsEnabled: Boolean?, terrainExaggeration: Double?) {
         this.center = center
         this.zoom = zoom
         this.terrainIsEnabled = terrainIsEnabled
@@ -379,7 +379,7 @@ class MTMapOptions {
     }
 
     /** Initializes map options with center, zoom and projection. */
-    constructor(center: LatLng?, zoom: Double?, projection: MTProjectionType?) {
+    constructor(center: LngLat?, zoom: Double?, projection: MTProjectionType?) {
         this.center = center
         this.zoom = zoom
         this.projection = projection

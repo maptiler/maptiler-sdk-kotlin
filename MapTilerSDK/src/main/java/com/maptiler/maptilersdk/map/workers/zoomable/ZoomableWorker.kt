@@ -37,10 +37,10 @@ internal class ZoomableWorker(
                 GetZoom(),
             )
 
-        when (returnTypeValue) {
-            is StringValue -> return returnTypeValue.value.toDouble()
-            is DoubleValue -> return returnTypeValue.value
-            else -> return 0.0
+        return when (returnTypeValue) {
+            is StringValue -> returnTypeValue.value.toDouble()
+            is DoubleValue -> returnTypeValue.value
+            else -> 0.0
         }
     }
 

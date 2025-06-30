@@ -17,6 +17,9 @@ import com.maptiler.maptilersdk.logging.MTLogType
 import com.maptiler.maptilersdk.logging.MTLogger
 import com.maptiler.maptilersdk.map.gestures.MTGestureService
 import com.maptiler.maptilersdk.map.style.MTStyle
+import com.maptiler.maptilersdk.map.types.MTPoint
+import com.maptiler.maptilersdk.map.workers.navigable.MTNavigable
+import com.maptiler.maptilersdk.map.workers.navigable.NavigableWorker
 import com.maptiler.maptilersdk.map.workers.zoomable.MTZoomable
 import com.maptiler.maptilersdk.map.workers.zoomable.ZoomableWorker
 import kotlinx.coroutines.CoroutineScope
@@ -34,8 +37,9 @@ interface MTMapViewDelegate {
 class MTMapViewController(
     private val context: Context,
 ) : WebViewExecutorDelegate,
-    MTZoomable {
-    var coroutineScope: CoroutineScope? = null
+    MTZoomable,
+    MTNavigable {
+    private var coroutineScope: CoroutineScope? = null
 
     private var bridge: MTBridge? = null
     private var webViewExecutor: WebViewExecutor? =
@@ -44,6 +48,7 @@ class MTMapViewController(
         }
 
     private lateinit var zoomableWorker: ZoomableWorker
+    private lateinit var navigableWorker: NavigableWorker
 
     /**
      * Proxy style object of the map.
@@ -98,6 +103,7 @@ class MTMapViewController(
 
     private fun initializeWorkers() {
         zoomableWorker = ZoomableWorker(bridge!!)
+        navigableWorker = NavigableWorker(bridge!!)
     }
 
     fun bind(scope: CoroutineScope) {
@@ -120,15 +126,55 @@ class MTMapViewController(
         }
     }
 
+    // ZOOMABLE
+
+    /**
+     * Increases the map's zoom level by 1.
+     */
     override suspend fun zoomIn() = zoomableWorker.zoomIn()
 
+    /**
+     * Decreases the map's zoom level by 1.
+     */
     override suspend fun zoomOut() = zoomableWorker.zoomOut()
 
+    /**
+     * Returns the map's current zoom level.
+     */
     override suspend fun getZoom(): Double = zoomableWorker.getZoom()
 
+    /**
+     * Sets the map's zoom level.
+     *
+     * @param zoom The zoom level to set (0-20).
+     */
     override suspend fun setZoom(zoom: Double) = zoomableWorker.setZoom(zoom)
 
+    /**
+     * Sets the map's maximum zoom.
+     * @param maxZoom Desired zoom.
+     */
     override suspend fun setMaxZoom(maxZoom: Double) = zoomableWorker.setMaxZoom(maxZoom)
 
+    /**
+     * Sets the map's minimum zoom.
+     * @param minZoom Desired zoom.
+     */
     override suspend fun setMinZoom(minZoom: Double) = zoomableWorker.setMinZoom(minZoom)
+
+    // NAVIGABLE
+
+    /**
+     * Pans the map by the specified offset.
+     *
+     * @param offset Offset to pan by.
+     */
+    override suspend fun panBy(offset: MTPoint) = navigableWorker.panBy(offset)
+
+    /**
+     * Pans the map to the specified location with an animated transition.
+     *
+     * @param coordinates Coordinates to pan to.
+     */
+    override suspend fun panTo(coordinates: LngLat) = navigableWorker.panTo(coordinates)
 }
