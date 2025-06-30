@@ -13,12 +13,12 @@ interface MTZoomable {
     /**
      * Increases the map's zoom level by 1.
      */
-    suspend fun zoomIn()
+    fun zoomIn()
 
     /**
      * Decreases the map's zoom level by 1.
      */
-    suspend fun zoomOut()
+    fun zoomOut()
 
     /**
      * Returns the map's current zoom level.
@@ -30,19 +30,19 @@ interface MTZoomable {
      *
      * @param zoom The zoom level to set (0-20).
      */
-    suspend fun setZoom(zoom: Double)
+    fun setZoom(zoom: Double)
 
     /**
      * Sets the map's maximum zoom level.
      *
      * @param maxZoom The max zoom level to set (0-20).
      */
-    suspend fun setMaxZoom(maxZoom: Double)
+    fun setMaxZoom(maxZoom: Double)
 
     /**
      * Sets the map's minimum zoom level.
      *
      * @param minZoom The min zoom level to set (0-20).
      */
-    suspend fun setMinZoom(minZoom: Double)
+    fun setMinZoom(minZoom: Double)
 }
