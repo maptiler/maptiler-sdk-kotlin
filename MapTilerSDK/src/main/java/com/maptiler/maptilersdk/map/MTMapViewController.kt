@@ -75,8 +75,6 @@ class MTMapViewController(
         bridge = MTBridge(webViewExecutor)
 
         gestureService = MTGestureService.create(bridge!!, this)
-
-        initializeWorkers()
     }
 
     private suspend fun initializeMap() {
@@ -102,12 +100,13 @@ class MTMapViewController(
     }
 
     private fun initializeWorkers() {
-        zoomableWorker = ZoomableWorker(bridge!!)
-        navigableWorker = NavigableWorker(bridge!!)
+        zoomableWorker = ZoomableWorker(bridge!!, coroutineScope!!)
+        navigableWorker = NavigableWorker(bridge!!, coroutineScope!!)
     }
 
     fun bind(scope: CoroutineScope) {
         coroutineScope = scope
+        initializeWorkers()
     }
 
     fun destroy() {
@@ -131,12 +130,12 @@ class MTMapViewController(
     /**
      * Increases the map's zoom level by 1.
      */
-    override suspend fun zoomIn() = zoomableWorker.zoomIn()
+    override fun zoomIn() = zoomableWorker.zoomIn()
 
     /**
      * Decreases the map's zoom level by 1.
      */
-    override suspend fun zoomOut() = zoomableWorker.zoomOut()
+    override fun zoomOut() = zoomableWorker.zoomOut()
 
     /**
      * Returns the map's current zoom level.
@@ -148,19 +147,19 @@ class MTMapViewController(
      *
      * @param zoom The zoom level to set (0-20).
      */
-    override suspend fun setZoom(zoom: Double) = zoomableWorker.setZoom(zoom)
+    override fun setZoom(zoom: Double) = zoomableWorker.setZoom(zoom)
 
     /**
      * Sets the map's maximum zoom.
      * @param maxZoom Desired zoom.
      */
-    override suspend fun setMaxZoom(maxZoom: Double) = zoomableWorker.setMaxZoom(maxZoom)
+    override fun setMaxZoom(maxZoom: Double) = zoomableWorker.setMaxZoom(maxZoom)
 
     /**
      * Sets the map's minimum zoom.
      * @param minZoom Desired zoom.
      */
-    override suspend fun setMinZoom(minZoom: Double) = zoomableWorker.setMinZoom(minZoom)
+    override fun setMinZoom(minZoom: Double) = zoomableWorker.setMinZoom(minZoom)
 
     // NAVIGABLE
 
@@ -169,12 +168,12 @@ class MTMapViewController(
      *
      * @param offset Offset to pan by.
      */
-    override suspend fun panBy(offset: MTPoint) = navigableWorker.panBy(offset)
+    override fun panBy(offset: MTPoint) = navigableWorker.panBy(offset)
 
     /**
      * Pans the map to the specified location with an animated transition.
      *
      * @param coordinates Coordinates to pan to.
      */
-    override suspend fun panTo(coordinates: LngLat) = navigableWorker.panTo(coordinates)
+    override fun panTo(coordinates: LngLat) = navigableWorker.panTo(coordinates)
 }

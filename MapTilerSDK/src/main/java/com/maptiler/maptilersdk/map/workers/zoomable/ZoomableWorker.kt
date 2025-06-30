@@ -15,20 +15,27 @@ import com.maptiler.maptilersdk.commands.navigation.SetMinZoom
 import com.maptiler.maptilersdk.commands.navigation.SetZoom
 import com.maptiler.maptilersdk.commands.navigation.ZoomIn
 import com.maptiler.maptilersdk.commands.navigation.ZoomOut
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 internal class ZoomableWorker(
     private val bridge: MTBridge,
+    private val scope: CoroutineScope,
 ) : MTZoomable {
-    override suspend fun zoomIn() {
-        bridge.execute(
-            ZoomIn(),
-        )
+    override fun zoomIn() {
+        scope.launch {
+            bridge.execute(
+                ZoomIn(),
+            )
+        }
     }
 
-    override suspend fun zoomOut() {
-        bridge.execute(
-            ZoomOut(),
-        )
+    override fun zoomOut() {
+        scope.launch {
+            bridge.execute(
+                ZoomOut(),
+            )
+        }
     }
 
     override suspend fun getZoom(): Double {
@@ -44,21 +51,27 @@ internal class ZoomableWorker(
         }
     }
 
-    override suspend fun setZoom(zoom: Double) {
-        bridge.execute(
-            SetZoom(zoom),
-        )
+    override fun setZoom(zoom: Double) {
+        scope.launch {
+            bridge.execute(
+                SetZoom(zoom),
+            )
+        }
     }
 
-    override suspend fun setMaxZoom(maxZoom: Double) {
-        bridge.execute(
-            SetMaxZoom(maxZoom),
-        )
+    override fun setMaxZoom(maxZoom: Double) {
+        scope.launch {
+            bridge.execute(
+                SetMaxZoom(maxZoom),
+            )
+        }
     }
 
-    override suspend fun setMinZoom(minZoom: Double) {
-        bridge.execute(
-            SetMinZoom(minZoom),
-        )
+    override fun setMinZoom(minZoom: Double) {
+        scope.launch {
+            bridge.execute(
+                SetMinZoom(minZoom),
+            )
+        }
     }
 }

@@ -11,19 +11,26 @@ import com.maptiler.maptilersdk.commands.navigation.PanBy
 import com.maptiler.maptilersdk.commands.navigation.PanTo
 import com.maptiler.maptilersdk.map.LngLat
 import com.maptiler.maptilersdk.map.types.MTPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 internal class NavigableWorker(
     private val bridge: MTBridge,
+    private val scope: CoroutineScope,
 ) : MTNavigable {
-    override suspend fun panBy(offset: MTPoint) {
-        bridge.execute(
-            PanBy(offset),
-        )
+    override fun panBy(offset: MTPoint) {
+        scope.launch {
+            bridge.execute(
+                PanBy(offset),
+            )
+        }
     }
 
-    override suspend fun panTo(coordinates: LngLat) {
-        bridge.execute(
-            PanTo(coordinates),
-        )
+    override fun panTo(coordinates: LngLat) {
+        scope.launch {
+            bridge.execute(
+                PanTo(coordinates),
+            )
+        }
     }
 }

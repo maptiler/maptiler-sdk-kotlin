@@ -9,8 +9,21 @@ package com.maptiler.maptilersdk.map.workers.navigable
 import com.maptiler.maptilersdk.map.LngLat
 import com.maptiler.maptilersdk.map.types.MTPoint
 
+/**
+ * Defines methods for navigating the map.
+ */
 interface MTNavigable {
-    suspend fun panBy(offset: MTPoint)
+    /**
+     * Pans the map by the specified offset.
+     *
+     * @param offset Offset to pan by.
+     */
+    fun panBy(offset: MTPoint)
 
-    suspend fun panTo(coordinates: LngLat)
+    /**
+     * Pans the map to the specified location with an animated transition.
+     *
+     * @param coordinates Coordinates to pan to.
+     */
+    fun panTo(coordinates: LngLat)
 }
