@@ -15,6 +15,8 @@ import com.maptiler.maptilersdk.map.types.MTPoint
 internal data class PanBy(
     val offset: MTPoint,
 ) : MTCommand {
+    override val isPrimitiveReturnType: Boolean = false
+
     override fun toJS(): String {
         val offsetString: JSString = JsonConfig.json.encodeToString(offset)
 

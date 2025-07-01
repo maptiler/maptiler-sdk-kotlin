@@ -9,6 +9,8 @@ package com.maptiler.maptilersdk.bridge
 internal typealias JSString = String
 
 internal interface MTCommand {
+    val isPrimitiveReturnType: Boolean
+
     fun toJS(): JSString
 }
 

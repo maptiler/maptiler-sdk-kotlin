@@ -12,5 +12,7 @@ import com.maptiler.maptilersdk.bridge.MTCommand
 internal data class SetMaxZoom(
     val zoom: Double,
 ) : MTCommand {
+    override val isPrimitiveReturnType: Boolean = false
+
     override fun toJS(): String = "${MTBridge.MAP_OBJECT}.setMaxZoom($zoom);"
 }

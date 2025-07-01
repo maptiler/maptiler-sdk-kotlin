@@ -15,6 +15,8 @@ import com.maptiler.maptilersdk.map.LngLat
 internal data class PanTo(
     val coordinates: LngLat,
 ) : MTCommand {
+    override val isPrimitiveReturnType: Boolean = false
+
     override fun toJS(): String {
         val coordinatesString: JSString = JsonConfig.json.encodeToString(coordinates)
 

@@ -15,6 +15,8 @@ import com.maptiler.maptilersdk.map.options.MTDragPanOptions
 internal data class DragPanEnable(
     val options: MTDragPanOptions?,
 ) : MTCommand {
+    override val isPrimitiveReturnType: Boolean = false
+
     override fun toJS(): String {
         val optionsString: JSString = JsonConfig.json.encodeToString(options)
 
