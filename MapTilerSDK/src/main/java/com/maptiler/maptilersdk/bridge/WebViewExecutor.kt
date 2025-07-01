@@ -7,7 +7,11 @@
 package com.maptiler.maptilersdk.bridge
 
 import android.content.Context
+import android.view.ViewGroup
+import android.webkit.WebChromeClient
+import android.webkit.WebSettings
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import com.maptiler.maptilersdk.MTConfig
 import com.maptiler.maptilersdk.logging.MTLogLevel
 import com.maptiler.maptilersdk.logging.MTLogType
@@ -22,20 +26,72 @@ internal interface WebViewExecutorDelegate {
 
 internal class WebViewExecutor(
     context: Context,
-) : WebViewManagerDelegate,
-    MTCommandExecutable {
-    private val exceptionKey = "WKJavaScriptExceptionMessage"
-    private var webView: WebView? = null
-    val webViewManager: WebViewManager =
-        WebViewManager(context).apply {
-            delegate = this@WebViewExecutor
+) : MTCommandExecutable {
+    object Constants {
+        object Error {
+            const val HANDLER = "errorHandler"
+            const val MESSAGE = "message"
+            const val UNKNOWN = "Unknown Error"
         }
+
+        object Map {
+            const val HANDLER = "mapHandler"
+            const val EVENT = "event"
+            const val DATA = "data"
+        }
+
+        object JSResources {
+            const val MAPTILER_MAP = "MapTilerMap"
+            const val MAPTILER_SDK = "maptiler-sdk.umd.min"
+            const val MAPTILER_STYLESHEET = "maptiler-sdk"
+
+            const val HTML_EXTENSION = "html"
+            const val JS_EXTENSION = "js"
+            const val CSS_EXTENSION = "css"
+        }
+    }
+
+    private var webView: WebView? = null
 
     var delegate: WebViewExecutorDelegate? = null
 
     init {
-        webView = webViewManager.getAttachableWebView()
-        webView?.isVerticalScrollBarEnabled = false
+        initWebViewIfNeeded(context)
+    }
+
+    private fun initWebViewIfNeeded(context: Context) {
+        if (webView == null) {
+            webView =
+                WebView(context).apply {
+                    settings.javaScriptEnabled = true
+                    settings.allowFileAccess = true
+                    settings.domStorageEnabled = true
+                    settings.cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
+                    settings.useWideViewPort = true
+                    settings.loadWithOverviewMode = true
+
+                    isVerticalScrollBarEnabled = false
+
+                    webChromeClient = WebChromeClient()
+                    webViewClient =
+                        object : WebViewClient() {
+                            override fun onPageFinished(
+                                view: WebView?,
+                                url: String?,
+                            ) {
+                                url?.let { delegate?.onNavigationFinished(it) }
+                            }
+                        }
+
+                    layoutParams =
+                        ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                        )
+
+                    loadUrl("file:///android_asset/${Constants.JSResources.MAPTILER_MAP}.${Constants.JSResources.HTML_EXTENSION}")
+                }
+        }
     }
 
     fun getWebView(): WebView? = webView
@@ -75,7 +131,7 @@ internal class WebViewExecutor(
             return@withContext deferred.await()
         }
 
-    override fun onNavigationFinished(url: String) {
-        delegate?.onNavigationFinished(url)
+    fun destroy() {
+        webView?.destroy()
     }
 }
