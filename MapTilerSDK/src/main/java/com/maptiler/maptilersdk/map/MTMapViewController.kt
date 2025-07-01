@@ -71,7 +71,6 @@ class MTMapViewController(
     var gestureService: MTGestureService? = null
 
     init {
-        webViewExecutor = WebViewExecutor(context)
         bridge = MTBridge(webViewExecutor)
 
         gestureService = MTGestureService.create(bridge!!, this)
@@ -110,10 +109,10 @@ class MTMapViewController(
     }
 
     fun destroy() {
-        webViewExecutor?.webViewManager!!.destroy()
+        webViewExecutor?.destroy()
     }
 
-    internal fun getAttachableWebView(): WebView = webViewExecutor?.webViewManager!!.getAttachableWebView()
+    internal fun getAttachableWebView(): WebView = webViewExecutor?.getWebView()!!
 
     override fun onNavigationFinished(url: String) {
         coroutineScope?.launch(Dispatchers.Default) {
