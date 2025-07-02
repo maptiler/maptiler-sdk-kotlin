@@ -15,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
+@Suppress("FunctionName")
 @Composable
 fun MainScreen(context: Context) {
     val navController = rememberNavController()

@@ -198,7 +198,7 @@ class MTMapOptions {
     /**
      * A value representing the position of the MapTiler wordmark on the map.
      */
-    var logoPosition: MTMapCorner? = MTMapCorner.TOP_RIGHT
+    var logoPosition: MTMapCorner? = MTMapCorner.TOP_LEFT
         private set
 
     /**
@@ -388,5 +388,11 @@ class MTMapOptions {
     /** Full constructor with optional parameters for all properties. */
     constructor() {
         // Defaults
+    }
+
+    // Setters
+
+    fun setMapTilerLogoIsVisible(isVisible: Boolean) {
+        maptilerLogoIsVisible = isVisible
     }
 }

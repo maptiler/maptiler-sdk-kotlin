@@ -25,7 +25,7 @@ internal interface WebViewExecutorDelegate {
 }
 
 internal class WebViewExecutor(
-    context: Context,
+    private val context: Context,
 ) : MTCommandExecutable {
     object Constants {
         object Error {
@@ -51,17 +51,21 @@ internal class WebViewExecutor(
         }
     }
 
-    private var webView: WebView? = null
+    private var _webView: WebView? = null
+    val webView: WebView
+        get() {
+            if (_webView == null) {
+                initWebViewIfNeeded(context)
+            }
+
+            return _webView!!
+        }
 
     var delegate: WebViewExecutorDelegate? = null
 
-    init {
-        initWebViewIfNeeded(context)
-    }
-
     private fun initWebViewIfNeeded(context: Context) {
-        if (webView == null) {
-            webView =
+        if (_webView == null) {
+            _webView =
                 WebView(context).apply {
                     settings.javaScriptEnabled = true
                     settings.allowFileAccess = true
@@ -94,7 +98,11 @@ internal class WebViewExecutor(
         }
     }
 
-    fun getWebView(): WebView? = webView
+    fun setWebView(webView: WebView) {
+        this._webView = webView
+    }
+
+    fun getAttachableWebView(): WebView? = webView
 
     override suspend fun execute(command: MTCommand): MTBridgeReturnType =
         withContext(Dispatchers.Main) {
@@ -103,35 +111,41 @@ internal class WebViewExecutor(
 
             val deferred = CompletableDeferred<MTBridgeReturnType>()
 
-            webView.evaluateJavascript(command.toJS()) { result ->
-                try {
-                    if (result == null || result == "null") {
+            if (command.isPrimitiveReturnType) {
+                webView.evaluateJavascript(command.toJS()) { result ->
+                    try {
+                        if (result == null || result == "null") {
+                            if (isVerbose) {
+                                MTLogger.log("$command completed with unsupported return type.", MTLogType.WARNING)
+                            }
+
+                            deferred.complete(MTBridgeReturnType.UnsupportedType)
+                        } else {
+                            try {
+                                val parsedResult = MTBridgeReturnType.from(result)
+                                deferred.complete(parsedResult)
+                            } catch (e: Exception) {
+                                deferred.completeExceptionally(MTError.InvalidResultType(result))
+                            }
+                        }
+                    } catch (e: Exception) {
                         if (isVerbose) {
-                            MTLogger.log("$command completed with unsupported return type.", MTLogType.WARNING)
+                            MTLogger.log("Bridging error occurred for $command: ${e.message}", MTLogType.ERROR)
                         }
 
-                        deferred.complete(MTBridgeReturnType.UnsupportedType)
-                    } else {
-                        try {
-                            val parsedResult = MTBridgeReturnType.from(result)
-                            deferred.complete(parsedResult)
-                        } catch (e: Exception) {
-                            deferred.completeExceptionally(MTError.InvalidResultType(result))
-                        }
+                        deferred.completeExceptionally(MTError.Unknown(e.message ?: "Unknown error"))
                     }
-                } catch (e: Exception) {
-                    if (isVerbose) {
-                        MTLogger.log("Bridging error occurred for $command: ${e.message}", MTLogType.ERROR)
-                    }
-
-                    deferred.completeExceptionally(MTError.Unknown(e.message ?: "Unknown error"))
                 }
+            } else {
+                webView.evaluateJavascript(command.toJS(), null)
+                deferred.complete(MTBridgeReturnType.UnsupportedType)
             }
 
             return@withContext deferred.await()
         }
 
     fun destroy() {
-        webView?.destroy()
+        _webView?.destroy()
+        _webView = null
     }
 }

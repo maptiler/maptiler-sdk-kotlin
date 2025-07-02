@@ -22,6 +22,7 @@ import com.maptiler.maptilersdk.map.MTMapViewController
 import com.maptiler.maptilersdk.map.MTMapViewDelegate
 import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
 
+@Suppress("FunctionName")
 @Composable
 fun HomeScreen(
     navController: NavController,
@@ -29,10 +30,13 @@ fun HomeScreen(
 ) {
     val mapController = MapController(context)
 
+    val options = MTMapOptions()
+    options.setMapTilerLogoIsVisible(true)
+
     Box(modifier = Modifier.fillMaxSize()) {
         MTMapView(
             MTMapReferenceStyle.STREETS,
-            MTMapOptions(),
+            options,
             mapController.controller,
             modifier =
                 Modifier

@@ -9,6 +9,8 @@ package com.maptiler.maptilersdk.map
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
@@ -29,6 +31,7 @@ fun MTMapView(
     styleVariant: MTMapStyleVariant? = null,
 ) {
     val scope = rememberCoroutineScope()
+    val webView = remember { controller.getAttachableWebView() }
 
     LaunchedEffect(Unit) {
         controller.bind(scope)
@@ -44,8 +47,10 @@ fun MTMapView(
         }
     }
 
-    AndroidView(
-        factory = { controller.getAttachableWebView() },
-        modifier = modifier,
-    )
+    key(webView) {
+        AndroidView(
+            factory = { webView },
+            modifier = modifier,
+        )
+    }
 }

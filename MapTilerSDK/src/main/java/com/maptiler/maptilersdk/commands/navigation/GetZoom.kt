@@ -10,5 +10,7 @@ import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTCommand
 
 internal class GetZoom : MTCommand {
+    override val isPrimitiveReturnType: Boolean = true
+
     override fun toJS(): String = "${MTBridge.MAP_OBJECT}.getZoom();"
 }

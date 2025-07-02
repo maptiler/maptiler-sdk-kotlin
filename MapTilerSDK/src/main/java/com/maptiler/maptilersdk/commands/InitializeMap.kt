@@ -22,6 +22,8 @@ internal data class InitializeMap(
     val styleVariant: MTMapStyleVariant?,
     val isSessionLogicEnabled: Any?,
 ) : MTCommand {
+    override val isPrimitiveReturnType: Boolean = false
+
     override fun toJS(): JSString {
         val referenceStyleName = referenceStyle.getName()
         val styleVariantName = styleVariant?.value?.uppercase()

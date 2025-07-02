@@ -33,6 +33,7 @@ private val LightColorScheme =
      */
     )
 
+@Suppress("FunctionName")
 @Composable
 fun MapTilerMobileDemoTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

@@ -112,7 +112,7 @@ class MTMapViewController(
         webViewExecutor?.destroy()
     }
 
-    internal fun getAttachableWebView(): WebView = webViewExecutor?.getWebView()!!
+    internal fun getAttachableWebView(): WebView = webViewExecutor?.getAttachableWebView()!!
 
     override fun onNavigationFinished(url: String) {
         coroutineScope?.launch(Dispatchers.Default) {
