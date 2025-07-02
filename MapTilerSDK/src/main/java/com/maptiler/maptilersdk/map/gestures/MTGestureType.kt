@@ -11,6 +11,11 @@ package com.maptiler.maptilersdk.map.gestures
  */
 enum class MTGestureType {
     /**
+     * Double tap to zoom in.
+     */
+    DOUBLE_TAP_ZOOM_IN,
+
+    /**
      * Drag and pan.
      */
     DRAG_PAN,

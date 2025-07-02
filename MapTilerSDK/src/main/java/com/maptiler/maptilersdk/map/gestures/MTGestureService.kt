@@ -9,22 +9,31 @@ package com.maptiler.maptilersdk.map.gestures
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.map.MTMapViewController
 import com.maptiler.maptilersdk.map.options.MTDragPanOptions
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
-class MTGestureService private constructor() {
+class MTGestureService(
+    val scope: CoroutineScope,
+) {
     private val enabledGestures: MutableMap<MTGestureType, MTGesture> = mutableMapOf()
 
     private lateinit var bridge: MTBridge
     private lateinit var mapViewController: MTMapViewController
 
+    private var doubleTapSensitivity: Double = 0.4
+
     companion object {
         internal fun create(
+            scope: CoroutineScope,
             bridge: MTBridge,
             mapViewController: MTMapViewController,
         ): MTGestureService =
-            MTGestureService().apply {
+            MTGestureService(scope).apply {
                 this.bridge = bridge
                 this.mapViewController = mapViewController
 
+                enabledGestures[MTGestureType.DOUBLE_TAP_ZOOM_IN] =
+                    MTGestureFactory.makeGesture(MTGestureType.DOUBLE_TAP_ZOOM_IN, bridge)
                 enabledGestures[MTGestureType.DRAG_PAN] =
                     MTGestureFactory.makeGesture(MTGestureType.DRAG_PAN, bridge)
                 enabledGestures[MTGestureType.TWO_FINGERS_DRAG_PITCH] =
@@ -34,33 +43,56 @@ class MTGestureService private constructor() {
             }
     }
 
-    suspend fun disableGesture(type: MTGestureType) {
+    fun disableGesture(type: MTGestureType) {
         enabledGestures[type]?.let { gesture ->
-            gesture.disable()
+
+            scope.launch {
+                gesture.disable()
+            }
+
             enabledGestures.remove(type)
         }
     }
 
-    suspend fun enableDragPanGesture(options: MTDragPanOptions? = null) {
-        val gesture = MTGestureFactory.makeGesture(MTGestureType.DRAG_PAN, bridge)
-        enabledGestures[MTGestureType.DRAG_PAN] = gesture
+    fun enableDoubleTapZoomInGesture() {
+        val gesture = MTGestureFactory.makeGesture(MTGestureType.DOUBLE_TAP_ZOOM_IN, bridge)
+        enabledGestures[MTGestureType.DOUBLE_TAP_ZOOM_IN] = gesture
 
-        (gesture as? MTDragPanGesture)?.let {
-            if (options != null) it.enable(options) else it.enable()
+        scope.launch {
+            (gesture as? MTPinchRotateAndZoomGesture)?.enable()
         }
     }
 
-    suspend fun enablePinchRotateAndZoomGesture() {
+    fun enableDragPanGesture(options: MTDragPanOptions? = null) {
+        val gesture = MTGestureFactory.makeGesture(MTGestureType.DRAG_PAN, bridge)
+        enabledGestures[MTGestureType.DRAG_PAN] = gesture
+
+        scope.launch {
+            (gesture as? MTDragPanGesture)?.let {
+                if (options != null) it.enable(options) else it.enable()
+            }
+        }
+    }
+
+    fun enablePinchRotateAndZoomGesture() {
         val gesture = MTGestureFactory.makeGesture(MTGestureType.PINCH_ROTATE_AND_ZOOM, bridge)
         enabledGestures[MTGestureType.PINCH_ROTATE_AND_ZOOM] = gesture
 
-        (gesture as? MTPinchRotateAndZoomGesture)?.enable()
+        scope.launch {
+            (gesture as? MTPinchRotateAndZoomGesture)?.enable()
+        }
     }
 
-    suspend fun enableTwoFingerDragPitchGesture() {
+    fun enableTwoFingerDragPitchGesture() {
         val gesture = MTGestureFactory.makeGesture(MTGestureType.TWO_FINGERS_DRAG_PITCH, bridge)
         enabledGestures[MTGestureType.TWO_FINGERS_DRAG_PITCH] = gesture
 
-        (gesture as? MTTwoFingersDragPitchGesture)?.enable()
+        scope.launch {
+            (gesture as? MTTwoFingersDragPitchGesture)?.enable()
+        }
+    }
+
+    fun setDoubleTapSensitivity(sensitivity: Double) {
+        doubleTapSensitivity = sensitivity
     }
 }

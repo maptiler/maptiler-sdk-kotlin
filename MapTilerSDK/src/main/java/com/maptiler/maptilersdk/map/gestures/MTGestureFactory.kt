@@ -14,6 +14,7 @@ internal object MTGestureFactory {
         bridge: MTBridge,
     ): MTGesture =
         when (type) {
+            MTGestureType.DOUBLE_TAP_ZOOM_IN -> MTDoubleTapZoomInGesture.create(bridge)
             MTGestureType.DRAG_PAN -> MTDragPanGesture.create(bridge)
             MTGestureType.TWO_FINGERS_DRAG_PITCH -> MTTwoFingersDragPitchGesture.create(bridge)
             MTGestureType.PINCH_ROTATE_AND_ZOOM -> MTPinchRotateAndZoomGesture.create(bridge)

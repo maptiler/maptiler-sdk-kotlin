@@ -72,8 +72,6 @@ class MTMapViewController(
 
     init {
         bridge = MTBridge(webViewExecutor)
-
-        gestureService = MTGestureService.create(bridge!!, this)
     }
 
     private suspend fun initializeMap() {
@@ -105,6 +103,8 @@ class MTMapViewController(
 
     fun bind(scope: CoroutineScope) {
         coroutineScope = scope
+        gestureService = MTGestureService.create(coroutineScope!!, bridge!!, this)
+
         initializeWorkers()
     }
 

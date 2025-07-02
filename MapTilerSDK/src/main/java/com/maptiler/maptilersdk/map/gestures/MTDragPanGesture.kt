@@ -18,6 +18,9 @@ class MTDragPanGesture private constructor(
 ) : MTGesture {
     override val type: MTGestureType = MTGestureType.DRAG_PAN
 
+    /**
+     * Disables the gesture on the map.
+     */
     override suspend fun disable() {
         try {
             bridge.execute(DragPanDisable())
@@ -26,6 +29,9 @@ class MTDragPanGesture private constructor(
         }
     }
 
+    /**
+     * Enables the gesture on the map.
+     */
     override suspend fun enable() {
         try {
             bridge.execute(DragPanEnable(options = null))
@@ -34,6 +40,11 @@ class MTDragPanGesture private constructor(
         }
     }
 
+    /**
+     * Enables the gesture on the map using specified options.
+     *
+     * @param options Drag options to use.
+     */
     suspend fun enable(options: MTDragPanOptions) {
         try {
             bridge.execute(DragPanEnable(options = options))

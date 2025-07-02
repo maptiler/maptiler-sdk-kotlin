@@ -17,6 +17,9 @@ class MTTwoFingersDragPitchGesture private constructor(
 ) : MTGesture {
     override val type: MTGestureType = MTGestureType.TWO_FINGERS_DRAG_PITCH
 
+    /**
+     * Disables the gesture on the map.
+     */
     override suspend fun disable() {
         try {
             bridge.execute(TwoFingersDragPitchDisable())
@@ -25,6 +28,9 @@ class MTTwoFingersDragPitchGesture private constructor(
         }
     }
 
+    /**
+     * Enables the gesture on the map.
+     */
     override suspend fun enable() {
         try {
             bridge.execute(TwoFingersDragPitchEnable())
