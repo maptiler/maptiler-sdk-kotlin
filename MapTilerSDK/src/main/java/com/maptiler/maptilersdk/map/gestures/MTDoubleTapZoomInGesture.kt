@@ -7,22 +7,22 @@
 package com.maptiler.maptilersdk.map.gestures
 
 import com.maptiler.maptilersdk.bridge.MTBridge
-import com.maptiler.maptilersdk.commands.gestures.PinchRotateAndZoomDisable
-import com.maptiler.maptilersdk.commands.gestures.PinchRotateAndZoomEnable
+import com.maptiler.maptilersdk.commands.gestures.DoubleTapZoomDisable
+import com.maptiler.maptilersdk.commands.gestures.DoubleTapZoomEnable
 import com.maptiler.maptilersdk.logging.MTLogType
 import com.maptiler.maptilersdk.logging.MTLogger
 
-class MTPinchRotateAndZoomGesture private constructor(
+class MTDoubleTapZoomInGesture private constructor(
     private val bridge: MTBridge,
 ) : MTGesture {
-    override val type: MTGestureType = MTGestureType.PINCH_ROTATE_AND_ZOOM
+    override val type: MTGestureType = MTGestureType.DOUBLE_TAP_ZOOM_IN
 
     /**
      * Disables the gesture on the map.
      */
     override suspend fun disable() {
         try {
-            bridge.execute(PinchRotateAndZoomDisable())
+            bridge.execute(DoubleTapZoomDisable())
         } catch (e: Exception) {
             MTLogger.log(e.toString(), MTLogType.ERROR)
         }
@@ -33,13 +33,13 @@ class MTPinchRotateAndZoomGesture private constructor(
      */
     override suspend fun enable() {
         try {
-            bridge.execute(PinchRotateAndZoomEnable())
+            bridge.execute(DoubleTapZoomEnable())
         } catch (e: Exception) {
             MTLogger.log(e.toString(), MTLogType.ERROR)
         }
     }
 
     companion object {
-        internal fun create(bridge: MTBridge): MTPinchRotateAndZoomGesture = MTPinchRotateAndZoomGesture(bridge)
+        internal fun create(bridge: MTBridge): MTDoubleTapZoomInGesture = MTDoubleTapZoomInGesture(bridge)
     }
 }
