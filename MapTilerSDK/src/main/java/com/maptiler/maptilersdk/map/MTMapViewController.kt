@@ -74,7 +74,7 @@ class MTMapViewController(
         bridge = MTBridge(webViewExecutor)
     }
 
-    private suspend fun initializeMap() {
+    internal suspend fun initializeMap() {
         val apiKey = MTConfig.getAPIKey()
 
         if (options != null) {
@@ -101,15 +101,19 @@ class MTMapViewController(
         navigableWorker = NavigableWorker(bridge!!, coroutineScope!!)
     }
 
-    fun bind(scope: CoroutineScope) {
+    internal fun bind(scope: CoroutineScope) {
         coroutineScope = scope
         gestureService = MTGestureService.create(coroutineScope!!, bridge!!, this)
 
         initializeWorkers()
     }
 
-    fun destroy() {
+    internal fun destroy() {
         webViewExecutor?.destroy()
+    }
+
+    internal fun setWebView(webView: WebView) {
+        webViewExecutor?.setWebView(webView)
     }
 
     internal fun getAttachableWebView(): WebView = webViewExecutor?.getAttachableWebView()!!
