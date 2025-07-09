@@ -52,7 +52,7 @@ internal class WebViewExecutor(
     }
 
     private var _webView: WebView? = null
-    val webView: WebView
+    internal val webView: WebView
         get() {
             if (_webView == null) {
                 initWebViewIfNeeded(context)
@@ -98,11 +98,11 @@ internal class WebViewExecutor(
         }
     }
 
-    fun setWebView(webView: WebView) {
+    internal fun setWebView(webView: WebView) {
         this._webView = webView
     }
 
-    fun getAttachableWebView(): WebView? = webView
+    internal fun getAttachableWebView(): WebView? = webView
 
     override suspend fun execute(command: MTCommand): MTBridgeReturnType =
         withContext(Dispatchers.Main) {
@@ -144,8 +144,16 @@ internal class WebViewExecutor(
             return@withContext deferred.await()
         }
 
-    fun destroy() {
+    internal fun destroy() {
         _webView?.destroy()
         _webView = null
+    }
+
+    internal fun addJSInterface(jsInterface: MTJavaScriptInterface) {
+        webView.addJavascriptInterface(jsInterface, "Android")
+    }
+
+    internal fun reload() {
+        webView.reload()
     }
 }
