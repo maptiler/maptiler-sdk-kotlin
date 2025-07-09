@@ -5,13 +5,13 @@
 
 function setUpMapEvents(map) {
     // BRIDGE - Error event propagation
-    map.on('error', function(error) {
-        // Placeholder - error propagation
+    map.on('error', function(errorEvent) {
+        Android.onError(errorEvent?.error?.message);
     });
 
     // BRIDGE - WebGL event propagation
     map.on('webglcontextlost', function() {
-        // Placeholder - event propagation
+        Android.onWebGLContextLost()
     });
 
     // BRIDGE - Map events propagation

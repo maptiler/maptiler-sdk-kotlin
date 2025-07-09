@@ -10,6 +10,8 @@ import android.content.Context
 import android.webkit.WebView
 import com.maptiler.maptilersdk.MTConfig
 import com.maptiler.maptilersdk.bridge.MTBridge
+import com.maptiler.maptilersdk.bridge.MTJavaScriptInterface
+import com.maptiler.maptilersdk.bridge.MTJavascriptDelegate
 import com.maptiler.maptilersdk.bridge.WebViewExecutor
 import com.maptiler.maptilersdk.bridge.WebViewExecutorDelegate
 import com.maptiler.maptilersdk.commands.InitializeMap
@@ -37,6 +39,7 @@ interface MTMapViewDelegate {
 class MTMapViewController(
     private val context: Context,
 ) : WebViewExecutorDelegate,
+    MTJavascriptDelegate,
     MTZoomable,
     MTNavigable {
     private var coroutineScope: CoroutineScope? = null
@@ -49,6 +52,11 @@ class MTMapViewController(
 
     private lateinit var zoomableWorker: ZoomableWorker
     private lateinit var navigableWorker: NavigableWorker
+
+    private val jsInterface: MTJavaScriptInterface =
+        MTJavaScriptInterface(context).apply {
+            delegate = this@MTMapViewController
+        }
 
     /**
      * Proxy style object of the map.
@@ -75,10 +83,10 @@ class MTMapViewController(
     }
 
     internal suspend fun initializeMap() {
-        val apiKey = MTConfig.getAPIKey()
+        val apiKey = MTConfig.apiKey
 
         if (options != null) {
-            MTConfig.setSessionLogic(options!!.isSessionLogicEnabled)
+            MTConfig.isSessionLogicEnabled = (options!!.isSessionLogicEnabled)
         }
 
         val isSessionLogicEnabled = MTConfig.isSessionLogicEnabled
@@ -106,6 +114,8 @@ class MTMapViewController(
         gestureService = MTGestureService.create(coroutineScope!!, bridge!!, this)
 
         initializeWorkers()
+
+        webViewExecutor?.addJSInterface(jsInterface)
     }
 
     internal fun destroy() {
@@ -126,6 +136,28 @@ class MTMapViewController(
                 MTLogger.log("Map Init error $error", MTLogType.ERROR)
             }
         }
+    }
+
+    fun reload() {
+        webViewExecutor?.reload()
+    }
+
+    // EVENTS
+
+    /**
+     * Map error handler.
+     *
+     * @param message Error message.
+     */
+    override fun onError(message: String) {
+        MTLogger.log("Map error. Make sure your API Key and/or Style JSON are correct.", MTLogType.ERROR)
+    }
+
+    /**
+     * WebGL Context error handler
+     */
+    override fun onWebGLContextLost() {
+        MTLogger.log("Context lost, consider calling reload on MTMapViewController", MTLogType.CRITICAL_ERROR)
     }
 
     // ZOOMABLE

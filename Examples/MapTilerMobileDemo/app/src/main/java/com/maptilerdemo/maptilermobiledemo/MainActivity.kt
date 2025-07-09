@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.MaterialTheme
 import com.maptiler.maptilersdk.MTConfig
+import com.maptiler.maptilersdk.logging.MTLogLevel
 
 // Classic Map View Imports
 // import com.maptiler.maptilersdk.map.MTMapOptions
@@ -17,7 +18,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        MTConfig.setAPIKey(BuildConfig.MAPTILER_API_KEY)
+        MTConfig.apiKey = BuildConfig.MAPTILER_API_KEY
+        MTConfig.logLevel = MTLogLevel.Debug(true)
 
         enableEdgeToEdge()
         setContent {
