@@ -15,7 +15,9 @@ internal interface MTJavascriptDelegate {
     fun onWebGLContextLost()
 }
 
-internal class MTJavaScriptInterface(private val context: Context) {
+internal class MTJavaScriptInterface(
+    private val context: Context,
+) {
     var delegate: MTJavascriptDelegate? = null
 
     @JavascriptInterface
