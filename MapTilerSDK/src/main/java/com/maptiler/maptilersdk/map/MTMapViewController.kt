@@ -18,6 +18,8 @@ import com.maptiler.maptilersdk.commands.InitializeMap
 import com.maptiler.maptilersdk.logging.MTLogType
 import com.maptiler.maptilersdk.logging.MTLogger
 import com.maptiler.maptilersdk.map.gestures.MTGestureService
+import com.maptiler.maptilersdk.map.options.MTCameraOptions
+import com.maptiler.maptilersdk.map.options.MTFlyToOptions
 import com.maptiler.maptilersdk.map.style.MTStyle
 import com.maptiler.maptilersdk.map.types.MTPoint
 import com.maptiler.maptilersdk.map.workers.navigable.MTNavigable
@@ -211,4 +213,29 @@ class MTMapViewController(
      * @param coordinates Coordinates to pan to.
      */
     override fun panTo(coordinates: LngLat) = navigableWorker.panTo(coordinates)
+
+    /**
+     * Changes any combination of center, zoom, bearing, and pitch, animating the transition along a curve that evokes flight.
+     *
+     * @param cameraOptions Options for controlling the desired location, zoom, bearing, and pitch of the camera.
+     * @param flyToOptions Options describing the destination and animation of the transition.
+     */
+    override fun flyTo(
+        cameraOptions: MTCameraOptions,
+        flyToOptions: MTFlyToOptions?,
+    ) = navigableWorker.flyTo(cameraOptions, flyToOptions)
+
+    /**
+     * Changes any combination of center, zoom, bearing, and pitch, without an animated transition
+     *
+     *@param cameraOptions Options for controlling the desired location, zoom, bearing, and pitch of the camera.
+     */
+    override fun jumpTo(cameraOptions: MTCameraOptions) = navigableWorker.jumpTo(cameraOptions)
+
+    /**
+     * Changes any combination of center, zoom, bearing and pitch with an animated transition between old and new values.
+     *
+     *@param cameraOptions Options for controlling the desired location, zoom, bearing, and pitch of the camera.
+     */
+    override fun easeTo(cameraOptions: MTCameraOptions) = navigableWorker.easeTo(cameraOptions)
 }
