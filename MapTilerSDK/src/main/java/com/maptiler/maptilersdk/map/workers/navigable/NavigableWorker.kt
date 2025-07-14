@@ -7,11 +7,22 @@
 package com.maptiler.maptilersdk.map.workers.navigable
 
 import com.maptiler.maptilersdk.bridge.MTBridge
+import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.DoubleValue
+import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.StringValue
 import com.maptiler.maptilersdk.commands.navigation.EaseTo
 import com.maptiler.maptilersdk.commands.navigation.FlyTo
+import com.maptiler.maptilersdk.commands.navigation.GetCenter
+import com.maptiler.maptilersdk.commands.navigation.GetRoll
+import com.maptiler.maptilersdk.commands.navigation.GetZoom
 import com.maptiler.maptilersdk.commands.navigation.JumpTo
 import com.maptiler.maptilersdk.commands.navigation.PanBy
 import com.maptiler.maptilersdk.commands.navigation.PanTo
+import com.maptiler.maptilersdk.commands.navigation.SetBearing
+import com.maptiler.maptilersdk.commands.navigation.SetCenter
+import com.maptiler.maptilersdk.commands.navigation.SetCenterClampedToGround
+import com.maptiler.maptilersdk.commands.navigation.SetCenterElevation
+import com.maptiler.maptilersdk.commands.navigation.SetRoll
+import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.map.LngLat
 import com.maptiler.maptilersdk.map.options.MTCameraOptions
 import com.maptiler.maptilersdk.map.options.MTFlyToOptions
@@ -62,6 +73,84 @@ internal class NavigableWorker(
         scope.launch {
             bridge.execute(
                 EaseTo(cameraOptions),
+            )
+        }
+    }
+
+    override suspend fun getBearing(): Double {
+        val returnTypeValue =
+            bridge.execute(
+                GetZoom(),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> returnTypeValue.value.toDouble()
+            is DoubleValue -> returnTypeValue.value
+            else -> 0.0
+        }
+    }
+
+    override fun setBearing(bearing: Double) {
+        scope.launch {
+            bridge.execute(
+                SetBearing(bearing),
+            )
+        }
+    }
+
+    override suspend fun getRoll(): Double {
+        val returnTypeValue =
+            bridge.execute(
+                GetRoll(),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> returnTypeValue.value.toDouble()
+            is DoubleValue -> returnTypeValue.value
+            else -> 0.0
+        }
+    }
+
+    override fun setRoll(roll: Double) {
+        scope.launch {
+            bridge.execute(
+                SetRoll(roll),
+            )
+        }
+    }
+
+    override suspend fun getCenter(): LngLat {
+        val returnTypeValue =
+            bridge.execute(
+                GetCenter(),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> JsonConfig.json.decodeFromString<LngLat>(returnTypeValue.value)
+            else -> LngLat(0.0, 0.0)
+        }
+    }
+
+    override fun setCenter(center: LngLat) {
+        scope.launch {
+            bridge.execute(
+                SetCenter(center),
+            )
+        }
+    }
+
+    override fun setIsCenterClampedToGround(isCenterClampedToGround: Boolean) {
+        scope.launch {
+            bridge.execute(
+                SetCenterClampedToGround(isCenterClampedToGround),
+            )
+        }
+    }
+
+    override fun setCenterElevation(elevation: Double) {
+        scope.launch {
+            bridge.execute(
+                SetCenterElevation(elevation),
             )
         }
     }

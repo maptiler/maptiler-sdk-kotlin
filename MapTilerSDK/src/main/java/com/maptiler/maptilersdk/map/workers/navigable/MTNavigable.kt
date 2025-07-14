@@ -53,4 +53,58 @@ interface MTNavigable {
      *@param cameraOptions Options for controlling the desired location, zoom, bearing, and pitch of the camera.
      */
     fun easeTo(cameraOptions: MTCameraOptions)
+
+    /**
+     * Returns the map's current bearing.
+     */
+    suspend fun getBearing(): Double
+
+    /**
+     * Sets bearing of the map.
+     *
+     *@param bearing The bearing of the map, measured in degrees counter-clockwise from north.
+     */
+    fun setBearing(bearing: Double)
+
+    /**
+     * Returns the map's current roll.
+     */
+    suspend fun getRoll(): Double
+
+    /**
+     * Sets the map's roll angle.
+     *
+     *@param roll Desired roll.
+     */
+    fun setRoll(roll: Double)
+
+    /**
+     * Returns the map's current center.
+     */
+    suspend fun getCenter(): LngLat
+
+    /**
+     * Sets the geographical center of the map.
+     *
+     *@param center Geographical center of the map.
+     */
+    fun setCenter(center: LngLat)
+
+    /**
+     * Sets the center clamped to the ground.
+     *
+     * If true, the elevation of the center point will automatically be set to the
+     * terrain elevation (or zero if terrain is not enabled). If false, the elevation
+     * of the center point will default to sea level and will not automatically update.
+     *
+     *@param isCenterClampedToGround Boolean indicating whether center is clamped to the ground.
+     */
+    fun setIsCenterClampedToGround(isCenterClampedToGround: Boolean)
+
+    /**
+     * Sets the elevation of the map's center point, in meters above sea level.
+     *
+     *@param elevation Desired elevation.
+     */
+    fun setCenterElevation(elevation: Double)
 }
