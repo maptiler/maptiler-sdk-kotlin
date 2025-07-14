@@ -238,4 +238,59 @@ class MTMapViewController(
      *@param cameraOptions Options for controlling the desired location, zoom, bearing, and pitch of the camera.
      */
     override fun easeTo(cameraOptions: MTCameraOptions) = navigableWorker.easeTo(cameraOptions)
+
+    /**
+     * Returns the map's current bearing.
+     */
+    override suspend fun getBearing(): Double = navigableWorker.getBearing()
+
+    /**
+     * Sets bearing of the map.
+     *
+     *@param bearing The bearing of the map, measured in degrees counter-clockwise from north.
+     */
+    override fun setBearing(bearing: Double) = navigableWorker.setBearing(bearing)
+
+    /**
+     * Returns the map's current roll.
+     */
+    override suspend fun getRoll(): Double = navigableWorker.getRoll()
+
+    /**
+     * Sets the map's roll angle.
+     *
+     *@param roll Desired roll.
+     */
+    override fun setRoll(roll: Double) = navigableWorker.setRoll(roll)
+
+    /**
+     * Returns the map's current center.
+     */
+    override suspend fun getCenter(): LngLat = navigableWorker.getCenter()
+
+    /**
+     * Sets the geographical center of the map.
+     *
+     *@param center Geographical center of the map.
+     */
+    override fun setCenter(center: LngLat) = navigableWorker.setCenter(center)
+
+    /**
+     * Sets the center clamped to the ground.
+     *
+     * If true, the elevation of the center point will automatically be set to the
+     * terrain elevation (or zero if terrain is not enabled). If false, the elevation
+     * of the center point will default to sea level and will not automatically update.
+     *
+     *@param isCenterClampedToGround Boolean indicating whether center is clamped to the ground.
+     */
+    override fun setIsCenterClampedToGround(isCenterClampedToGround: Boolean) =
+        navigableWorker.setIsCenterClampedToGround(isCenterClampedToGround)
+
+    /**
+     * Sets the elevation of the map's center point, in meters above sea level.
+     *
+     *@param elevation Desired elevation.
+     */
+    override fun setCenterElevation(elevation: Double) = navigableWorker.setCenterElevation(elevation)
 }
