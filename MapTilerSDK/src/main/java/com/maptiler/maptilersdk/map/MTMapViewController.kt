@@ -20,6 +20,7 @@ import com.maptiler.maptilersdk.logging.MTLogger
 import com.maptiler.maptilersdk.map.gestures.MTGestureService
 import com.maptiler.maptilersdk.map.options.MTCameraOptions
 import com.maptiler.maptilersdk.map.options.MTFlyToOptions
+import com.maptiler.maptilersdk.map.options.MTPaddingOptions
 import com.maptiler.maptilersdk.map.style.MTStyle
 import com.maptiler.maptilersdk.map.types.MTPoint
 import com.maptiler.maptilersdk.map.workers.navigable.MTNavigable
@@ -293,4 +294,11 @@ class MTMapViewController(
      *@param elevation Desired elevation.
      */
     override fun setCenterElevation(elevation: Double) = navigableWorker.setCenterElevation(elevation)
+
+    /**
+     * Sets the padding in pixels around the viewport.
+     *
+     *@param padding Custom options to use.
+     */
+    override fun setPadding(padding: MTPaddingOptions) = navigableWorker.setPadding(padding)
 }

@@ -9,6 +9,7 @@ package com.maptiler.maptilersdk.map.workers.navigable
 import com.maptiler.maptilersdk.map.LngLat
 import com.maptiler.maptilersdk.map.options.MTCameraOptions
 import com.maptiler.maptilersdk.map.options.MTFlyToOptions
+import com.maptiler.maptilersdk.map.options.MTPaddingOptions
 import com.maptiler.maptilersdk.map.types.MTPoint
 
 /**
@@ -107,4 +108,11 @@ interface MTNavigable {
      *@param elevation Desired elevation.
      */
     fun setCenterElevation(elevation: Double)
+
+    /**
+     * Sets the padding in pixels around the viewport.
+     *
+     *@param padding Custom options to use.
+     */
+    fun setPadding(padding: MTPaddingOptions)
 }
