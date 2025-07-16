@@ -21,11 +21,13 @@ import com.maptiler.maptilersdk.commands.navigation.SetBearing
 import com.maptiler.maptilersdk.commands.navigation.SetCenter
 import com.maptiler.maptilersdk.commands.navigation.SetCenterClampedToGround
 import com.maptiler.maptilersdk.commands.navigation.SetCenterElevation
+import com.maptiler.maptilersdk.commands.navigation.SetPadding
 import com.maptiler.maptilersdk.commands.navigation.SetRoll
 import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.map.LngLat
 import com.maptiler.maptilersdk.map.options.MTCameraOptions
 import com.maptiler.maptilersdk.map.options.MTFlyToOptions
+import com.maptiler.maptilersdk.map.options.MTPaddingOptions
 import com.maptiler.maptilersdk.map.types.MTPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -151,6 +153,14 @@ internal class NavigableWorker(
         scope.launch {
             bridge.execute(
                 SetCenterElevation(elevation),
+            )
+        }
+    }
+
+    override fun setPadding(padding: MTPaddingOptions) {
+        scope.launch {
+            bridge.execute(
+                SetPadding(padding),
             )
         }
     }
