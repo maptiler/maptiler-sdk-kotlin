@@ -15,6 +15,9 @@ import com.maptiler.maptilersdk.bridge.MTJavascriptDelegate
 import com.maptiler.maptilersdk.bridge.WebViewExecutor
 import com.maptiler.maptilersdk.bridge.WebViewExecutorDelegate
 import com.maptiler.maptilersdk.commands.InitializeMap
+import com.maptiler.maptilersdk.events.EventProcessor
+import com.maptiler.maptilersdk.events.EventProcessorDelegate
+import com.maptiler.maptilersdk.events.MTEvent
 import com.maptiler.maptilersdk.logging.MTLogType
 import com.maptiler.maptilersdk.logging.MTLogger
 import com.maptiler.maptilersdk.map.gestures.MTGestureService
@@ -22,6 +25,7 @@ import com.maptiler.maptilersdk.map.options.MTCameraOptions
 import com.maptiler.maptilersdk.map.options.MTFlyToOptions
 import com.maptiler.maptilersdk.map.options.MTPaddingOptions
 import com.maptiler.maptilersdk.map.style.MTStyle
+import com.maptiler.maptilersdk.map.types.MTData
 import com.maptiler.maptilersdk.map.types.MTPoint
 import com.maptiler.maptilersdk.map.workers.navigable.MTNavigable
 import com.maptiler.maptilersdk.map.workers.navigable.NavigableWorker
@@ -42,12 +46,17 @@ interface MTMapViewDelegate {
 class MTMapViewController(
     private val context: Context,
 ) : WebViewExecutorDelegate,
+    EventProcessorDelegate,
     MTJavascriptDelegate,
     MTZoomable,
     MTNavigable {
     private var coroutineScope: CoroutineScope? = null
 
     private var bridge: MTBridge? = null
+    private var eventProcessor: EventProcessor =
+        EventProcessor().apply {
+            delegate = this@MTMapViewController
+        }
     private var webViewExecutor: WebViewExecutor? =
         WebViewExecutor(context).apply {
             delegate = this@MTMapViewController
@@ -114,7 +123,7 @@ class MTMapViewController(
 
     internal fun bind(scope: CoroutineScope) {
         coroutineScope = scope
-        gestureService = MTGestureService.create(coroutineScope!!, bridge!!, this)
+        gestureService = MTGestureService.create(coroutineScope!!, bridge!!, eventProcessor!!, this)
 
         initializeWorkers()
 
@@ -301,4 +310,12 @@ class MTMapViewController(
      *@param padding Custom options to use.
      */
     override fun setPadding(padding: MTPaddingOptions) = navigableWorker.setPadding(padding)
+
+    override fun onEventTriggered(
+        processor: EventProcessor,
+        event: MTEvent,
+        data: MTData?,
+    ) {
+        MTLogger.log("MTEvent triggered: $event", MTLogType.EVENT)
+    }
 }
