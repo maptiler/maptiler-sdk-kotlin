@@ -7,6 +7,7 @@
 package com.maptiler.maptilersdk.map.gestures
 
 import com.maptiler.maptilersdk.bridge.MTBridge
+import com.maptiler.maptilersdk.events.EventProcessor
 import com.maptiler.maptilersdk.map.MTMapViewController
 import com.maptiler.maptilersdk.map.options.MTDragPanOptions
 import kotlinx.coroutines.CoroutineScope
@@ -18,18 +19,19 @@ class MTGestureService(
     private val enabledGestures: MutableMap<MTGestureType, MTGesture> = mutableMapOf()
 
     private lateinit var bridge: MTBridge
+    private lateinit var eventProcessor: EventProcessor
     private lateinit var mapViewController: MTMapViewController
-
-    private var doubleTapSensitivity: Double = 0.4
 
     companion object {
         internal fun create(
             scope: CoroutineScope,
             bridge: MTBridge,
+            eventProcessor: EventProcessor,
             mapViewController: MTMapViewController,
         ): MTGestureService =
             MTGestureService(scope).apply {
                 this.bridge = bridge
+                this.eventProcessor = eventProcessor
                 this.mapViewController = mapViewController
 
                 enabledGestures[MTGestureType.DOUBLE_TAP_ZOOM_IN] =
@@ -92,7 +94,12 @@ class MTGestureService(
         }
     }
 
+    /**
+     * Sets the double tap sensitivity level (i.e. required time between taps).
+     *
+     * Default: 0.4
+     */
     fun setDoubleTapSensitivity(sensitivity: Double) {
-        doubleTapSensitivity = sensitivity
+        eventProcessor.setDoubleTapSensitivity(sensitivity)
     }
 }
