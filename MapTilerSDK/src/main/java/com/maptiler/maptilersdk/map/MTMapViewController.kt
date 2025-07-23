@@ -37,6 +37,11 @@ import kotlinx.coroutines.launch
 
 interface MTMapViewDelegate {
     fun onMapViewInitialized()
+
+    fun onEventTriggered(
+        event: MTEvent,
+        data: MTData?,
+    )
 }
 
 /**
@@ -112,8 +117,6 @@ class MTMapViewController(
                 isSessionLogicEnabled,
             ),
         )
-
-        delegate?.onMapViewInitialized()
     }
 
     private fun initializeWorkers() {
@@ -170,6 +173,13 @@ class MTMapViewController(
      */
     override fun onWebGLContextLost() {
         MTLogger.log("Context lost, consider calling reload on MTMapViewController", MTLogType.CRITICAL_ERROR)
+    }
+
+    override fun onEvent(
+        event: MTEvent,
+        data: MTData?,
+    ) {
+        eventProcessor.registerEvent(event, data)
     }
 
     // ZOOMABLE
@@ -317,5 +327,11 @@ class MTMapViewController(
         data: MTData?,
     ) {
         MTLogger.log("MTEvent triggered: $event", MTLogType.EVENT)
+
+        delegate?.onEventTriggered(event, data)
+
+        if (event == MTEvent.ON_READY) {
+            delegate?.onMapViewInitialized()
+        }
     }
 }

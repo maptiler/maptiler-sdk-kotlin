@@ -44,18 +44,24 @@ function setUpMapEvents(map) {
 
     events.forEach(event => {
         map.on(event, function() {
-            // Placeholder - event propagation
+            Android.onEvent(event, '');
         });
     });
 
     // MapTapEvent
     map.on('click', function(e) {
         var data = {
-            lngLat: e.lngLat,
-            point: e.point
+            lngLat: {
+                lng: e.lngLat.lng,
+                lat: e.lngLat.lat
+            },
+            point: {
+                x: e.point.x,
+                y: e.point.y
+            }
         };
 
-        // Placeholder - event propagation
+        Android.onEvent('click', JSON.stringify(data));
     });
 
     // MapImageEvent
@@ -64,7 +70,7 @@ function setUpMapEvents(map) {
             id: e.id,
         };
 
-        // Placeholder - event propagation
+         Android.onEvent('styleimagemissing', JSON.stringify(data));
     });
 
     // MapDataEvents
@@ -88,12 +94,10 @@ function setUpMapEvents(map) {
                 dataType: e.dataType,
                 isSourceLoaded: e.isSourceLoaded,
                 source: e.source,
-                sourceDataType: e.sourceDataType,
-                tile: e.tile,
-                coord: e.coord
+                sourceDataType: e.sourceDataType
             };
 
-            // Placeholder - event propagation
+             Android.onEvent(event, JSON.stringify(data));
         });
     });
 
@@ -113,14 +117,31 @@ function setUpMapEvents(map) {
 
     mapTouchEvents.forEach(event => {
         map.on(event, function(e) {
+
             var data = {
-                lngLat: e.lngLat,
-                lngLats: e.lngLats,
-                point: e.point,
-                points: e.points
+                lngLat: e.lngLat ? {
+                   lng: e.lngLat.lng,
+                   lat: e.lngLat.lat
+                } : null,
+                lngLats: Array.isArray(e.lngLats)
+                    ? e.lngLats.map(coord => ({
+                            lng: coord.lng,
+                            lat: coord.lat
+                        }))
+                    : [],
+                point: e.point ? {
+                   x: e.point.x,
+                   y: e.point.y
+                } : null,
+                points: Array.isArray(e.points)
+                    ? e.points.map(point => ({
+                            x: point.x,
+                            y: point.y
+                         }))
+                    : [],
             };
 
-            // Placeholder - event propagation
+             Android.onEvent(event, JSON.stringify(data));
         });
     });
 }
