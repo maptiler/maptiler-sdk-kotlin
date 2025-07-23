@@ -16,11 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.maptiler.maptilersdk.events.EventProcessor
+import com.maptiler.maptilersdk.events.MTEvent
 import com.maptiler.maptilersdk.map.MTMapOptions
 import com.maptiler.maptilersdk.map.MTMapView
 import com.maptiler.maptilersdk.map.MTMapViewController
 import com.maptiler.maptilersdk.map.MTMapViewDelegate
 import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
+import com.maptiler.maptilersdk.map.types.MTData
 
 @Suppress("FunctionName")
 @Composable
@@ -64,5 +67,12 @@ class MapController(
 
     override fun onMapViewInitialized() {
         Log.i("Demo App", "Map View Initialized.")
+    }
+
+    override fun onEventTriggered(
+        event: MTEvent,
+        data: MTData?,
+    ) {
+        Log.i("Demo App", "Map View Event Triggered: $event.")
     }
 }
