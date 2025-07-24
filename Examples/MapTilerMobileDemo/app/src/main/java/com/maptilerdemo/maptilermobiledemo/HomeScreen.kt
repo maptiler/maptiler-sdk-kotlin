@@ -16,12 +16,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.maptiler.maptilersdk.events.EventProcessor
 import com.maptiler.maptilersdk.events.MTEvent
+import com.maptiler.maptilersdk.map.LngLat
 import com.maptiler.maptilersdk.map.MTMapOptions
 import com.maptiler.maptilersdk.map.MTMapView
 import com.maptiler.maptilersdk.map.MTMapViewController
 import com.maptiler.maptilersdk.map.MTMapViewDelegate
+import com.maptiler.maptilersdk.map.options.MTCameraOptions
 import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
 import com.maptiler.maptilersdk.map.types.MTData
 
@@ -52,6 +53,23 @@ fun HomeScreen(
             modifier =
                 Modifier
                     .align(Alignment.TopEnd)
+                    .padding(20.dp),
+        )
+
+        NavigationControl(
+            onFlyTo = {
+                val unterageriCoordinates = LngLat(8.581651, 47.137765)
+                val cameraOptions = MTCameraOptions(unterageriCoordinates)
+                mapController.controller.flyTo(cameraOptions, null)
+            },
+            onEaseTo = {
+                val brnoCoordinates = LngLat(16.626576, 49.212596)
+                val cameraOptions = MTCameraOptions(brnoCoordinates)
+                mapController.controller.easeTo(cameraOptions)
+            },
+            modifier =
+                Modifier
+                    .align(Alignment.BottomCenter)
                     .padding(20.dp),
         )
     }
