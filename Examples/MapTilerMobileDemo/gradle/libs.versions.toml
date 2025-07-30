@@ -12,6 +12,7 @@ secretsGradlePlugin = "2.0.1"
 navigationRuntimeAndroid = "2.9.0"
 composeNavigation = "1.4.1"
 navigationComposeJvmstubs = "2.9.0"
+foundationAndroid = "1.8.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -33,6 +34,7 @@ maptilersdk = { module = "com.maptiler:MapTilerSDK" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 androidx-navigation-runtime-android = { group = "androidx.navigation", name = "navigation-runtime-android", version.ref = "navigationRuntimeAndroid" }
 androidx-navigation-compose-jvmstubs = { group = "androidx.navigation", name = "navigation-compose-jvmstubs", version.ref = "navigationComposeJvmstubs" }
+androidx-foundation-android = { group = "androidx.compose.foundation", name = "foundation-android", version.ref = "foundationAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

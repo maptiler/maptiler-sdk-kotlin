@@ -8,7 +8,9 @@ package com.maptilerdemo.maptilermobiledemo
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -46,15 +48,32 @@ fun HomeScreen(
                 Modifier
                     .fillMaxSize(),
         )
-
-        ZoomControl(
-            onZoomIn = { mapController.controller.zoomIn() },
-            onZoomOut = { mapController.controller.zoomOut() },
+        Column(
             modifier =
                 Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(20.dp),
-        )
+                    .align(Alignment.TopEnd),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+            horizontalAlignment = Alignment.End,
+        ) {
+            JumpControl(
+                onJump = { coordinates: LngLat ->
+
+                    val cameraOptions = MTCameraOptions(coordinates)
+                    mapController.controller.jumpTo(cameraOptions)
+                },
+                modifier =
+                    Modifier
+                        .padding(5.dp),
+            )
+
+            ZoomControl(
+                onZoomIn = { mapController.controller.zoomIn() },
+                onZoomOut = { mapController.controller.zoomOut() },
+                modifier =
+                    Modifier
+                        .padding(10.dp),
+            )
+        }
 
         NavigationControl(
             onFlyTo = {
