@@ -9,12 +9,14 @@ package com.maptiler.maptilersdk.map
 import android.content.Context
 import android.webkit.WebView
 import com.maptiler.maptilersdk.MTConfig
+import com.maptiler.maptilersdk.annotations.MTMarker
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTJavaScriptInterface
 import com.maptiler.maptilersdk.bridge.MTJavascriptDelegate
 import com.maptiler.maptilersdk.bridge.WebViewExecutor
 import com.maptiler.maptilersdk.bridge.WebViewExecutorDelegate
 import com.maptiler.maptilersdk.commands.InitializeMap
+import com.maptiler.maptilersdk.commands.annotations.SetCoordinatesToMarker
 import com.maptiler.maptilersdk.events.EventProcessor
 import com.maptiler.maptilersdk.events.EventProcessorDelegate
 import com.maptiler.maptilersdk.events.MTEvent
@@ -155,6 +157,16 @@ class MTMapViewController(
 
     fun reload() {
         webViewExecutor?.reload()
+    }
+
+    // ANNOTATIONS
+
+    private fun setCoordinatesToMarker(marker: MTMarker) {
+        coroutineScope?.launch {
+            bridge?.execute(
+                SetCoordinatesToMarker(marker),
+            )
+        }
     }
 
     // EVENTS
