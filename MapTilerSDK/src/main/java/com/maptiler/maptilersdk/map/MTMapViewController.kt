@@ -31,6 +31,8 @@ import com.maptiler.maptilersdk.map.types.MTData
 import com.maptiler.maptilersdk.map.types.MTPoint
 import com.maptiler.maptilersdk.map.workers.navigable.MTNavigable
 import com.maptiler.maptilersdk.map.workers.navigable.NavigableWorker
+import com.maptiler.maptilersdk.map.workers.stylable.MTStylable
+import com.maptiler.maptilersdk.map.workers.stylable.StylableWorker
 import com.maptiler.maptilersdk.map.workers.zoomable.MTZoomable
 import com.maptiler.maptilersdk.map.workers.zoomable.ZoomableWorker
 import kotlinx.coroutines.CoroutineScope
@@ -56,7 +58,8 @@ class MTMapViewController(
     EventProcessorDelegate,
     MTJavascriptDelegate,
     MTZoomable,
-    MTNavigable {
+    MTNavigable,
+    MTStylable {
     private var coroutineScope: CoroutineScope? = null
 
     private var bridge: MTBridge? = null
@@ -71,6 +74,7 @@ class MTMapViewController(
 
     private lateinit var zoomableWorker: ZoomableWorker
     private lateinit var navigableWorker: NavigableWorker
+    private lateinit var stylableWorker: StylableWorker
 
     private val jsInterface: MTJavaScriptInterface =
         MTJavaScriptInterface(context).apply {
@@ -124,6 +128,7 @@ class MTMapViewController(
     private fun initializeWorkers() {
         zoomableWorker = ZoomableWorker(bridge!!, coroutineScope!!)
         navigableWorker = NavigableWorker(bridge!!, coroutineScope!!)
+        stylableWorker = StylableWorker(bridge!!, coroutineScope!!)
     }
 
     internal fun bind(scope: CoroutineScope) {
@@ -161,7 +166,7 @@ class MTMapViewController(
 
     // ANNOTATIONS
 
-    private fun setCoordinatesToMarker(marker: MTMarker) {
+    internal fun setCoordinatesToMarker(marker: MTMarker) {
         coroutineScope?.launch {
             bridge?.execute(
                 SetCoordinatesToMarker(marker),
@@ -332,6 +337,22 @@ class MTMapViewController(
      *@param padding Custom options to use.
      */
     override fun setPadding(padding: MTPaddingOptions) = navigableWorker.setPadding(padding)
+
+    // STYLABLE
+
+    /**
+     * Adds the marker to the map.
+     *
+     * @param marker Marker to add.
+     */
+    override fun addMarker(marker: MTMarker) = stylableWorker.addMarker(marker)
+
+    /**
+     * Removes the marker from the map.
+     *
+     * @param marker Marker to remove.
+     */
+    override fun removeMarker(marker: MTMarker) = stylableWorker.removeMarker(marker)
 
     override fun onEventTriggered(
         processor: EventProcessor,

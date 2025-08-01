@@ -53,6 +53,19 @@ class MTMarker(
         this.draggable = draggable
     }
 
+    constructor(
+        coordinates: LngLat,
+    ) : this(identifier = "mark${UUID.randomUUID().toString().replace("-", "")}", _coordinates = coordinates) {
+        // Default
+    }
+
+    constructor(
+        coordinates: LngLat,
+        icon: Bitmap,
+    ) : this(identifier = "mark${UUID.randomUUID().toString().replace("-", "")}", _coordinates = coordinates) {
+        this.icon = icon
+    }
+
     /**
      * Sets coordinates for the marker.
      *
