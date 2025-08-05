@@ -7,9 +7,12 @@
 package com.maptiler.maptilersdk.map.workers.stylable
 
 import com.maptiler.maptilersdk.annotations.MTMarker
+import com.maptiler.maptilersdk.annotations.MTTextPopup
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.commands.annotations.AddMarker
+import com.maptiler.maptilersdk.commands.annotations.AddTextPopup
 import com.maptiler.maptilersdk.commands.annotations.RemoveMarker
+import com.maptiler.maptilersdk.commands.annotations.RemoveTextPopup
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -29,6 +32,22 @@ internal class StylableWorker(
         scope.launch {
             bridge.execute(
                 RemoveMarker(marker),
+            )
+        }
+    }
+
+    override fun addTextPopup(popup: MTTextPopup) {
+        scope.launch {
+            bridge.execute(
+                AddTextPopup(popup),
+            )
+        }
+    }
+
+    override fun removeTextPopup(popup: MTTextPopup) {
+        scope.launch {
+            bridge.execute(
+                RemoveTextPopup(popup),
             )
         }
     }
