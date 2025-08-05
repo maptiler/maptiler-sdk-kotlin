@@ -37,6 +37,33 @@ internal data class AddMarker(
 
         var iconInit = ""
         var iconData = ""
+        val popupAttachment =
+            if (marker.popup != null) {
+                val popup = marker.popup!!
+
+                val offset =
+                    if (popup.offset != null) {
+                        popup.offset
+                    } else {
+                        0.0
+                    }
+
+                """
+                const ${popup.identifier} = new maptilersdk.Popup({ offset: $offset });
+
+                ${popup.identifier}
+                .setText('${popup.text}')
+                """
+            } else {
+                ""
+            }
+
+        val popupString =
+            if (marker.popup != null) {
+                "${marker.identifier}.setPopup(${marker.popup!!.identifier})"
+            } else {
+                ""
+            }
 
         if (marker.icon != null) {
             iconInit = """
@@ -48,6 +75,8 @@ internal data class AddMarker(
         }
 
         return """
+            $popupAttachment
+            
             $iconInit
             
             const ${marker.identifier} = new maptilersdk.Marker({
@@ -55,6 +84,8 @@ internal data class AddMarker(
                 draggable: $draggable,
                 $iconData
             });
+            
+            $popupString
 
             ${marker.identifier}
             .setLngLat([${marker.coordinates.lng}, ${marker.coordinates.lat}])

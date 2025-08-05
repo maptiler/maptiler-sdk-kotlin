@@ -10,6 +10,7 @@ import android.content.Context
 import android.webkit.WebView
 import com.maptiler.maptilersdk.MTConfig
 import com.maptiler.maptilersdk.annotations.MTMarker
+import com.maptiler.maptilersdk.annotations.MTTextPopup
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTJavaScriptInterface
 import com.maptiler.maptilersdk.bridge.MTJavascriptDelegate
@@ -17,6 +18,7 @@ import com.maptiler.maptilersdk.bridge.WebViewExecutor
 import com.maptiler.maptilersdk.bridge.WebViewExecutorDelegate
 import com.maptiler.maptilersdk.commands.InitializeMap
 import com.maptiler.maptilersdk.commands.annotations.SetCoordinatesToMarker
+import com.maptiler.maptilersdk.commands.annotations.SetCoordinatesToTextPopup
 import com.maptiler.maptilersdk.events.EventProcessor
 import com.maptiler.maptilersdk.events.EventProcessorDelegate
 import com.maptiler.maptilersdk.events.MTEvent
@@ -170,6 +172,14 @@ class MTMapViewController(
         coroutineScope?.launch {
             bridge?.execute(
                 SetCoordinatesToMarker(marker),
+            )
+        }
+    }
+
+    internal fun setCoordinatesToTextPopup(popup: MTTextPopup) {
+        coroutineScope?.launch {
+            bridge?.execute(
+                SetCoordinatesToTextPopup(popup),
             )
         }
     }
@@ -353,6 +363,20 @@ class MTMapViewController(
      * @param marker Marker to remove.
      */
     override fun removeMarker(marker: MTMarker) = stylableWorker.removeMarker(marker)
+
+    /**
+     * Adds a text popup to the map.
+     *
+     * @param popup Popup to add.
+     */
+    override fun addTextPopup(popup: MTTextPopup) = stylableWorker.addTextPopup(popup)
+
+    /**
+     * Removes a text popup from the map.
+     *
+     * @param popup Popup to remove.
+     */
+    override fun removeTextPopup(popup: MTTextPopup) = stylableWorker.removeTextPopup(popup)
 
     override fun onEventTriggered(
         processor: EventProcessor,
