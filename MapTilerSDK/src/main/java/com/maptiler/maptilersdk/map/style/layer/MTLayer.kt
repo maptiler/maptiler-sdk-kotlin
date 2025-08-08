@@ -18,7 +18,7 @@ interface MTLayer {
     /**
      * Type of the layer.
      */
-    var type: MTLayerType
+    val type: MTLayerType
 
     /**
      * Identifier of the source.

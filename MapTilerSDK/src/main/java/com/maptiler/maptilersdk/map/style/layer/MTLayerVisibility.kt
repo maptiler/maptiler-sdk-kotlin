@@ -19,4 +19,10 @@ enum class MTLayerVisibility {
      * Layer is not shown.
      */
     NONE,
+
+    ;
+
+    companion object {
+        fun from(value: MTLayerVisibility?): MTLayerVisibility? = entries.firstOrNull { it == value }
+    }
 }
