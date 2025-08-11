@@ -34,6 +34,7 @@ class MTSymbolLayer : MTLayer {
     /**
      * Identifier of the source to be used for this layer.
      */
+    @SerialName("source")
     override var sourceIdentifier: String
 
     /**
@@ -73,22 +74,20 @@ class MTSymbolLayer : MTLayer {
      * Enum controlling whether this layer is displayed.
      */
     var visibility: MTLayerVisibility
-        get() = MTLayerVisibility.from(layout.visibility) ?: MTLayerVisibility.VISIBLE
+        get() = MTLayerVisibility.from(_layout.visibility) ?: MTLayerVisibility.VISIBLE
         set(value) {
-            layout.visibility = value
+            _layout.visibility = value
         }
 
-    internal val iconName: String
+    private var iconName: String
         get() = "icon$identifier"
+        set(value) {
+            _layout.iconImage = value
+        }
 
+    @Suppress("PropertyName")
     @SerialName("layout")
-    private val _layout: MTSymbolLayout = MTSymbolLayout()
-
-    internal val layout: MTSymbolLayout
-        get() =
-            _layout.apply {
-                iconImage = iconName
-            }
+    private var _layout: MTSymbolLayout = MTSymbolLayout()
 
     constructor(
         identifier: String,
@@ -96,6 +95,17 @@ class MTSymbolLayer : MTLayer {
     ) {
         this.identifier = identifier
         this.sourceIdentifier = sourceIdentifier
+    }
+
+    constructor(
+        identifier: String,
+        sourceIdentifier: String,
+        icon: Bitmap,
+    ) {
+        this.identifier = identifier
+        this.sourceIdentifier = sourceIdentifier
+        this.icon = icon
+        this._layout = MTSymbolLayout(iconName, visibility)
     }
 
     constructor(
@@ -128,12 +138,13 @@ class MTSymbolLayer : MTLayer {
         this.sourceLayer = sourceLayer
         this.icon = icon
         this.visibility = visibility
+        this._layout = MTSymbolLayout(iconName, visibility)
     }
 }
 
 @Serializable
 internal data class MTSymbolLayout(
     @SerialName("icon-image")
-    var iconImage: String? = null,
+    var iconImage: String = "",
     var visibility: MTLayerVisibility = MTLayerVisibility.VISIBLE,
 )

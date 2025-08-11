@@ -6,6 +6,7 @@
 
 package com.maptiler.maptilersdk.map.style.layer
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -13,11 +14,13 @@ enum class MTLayerVisibility {
     /**
      * Layer is shown.
      */
+    @SerialName("visible")
     VISIBLE,
 
     /**
      * Layer is not shown.
      */
+    @SerialName("none")
     NONE,
 
     ;

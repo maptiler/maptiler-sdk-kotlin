@@ -13,6 +13,9 @@ import com.maptiler.maptilersdk.commands.annotations.AddMarker
 import com.maptiler.maptilersdk.commands.annotations.AddTextPopup
 import com.maptiler.maptilersdk.commands.annotations.RemoveMarker
 import com.maptiler.maptilersdk.commands.annotations.RemoveTextPopup
+import com.maptiler.maptilersdk.commands.style.AddLayer
+import com.maptiler.maptilersdk.commands.style.RemoveLayer
+import com.maptiler.maptilersdk.map.style.layer.MTLayer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -48,6 +51,22 @@ internal class StylableWorker(
         scope.launch {
             bridge.execute(
                 RemoveTextPopup(popup),
+            )
+        }
+    }
+
+    fun addLayer(layer: MTLayer) {
+        scope.launch {
+            bridge.execute(
+                AddLayer(layer),
+            )
+        }
+    }
+
+    fun removeLayer(layer: MTLayer) {
+        scope.launch {
+            bridge.execute(
+                RemoveLayer(layer),
             )
         }
     }

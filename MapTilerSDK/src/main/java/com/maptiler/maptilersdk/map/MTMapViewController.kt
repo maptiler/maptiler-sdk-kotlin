@@ -29,6 +29,7 @@ import com.maptiler.maptilersdk.map.options.MTCameraOptions
 import com.maptiler.maptilersdk.map.options.MTFlyToOptions
 import com.maptiler.maptilersdk.map.options.MTPaddingOptions
 import com.maptiler.maptilersdk.map.style.MTStyle
+import com.maptiler.maptilersdk.map.style.layer.MTLayer
 import com.maptiler.maptilersdk.map.types.MTData
 import com.maptiler.maptilersdk.map.types.MTPoint
 import com.maptiler.maptilersdk.map.workers.navigable.MTNavigable
@@ -377,6 +378,20 @@ class MTMapViewController(
      * @param popup Popup to remove.
      */
     override fun removeTextPopup(popup: MTTextPopup) = stylableWorker.removeTextPopup(popup)
+
+    /**
+     * Adds a layer to the map.
+     *
+     * @param layer Layer to be added.
+     */
+    fun addLayer(layer: MTLayer) = stylableWorker.addLayer(layer)
+
+    /**
+     * Removes a layer from the map.
+     *
+     * @param layer Layer to be removed.
+     */
+    fun removeLayer(layer: MTLayer) = stylableWorker.removeLayer(layer)
 
     override fun onEventTriggered(
         processor: EventProcessor,
