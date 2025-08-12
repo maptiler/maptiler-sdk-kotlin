@@ -80,6 +80,13 @@ class MTMarker(
         this.popup = popup
     }
 
+    constructor(
+        coordinates: LngLat,
+        popup: MTTextPopup,
+    ) : this(identifier = "mark${UUID.randomUUID().toString().replace("-", "")}", _coordinates = coordinates) {
+        this.popup = popup
+    }
+
     /**
      * Sets coordinates for the marker.
      *
