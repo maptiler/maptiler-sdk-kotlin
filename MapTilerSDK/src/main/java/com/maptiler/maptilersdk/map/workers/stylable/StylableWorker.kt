@@ -14,10 +14,16 @@ import com.maptiler.maptilersdk.commands.annotations.AddTextPopup
 import com.maptiler.maptilersdk.commands.annotations.RemoveMarker
 import com.maptiler.maptilersdk.commands.annotations.RemoveTextPopup
 import com.maptiler.maptilersdk.commands.style.AddLayer
+import com.maptiler.maptilersdk.commands.style.AddSource
 import com.maptiler.maptilersdk.commands.style.RemoveLayer
+import com.maptiler.maptilersdk.commands.style.RemoveSource
+import com.maptiler.maptilersdk.commands.style.SetTilesToSource
+import com.maptiler.maptilersdk.commands.style.SetUrlToSource
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
+import com.maptiler.maptilersdk.map.style.source.MTSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.net.URL
 
 internal class StylableWorker(
     private val bridge: MTBridge,
@@ -67,6 +73,44 @@ internal class StylableWorker(
         scope.launch {
             bridge.execute(
                 RemoveLayer(layer),
+            )
+        }
+    }
+
+    fun addSource(source: MTSource) {
+        scope.launch {
+            bridge.execute(
+                AddSource(source),
+            )
+        }
+    }
+
+    fun removeSource(source: MTSource) {
+        scope.launch {
+            bridge.execute(
+                RemoveSource(source),
+            )
+        }
+    }
+
+    fun setUrlToSource(
+        url: URL,
+        source: MTSource,
+    ) {
+        scope.launch {
+            bridge.execute(
+                SetUrlToSource(url, source),
+            )
+        }
+    }
+
+    fun setTilesToSource(
+        tiles: Array<URL>,
+        source: MTSource,
+    ) {
+        scope.launch {
+            bridge.execute(
+                SetTilesToSource(tiles, source),
             )
         }
     }

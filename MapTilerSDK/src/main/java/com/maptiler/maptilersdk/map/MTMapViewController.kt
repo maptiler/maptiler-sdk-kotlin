@@ -30,6 +30,7 @@ import com.maptiler.maptilersdk.map.options.MTFlyToOptions
 import com.maptiler.maptilersdk.map.options.MTPaddingOptions
 import com.maptiler.maptilersdk.map.style.MTStyle
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
+import com.maptiler.maptilersdk.map.style.source.MTSource
 import com.maptiler.maptilersdk.map.types.MTData
 import com.maptiler.maptilersdk.map.types.MTPoint
 import com.maptiler.maptilersdk.map.workers.navigable.MTNavigable
@@ -41,6 +42,7 @@ import com.maptiler.maptilersdk.map.workers.zoomable.ZoomableWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.net.URL
 
 interface MTMapViewDelegate {
     fun onMapViewInitialized()
@@ -392,6 +394,30 @@ class MTMapViewController(
      * @param layer Layer to be removed.
      */
     fun removeLayer(layer: MTLayer) = stylableWorker.removeLayer(layer)
+
+    /**
+     * Adds a source to the map.
+     *
+     * @param source Source to be added.
+     */
+    fun addSource(source: MTSource) = stylableWorker.addSource(source)
+
+    /**
+     * Removes a source from the map.
+     *
+     * @param source Source to be removed.
+     */
+    fun removeSource(source: MTSource) = stylableWorker.removeSource(source)
+
+    internal fun setUrlToSource(
+        url: URL,
+        source: MTSource,
+    ) = stylableWorker.setUrlToSource(url, source)
+
+    internal fun setTilesToSource(
+        tiles: Array<URL>,
+        source: MTSource,
+    ) = stylableWorker.setTilesToSource(tiles, source)
 
     override fun onEventTriggered(
         processor: EventProcessor,
