@@ -29,20 +29,15 @@ import com.maptiler.maptilersdk.map.options.MTCameraOptions
 import com.maptiler.maptilersdk.map.options.MTFlyToOptions
 import com.maptiler.maptilersdk.map.options.MTPaddingOptions
 import com.maptiler.maptilersdk.map.style.MTStyle
-import com.maptiler.maptilersdk.map.style.layer.MTLayer
-import com.maptiler.maptilersdk.map.style.source.MTSource
 import com.maptiler.maptilersdk.map.types.MTData
 import com.maptiler.maptilersdk.map.types.MTPoint
 import com.maptiler.maptilersdk.map.workers.navigable.MTNavigable
 import com.maptiler.maptilersdk.map.workers.navigable.NavigableWorker
-import com.maptiler.maptilersdk.map.workers.stylable.MTStylable
-import com.maptiler.maptilersdk.map.workers.stylable.StylableWorker
 import com.maptiler.maptilersdk.map.workers.zoomable.MTZoomable
 import com.maptiler.maptilersdk.map.workers.zoomable.ZoomableWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.net.URL
 
 interface MTMapViewDelegate {
     fun onMapViewInitialized()
@@ -63,8 +58,7 @@ class MTMapViewController(
     EventProcessorDelegate,
     MTJavascriptDelegate,
     MTZoomable,
-    MTNavigable,
-    MTStylable {
+    MTNavigable {
     private var coroutineScope: CoroutineScope? = null
 
     private var bridge: MTBridge? = null
@@ -79,7 +73,6 @@ class MTMapViewController(
 
     private lateinit var zoomableWorker: ZoomableWorker
     private lateinit var navigableWorker: NavigableWorker
-    private lateinit var stylableWorker: StylableWorker
 
     private val jsInterface: MTJavaScriptInterface =
         MTJavaScriptInterface(context).apply {
@@ -133,7 +126,7 @@ class MTMapViewController(
     private fun initializeWorkers() {
         zoomableWorker = ZoomableWorker(bridge!!, coroutineScope!!)
         navigableWorker = NavigableWorker(bridge!!, coroutineScope!!)
-        stylableWorker = StylableWorker(bridge!!, coroutineScope!!)
+        style?.initWorker(bridge!!, coroutineScope!!)
     }
 
     internal fun bind(scope: CoroutineScope) {
@@ -351,74 +344,6 @@ class MTMapViewController(
      */
     override fun setPadding(padding: MTPaddingOptions) = navigableWorker.setPadding(padding)
 
-    // STYLABLE
-
-    /**
-     * Adds the marker to the map.
-     *
-     * @param marker Marker to add.
-     */
-    override fun addMarker(marker: MTMarker) = stylableWorker.addMarker(marker)
-
-    /**
-     * Removes the marker from the map.
-     *
-     * @param marker Marker to remove.
-     */
-    override fun removeMarker(marker: MTMarker) = stylableWorker.removeMarker(marker)
-
-    /**
-     * Adds a text popup to the map.
-     *
-     * @param popup Popup to add.
-     */
-    override fun addTextPopup(popup: MTTextPopup) = stylableWorker.addTextPopup(popup)
-
-    /**
-     * Removes a text popup from the map.
-     *
-     * @param popup Popup to remove.
-     */
-    override fun removeTextPopup(popup: MTTextPopup) = stylableWorker.removeTextPopup(popup)
-
-    /**
-     * Adds a layer to the map.
-     *
-     * @param layer Layer to be added.
-     */
-    fun addLayer(layer: MTLayer) = stylableWorker.addLayer(layer)
-
-    /**
-     * Removes a layer from the map.
-     *
-     * @param layer Layer to be removed.
-     */
-    fun removeLayer(layer: MTLayer) = stylableWorker.removeLayer(layer)
-
-    /**
-     * Adds a source to the map.
-     *
-     * @param source Source to be added.
-     */
-    fun addSource(source: MTSource) = stylableWorker.addSource(source)
-
-    /**
-     * Removes a source from the map.
-     *
-     * @param source Source to be removed.
-     */
-    fun removeSource(source: MTSource) = stylableWorker.removeSource(source)
-
-    internal fun setUrlToSource(
-        url: URL,
-        source: MTSource,
-    ) = stylableWorker.setUrlToSource(url, source)
-
-    internal fun setTilesToSource(
-        tiles: Array<URL>,
-        source: MTSource,
-    ) = stylableWorker.setTilesToSource(tiles, source)
-
     override fun onEventTriggered(
         processor: EventProcessor,
         event: MTEvent,
@@ -430,6 +355,10 @@ class MTMapViewController(
 
         if (event == MTEvent.ON_READY) {
             delegate?.onMapViewInitialized()
+        }
+
+        if (event == MTEvent.ON_IDLE && style != null) {
+            style?.processLayersQueueIfNeeded()
         }
     }
 }

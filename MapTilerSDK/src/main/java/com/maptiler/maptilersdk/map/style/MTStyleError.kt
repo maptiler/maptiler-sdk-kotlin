@@ -9,24 +9,34 @@ package com.maptiler.maptilersdk.map.style
 /**
  * Represents the exceptions raised by the MTStyle object.
  */
-enum class MTStyleError {
+sealed class MTStyleError(
+    message: String,
+) : Exception(message) {
     /**
      * Source with the same id already added to the map.
      */
-    SOURCE_ALREADY_EXISTS,
+    data object SourceAlreadyExists : MTStyleError("Source already exists") {
+        private fun readResolve(): Any = SourceAlreadyExists
+    }
 
     /**
      * Source does not exist in the map.
      */
-    SOURCE_NOT_FOUND,
+    data object SourceNotFound : MTStyleError("Source not found") {
+        private fun readResolve(): Any = SourceNotFound
+    }
 
     /**
      * Layer with the same id already added to the map.
      */
-    LAYER_ALREADY_EXISTS,
+    data object LayerAlreadyExists : MTStyleError("Layer already exists") {
+        private fun readResolve(): Any = LayerAlreadyExists
+    }
 
     /**
      * Layer does not exist in the map.
      */
-    LAYER_NOT_FOUND,
+    data object LayerNotFound : MTStyleError("Layer not found") {
+        private fun readResolve(): Any = LayerNotFound
+    }
 }

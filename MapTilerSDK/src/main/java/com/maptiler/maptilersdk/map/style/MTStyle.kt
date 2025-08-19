@@ -6,6 +6,19 @@
 
 package com.maptiler.maptilersdk.map.style
 
+import com.maptiler.maptilersdk.annotations.MTMarker
+import com.maptiler.maptilersdk.annotations.MTTextPopup
+import com.maptiler.maptilersdk.bridge.MTBridge
+import com.maptiler.maptilersdk.bridge.MTError
+import com.maptiler.maptilersdk.map.style.layer.MTLayer
+import com.maptiler.maptilersdk.map.style.source.MTSource
+import com.maptiler.maptilersdk.map.workers.stylable.MTStylable
+import com.maptiler.maptilersdk.map.workers.stylable.StylableWorker
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import java.lang.ref.WeakReference
+import java.net.URL
+
 /**
  * The proxy object for the current map style.
  *
@@ -15,7 +28,17 @@ package com.maptiler.maptilersdk.map.style
 class MTStyle(
     reference: MTMapReferenceStyle,
     variant: MTMapStyleVariant? = null,
-) {
+) : MTStylable {
+    private var coroutineScope: CoroutineScope? = null
+    private var bridge: MTBridge? = null
+
+    private lateinit var stylableWorker: StylableWorker
+
+    private val mapSources: MutableMap<String, WeakReference<MTSource>> = mutableMapOf()
+    private val mapLayers: MutableMap<String, WeakReference<MTLayer>> = mutableMapOf()
+
+    private val queue: MutableList<StyleTask> = mutableListOf()
+
     /**
      * Current reference style of the map object.
      */
@@ -33,6 +56,21 @@ class MTStyle(
         styleVariant = variant
     }
 
+    internal fun initWorker(
+        bridge: MTBridge,
+        coroutineScope: CoroutineScope,
+    ) {
+        this.bridge = bridge
+        this.coroutineScope = coroutineScope
+
+        stylableWorker = StylableWorker(bridge, coroutineScope)
+    }
+
+    internal fun processLayersQueueIfNeeded() {
+        queue.forEach { it.execute() }
+        queue.clear()
+    }
+
     /**
      * Returns variants for the current reference style if they exist.
      */
@@ -44,4 +82,132 @@ class MTStyle(
      * @param reference Reference style for which to get variants.
      */
     fun getVariantsForReferenceStyle(reference: MTMapReferenceStyle): List<MTMapStyleVariant>? = reference.getVariants()
+
+    // STYLABLE
+
+    /**
+     * Adds the marker to the map.
+     *
+     * @param marker Marker to add.
+     */
+    override fun addMarker(marker: MTMarker) = stylableWorker.addMarker(marker)
+
+    /**
+     * Removes the marker from the map.
+     *
+     * @param marker Marker to remove.
+     */
+    override fun removeMarker(marker: MTMarker) = stylableWorker.removeMarker(marker)
+
+    /**
+     * Adds a text popup to the map.
+     *
+     * @param popup Popup to add.
+     */
+    override fun addTextPopup(popup: MTTextPopup) = stylableWorker.addTextPopup(popup)
+
+    /**
+     * Removes a text popup from the map.
+     *
+     * @param popup Popup to remove.
+     */
+    override fun removeTextPopup(popup: MTTextPopup) = stylableWorker.removeTextPopup(popup)
+
+    /**
+     * Adds a layer to the map.
+     *
+     * @param layer Layer to be added.
+     */
+    fun addLayer(layer: MTLayer) {
+        if (mapLayers.containsKey(layer.identifier)) {
+            throw MTStyleError.LayerAlreadyExists
+        }
+
+        coroutineScope?.launch {
+            mapLayers[layer.identifier] = WeakReference(layer)
+
+            if (mapSources[layer.sourceIdentifier]?.get() != null) {
+                val isLoaded = isSourceLoaded(layer.sourceIdentifier)
+
+                if (isLoaded) {
+                    stylableWorker.addLayer(layer)
+                } else {
+                    val layerTask =
+                        StyleTask(layer.identifier) {
+                            stylableWorker.addLayer(layer)
+                        }
+
+                    queue.addLayer(layerTask)
+                }
+            } else {
+                throw MTError.MissingParent
+            }
+        }
+    }
+
+    /**
+     * Removes a layer from the map.
+     *
+     * @param layer Layer to be removed.
+     */
+    fun removeLayer(layer: MTLayer) {
+        if (mapLayers.containsKey(layer.identifier)) {
+            throw MTStyleError.LayerNotFound
+        }
+
+        mapLayers.remove(layer.identifier)
+        stylableWorker.removeLayer(layer)
+    }
+
+    /**
+     * Adds a source to the map.
+     *
+     * @param source Source to be added.
+     */
+    fun addSource(source: MTSource) {
+        if (mapSources.containsKey(source.identifier)) {
+            throw MTStyleError.SourceAlreadyExists
+        }
+
+        mapSources[source.identifier] = WeakReference(source)
+        stylableWorker.addSource(source)
+    }
+
+    /**
+     * Removes a source from the map.
+     *
+     * @param source Source to be removed.
+     */
+    fun removeSource(source: MTSource) {
+        if (!mapSources.containsKey(source.identifier)) {
+            throw MTStyleError.SourceNotFound
+        }
+
+        mapSources.remove(source.identifier)
+        stylableWorker.removeSource(source)
+    }
+
+    /**
+     * Returns boolean value indicating whether the source with provided id is loaded.
+     *
+     * @param sourceId The id of the source.
+     */
+    suspend fun isSourceLoaded(sourceId: String): Boolean = stylableWorker.isSourceLoaded(sourceId)
+
+    internal fun setUrlToSource(
+        url: URL,
+        source: MTSource,
+    ) = stylableWorker.setUrlToSource(url, source)
+
+    internal fun setTilesToSource(
+        tiles: Array<URL>,
+        source: MTSource,
+    ) = stylableWorker.setTilesToSource(tiles, source)
+}
+
+internal class StyleTask(
+    val name: String,
+    private val action: () -> Unit,
+) {
+    fun execute() = action()
 }

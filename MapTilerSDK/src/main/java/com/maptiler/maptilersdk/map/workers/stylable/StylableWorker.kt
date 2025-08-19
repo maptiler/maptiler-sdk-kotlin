@@ -9,12 +9,14 @@ package com.maptiler.maptilersdk.map.workers.stylable
 import com.maptiler.maptilersdk.annotations.MTMarker
 import com.maptiler.maptilersdk.annotations.MTTextPopup
 import com.maptiler.maptilersdk.bridge.MTBridge
+import com.maptiler.maptilersdk.bridge.MTBridgeReturnType
 import com.maptiler.maptilersdk.commands.annotations.AddMarker
 import com.maptiler.maptilersdk.commands.annotations.AddTextPopup
 import com.maptiler.maptilersdk.commands.annotations.RemoveMarker
 import com.maptiler.maptilersdk.commands.annotations.RemoveTextPopup
 import com.maptiler.maptilersdk.commands.style.AddLayer
 import com.maptiler.maptilersdk.commands.style.AddSource
+import com.maptiler.maptilersdk.commands.style.IsSourceLoaded
 import com.maptiler.maptilersdk.commands.style.RemoveLayer
 import com.maptiler.maptilersdk.commands.style.RemoveSource
 import com.maptiler.maptilersdk.commands.style.SetTilesToSource
@@ -112,6 +114,18 @@ internal class StylableWorker(
             bridge.execute(
                 SetTilesToSource(tiles, source),
             )
+        }
+    }
+
+    suspend fun isSourceLoaded(sourceId: String): Boolean {
+        val returnTypeValue =
+            bridge.execute(
+                IsSourceLoaded(sourceId),
+            )
+
+        return when (returnTypeValue) {
+            is MTBridgeReturnType.BoolValue -> returnTypeValue.value
+            else -> false
         }
     }
 }
