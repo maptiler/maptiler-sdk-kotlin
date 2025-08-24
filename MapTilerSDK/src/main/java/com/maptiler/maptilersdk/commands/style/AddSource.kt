@@ -43,8 +43,8 @@ internal data class AddSource(
             type: '${source.type}',
             minzoom: ${source.minZoom},
             maxzoom: ${source.maxZoom},
-            bounds: ${source.bounds},
             scheme: '${source.scheme}',
+            bounds: ${source.bounds.contentToString()},
             $data,
             $attributionString
         });

@@ -125,6 +125,8 @@ internal class StylableWorker(
 
         return when (returnTypeValue) {
             is MTBridgeReturnType.BoolValue -> returnTypeValue.value
+            is MTBridgeReturnType.DoubleValue -> returnTypeValue.value != 0.0
+            is MTBridgeReturnType.StringValue -> if (returnTypeValue.value == "true") true else false
             else -> false
         }
     }

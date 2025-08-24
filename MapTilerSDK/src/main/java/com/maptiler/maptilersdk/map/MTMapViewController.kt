@@ -83,6 +83,14 @@ class MTMapViewController(
      * Proxy style object of the map.
      */
     var style: MTStyle? = null
+        set(value) {
+            field = value
+            onStyleUpdate()
+        }
+
+    private fun onStyleUpdate() {
+        style?.initWorker(bridge!!, coroutineScope!!)
+    }
 
     /**
      * Current options of the map object.
@@ -126,7 +134,6 @@ class MTMapViewController(
     private fun initializeWorkers() {
         zoomableWorker = ZoomableWorker(bridge!!, coroutineScope!!)
         navigableWorker = NavigableWorker(bridge!!, coroutineScope!!)
-        style?.initWorker(bridge!!, coroutineScope!!)
     }
 
     internal fun bind(scope: CoroutineScope) {

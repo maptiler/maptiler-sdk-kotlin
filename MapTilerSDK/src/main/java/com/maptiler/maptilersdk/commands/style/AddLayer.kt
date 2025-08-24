@@ -12,6 +12,7 @@ import com.maptiler.maptilersdk.bridge.MTCommand
 import com.maptiler.maptilersdk.helpers.ImageHelper
 import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
+import com.maptiler.maptilersdk.map.style.layer.fill.MTFillLayer
 import com.maptiler.maptilersdk.map.style.layer.symbol.MTSymbolLayer
 
 internal data class AddLayer(
@@ -22,6 +23,8 @@ internal data class AddLayer(
     override fun toJS(): String =
         if (layer is MTSymbolLayer) {
             handleSymbolLayer(layer)
+        } else if (layer is MTFillLayer) {
+            handleFillLayer(layer)
         } else {
             ""
         }
@@ -49,5 +52,11 @@ internal data class AddLayer(
         } else {
             return ""
         }
+    }
+
+    private fun handleFillLayer(layer: MTFillLayer): JSString {
+        val layerString: JSString = JsonConfig.json.encodeToString(layer)
+
+        return "${MTBridge.MAP_OBJECT}.addLayer($layerString)"
     }
 }

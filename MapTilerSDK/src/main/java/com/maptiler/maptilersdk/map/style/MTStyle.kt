@@ -117,6 +117,7 @@ class MTStyle(
      * Adds a layer to the map.
      *
      * @param layer Layer to be added.
+     * @throws MTStyleError.LayerAlreadyExists if layer with the same id is already added to the map.
      */
     fun addLayer(layer: MTLayer) {
         if (mapLayers.containsKey(layer.identifier)) {
@@ -126,7 +127,7 @@ class MTStyle(
         coroutineScope?.launch {
             mapLayers[layer.identifier] = WeakReference(layer)
 
-            if (mapSources[layer.sourceIdentifier]?.get() != null) {
+            if (mapSources[layer.sourceIdentifier] != null) {
                 val isLoaded = isSourceLoaded(layer.sourceIdentifier)
 
                 if (isLoaded) {
@@ -137,7 +138,7 @@ class MTStyle(
                             stylableWorker.addLayer(layer)
                         }
 
-                    queue.addLayer(layerTask)
+                    queue.add(layerTask)
                 }
             } else {
                 throw MTError.MissingParent
@@ -149,6 +150,7 @@ class MTStyle(
      * Removes a layer from the map.
      *
      * @param layer Layer to be removed.
+     * @throws MTStyleError.LayerNotFound if source does not exist on the map.
      */
     fun removeLayer(layer: MTLayer) {
         if (mapLayers.containsKey(layer.identifier)) {
@@ -163,6 +165,7 @@ class MTStyle(
      * Adds a source to the map.
      *
      * @param source Source to be added.
+     * @throws MTStyleError.SourceAlreadyExists if source with the same id is already added to the map.
      */
     fun addSource(source: MTSource) {
         if (mapSources.containsKey(source.identifier)) {
@@ -177,6 +180,7 @@ class MTStyle(
      * Removes a source from the map.
      *
      * @param source Source to be removed.
+     * @throws MTStyleError.SourceNotFound if source does not exist on the map.
      */
     fun removeSource(source: MTSource) {
         if (!mapSources.containsKey(source.identifier)) {

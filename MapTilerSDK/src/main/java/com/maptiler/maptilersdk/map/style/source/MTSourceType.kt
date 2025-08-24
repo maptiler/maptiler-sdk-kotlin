@@ -51,4 +51,8 @@ enum class MTSourceType {
      */
     @SerialName("video")
     VIDEO,
+
+    ;
+
+    override fun toString() = serializer().descriptor.getElementName(ordinal)
 }
