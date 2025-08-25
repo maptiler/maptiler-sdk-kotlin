@@ -25,4 +25,8 @@ enum class MTTileScheme {
      */
     @SerialName("tms")
     TMS,
+
+    ;
+
+    override fun toString() = serializer().descriptor.getElementName(ordinal)
 }

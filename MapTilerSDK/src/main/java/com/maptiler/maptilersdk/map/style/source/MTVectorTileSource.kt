@@ -109,7 +109,7 @@ class MTVectorTileSource : MTTileSource {
         url: URL,
         mapViewController: MTMapViewController,
     ) {
-        mapViewController.setUrlToSource(url, this)
+        mapViewController.style?.setUrlToSource(url, this)
     }
 
     /**
@@ -124,6 +124,6 @@ class MTVectorTileSource : MTTileSource {
         tiles: Array<URL>,
         mapViewController: MTMapViewController,
     ) {
-        mapViewController.setTilesToSource(tiles, this)
+        mapViewController.style?.setTilesToSource(tiles, this)
     }
 }

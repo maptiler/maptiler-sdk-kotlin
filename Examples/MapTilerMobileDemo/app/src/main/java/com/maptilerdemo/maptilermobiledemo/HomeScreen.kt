@@ -8,6 +8,7 @@ package com.maptilerdemo.maptilermobiledemo
 
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.maptiler.maptilersdk.MTConfig
 import com.maptiler.maptilersdk.annotations.MTMarker
 import com.maptiler.maptilersdk.annotations.MTTextPopup
 import com.maptiler.maptilersdk.events.MTEvent
@@ -29,9 +31,13 @@ import com.maptiler.maptilersdk.map.MTMapViewController
 import com.maptiler.maptilersdk.map.MTMapViewDelegate
 import com.maptiler.maptilersdk.map.options.MTCameraOptions
 import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
+import com.maptiler.maptilersdk.map.style.MTStyleError
 import com.maptiler.maptilersdk.map.style.layer.MTLayerType
+import com.maptiler.maptilersdk.map.style.layer.fill.MTFillLayer
 import com.maptiler.maptilersdk.map.style.layer.symbol.MTSymbolLayer
+import com.maptiler.maptilersdk.map.style.source.MTVectorTileSource
 import com.maptiler.maptilersdk.map.types.MTData
+import java.net.URL
 
 @Suppress("FunctionName")
 @Composable
@@ -56,11 +62,29 @@ fun HomeScreen(
 
         LayerControl(
             onSelect = { type: MTLayerType ->
-                // TO DO: Update with proper source
                 if (type == MTLayerType.SYMBOL) {
-                    val mapTilerIcon = BitmapFactory.decodeResource(context.resources, R.drawable.maptiler_marker_icon)
-                    val layer = MTSymbolLayer("symbolLayer", "symbolSource", mapTilerIcon)
-                    mapController.controller.addLayer(layer)
+                    try {
+                        val mapTilerIcon =
+                            BitmapFactory.decodeResource(
+                                context.resources,
+                                R.drawable.maptiler_marker_icon,
+                            )
+                        val layer = MTSymbolLayer("symbolLayer", "openmapsource", mapTilerIcon)
+                        layer.sourceLayer = "place"
+                        mapController.controller.style?.addLayer(layer)
+                    } catch (error: MTStyleError) {
+                        Log.e("MTStyleError", "Symbol Layer already exists.")
+                    }
+                } else if (type == MTLayerType.FILL) {
+                    try {
+                        val layer = MTFillLayer("fillLayer", "openmapsource")
+                        layer.color = Color.BLUE
+                        layer.outlineColor = Color.CYAN
+                        layer.sourceLayer = "aeroway"
+                        mapController.controller.style?.addLayer(layer)
+                    } catch (error: MTStyleError) {
+                        Log.e("MTStyleError", "Fill Layer already exists.")
+                    }
                 }
             },
             modifier =
@@ -125,16 +149,22 @@ class MapController(
     override fun onMapViewInitialized() {
         Log.i("Demo App", "Map View Initialized.")
 
+        val mapTilerAPIKey = MTConfig.apiKey
+
         val unterageriCoordinates = LngLat(8.581651, 47.137765)
         val brnoCoordinates = LngLat(16.626576, 49.212596)
 
         val mapTilerIcon = BitmapFactory.decodeResource(context.resources, R.drawable.maptiler_marker_icon)
         val unterageriMarker = MTMarker(unterageriCoordinates, mapTilerIcon)
-        controller.addMarker(unterageriMarker)
+        controller.style?.addMarker(unterageriMarker)
 
         val brnoPopup = MTTextPopup(brnoCoordinates, "Brno Development Hub")
         val brnoMarker = MTMarker(brnoCoordinates, brnoPopup)
-        controller.addMarker(brnoMarker)
+        controller.style?.addMarker(brnoMarker)
+
+        val sourceURL = URL("https://api.maptiler.com/tiles/v3-openmaptiles/tiles.json?key=$mapTilerAPIKey")
+        val source = MTVectorTileSource("openmapsource", sourceURL)
+        controller.style?.addSource(source)
     }
 
     override fun onEventTriggered(
