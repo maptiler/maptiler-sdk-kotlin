@@ -26,5 +26,5 @@ interface MTSource {
     /**
      *  Type of the source.
      */
-    var type: MTSourceType
+    val type: MTSourceType
 }
