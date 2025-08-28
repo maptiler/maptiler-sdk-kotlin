@@ -60,6 +60,7 @@ class MTVectorTileSource : MTTileSource {
      * Type of the layer.
      */
     override var type: MTSourceType = MTSourceType.VECTOR
+        private set
 
     /**
      * Scheme used for tiles.
