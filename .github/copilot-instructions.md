@@ -26,7 +26,8 @@ This Android library wraps the MapTiler JS SDK via a typed Kotlin↔JS bridge lo
 
 ### Main Components
 
-- UI: `MTMapView` is a Compose `@Composable` that attaches a configured `WebView`.
+- UI (Compose): `MTMapView` is a Compose `@Composable` that attaches a configured `WebView`.
+- UI (XML): `MTMapViewClassic` is a `FrameLayout`-based view that inflates a `WebView` from `res/layout/mtmapview_layout.xml`. Initialize it by calling `initialize(referenceStyle, options, controller, styleVariant)` after inflation.
 - Controller: `MTMapViewController` binds coroutines, holds `MTStyle` and `MTMapOptions`, and exposes navigation/style APIs and events.
 - Bridge: Public Kotlin APIs construct `MTCommand`s serialized to JS, executed by `WebViewExecutor`; results decode via `MTBridgeReturnType`.
 - Lifecycle: `EventProcessor` listens to JS events, updates state, and notifies `MTMapViewDelegate` (`ON_READY`, `ON_IDLE`, etc.).
@@ -42,6 +43,7 @@ Before writing ANY new code, you MUST:
 - Follow ktlint rules enforced by the Gradle plugin.
 - Run `./gradlew ktlintCheck` and fix all violations locally. Optionally run `./gradlew :MapTilerSDK:ktlintCheck` for module scope.
 - If you add public API, add KDoc for it and ensure Dokka can generate docs (`./gradlew :MapTilerSDK:dokkaHtml`).
+ - For UI changes, verify both Compose (`MTMapView`) and XML (`MTMapViewClassic`) usage paths compile and behave consistently.
 
 ## Bridge Rules
 
@@ -111,6 +113,33 @@ fun MTMapViewController.setBearing(
 }
 ```
 
+XML usage example (Classic view):
+
+```xml
+<!-- app/src/main/res/layout/activity_main.xml -->
+<com.maptiler.maptilersdk.map.MTMapViewClassic
+    android:id="@+id/mtClassic"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
+```
+
+```kotlin
+// In Activity/Fragment after setContentView / onViewCreated
+val controller = MTMapViewController(requireContext())
+val classic = view.findViewById<MTMapViewClassic>(R.id.mtClassic)
+classic.initialize(
+    referenceStyle = MTMapReferenceStyle.SomeStyle,
+    options = MTMapOptions(/* ... */),
+    controller = controller,
+    styleVariant = null,
+)
+
+override fun onDestroy() {
+    super.onDestroy()
+    controller.destroy()
+}
+```
+
 ### Add a new command (checklist)
 - Read target JS API and confirm params/return.
 - Create command data class + `@Serializable` surrogate if needed.
@@ -173,6 +202,7 @@ fun MTMapViewController.setBearing(
 
 - `map/`: Core UI and map API.
   - `MTMapView` (Compose) attaches a `WebView`; exposes map/style APIs via controller and lifecycle events.
+  - `MTMapViewClassic` (XML) is a `FrameLayout` that inflates a `WebView` from `res/layout/mtmapview_layout.xml` and must be initialized via `initialize(...)`.
   - `MTMapViewController`: camera, events, gesture service, workers binding.
   - `MTMapOptions` + `options/`: camera, padding, animation, gestures config.
   - `style/`: `MTStyle`, reference styles/variants, glyphs/terrain/tile scheme, style errors.
@@ -256,4 +286,3 @@ What changed, how and why?
 
 ## Acceptance
 How were changes tested?
-

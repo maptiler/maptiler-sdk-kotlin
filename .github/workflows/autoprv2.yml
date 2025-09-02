@@ -1,0 +1,122 @@
+name: Automated PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue_key:
+        description: 'Issue key'
+        required: true
+      issue_summary:
+        description: 'Brief summary of the issue'
+        required: true
+      issue_description:
+        description: 'Detailed issue description'
+        required: true
+
+permissions:
+  id-token: write
+  contents: write           # allow the action to push code & open the PR
+  pull-requests: write      # allow the action to create and update PRs
+  issues: write
+  actions: read
+
+jobs:
+  automate:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # Set up developer tools
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Symlink agents file to the root
+
+      - name: Symlink agents
+        run: ln -s .github/copilot-instructions.md AGENTS.md
+
+        # Generate JS docs
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install JS deps
+        working-directory: js
+        run: npm ci
+
+      - name: Build JS docs
+        working-directory: js
+        run: npm run doc
+
+      # Set up environment variables
+
+      - name: Prepare variables
+        run: |
+          echo "ISSUE_KEY=${{ github.event.inputs.issue_key }}"        >> $GITHUB_ENV
+          echo "TITLE=${{ github.event.inputs.issue_summary }}"        >> $GITHUB_ENV
+          DESC_CLEANED=$(echo "${{ github.event.inputs.issue_description }}" | tr '\n' ' ' | sed 's/"/'\''/g')
+          echo "DESC=$DESC_CLEANED"                                    >> $GITHUB_ENV
+          echo "BRANCH=${{ github.event.inputs.issue_key }}"           >> $GITHUB_ENV
+
+      # Run the LLM Agent and commit the output
+
+      - name: Agent implement
+        uses: anthropics/claude-code-action@v1
+        env:
+          ANTHROPIC_API_KEY:  ${{ secrets.ANTHROPIC_API_KEY }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          additional_permissions: |
+            actions: read
+          claude_args: |
+            --allowedTools "Write,Read,Edit,Grep,Glob,Bash(swiftlint),Bash(xcrun)"
+          prompt: |
+            Implement ticket ${{ env.ISSUE_KEY }}: ${{ env.TITLE }}. ${{ env.DESC }}
+      - name: Agent commit
+        run: |
+          git add -A
+          git commit -m "$ISSUE_KEY: $TITLE"
+
+      # Prepare and push Pull Request
+
+      - id: cpr
+        name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token:  ${{ secrets.GITHUB_TOKEN }}
+          base:   main
+          branch: ${{ env.BRANCH }}
+          title:  "${{ env.ISSUE_KEY }}: ${{ env.TITLE }}"
+          body: |
+            **${{ env.ISSUE_KEY }}**
+
+            ## Objective
+            **${{ env.TITLE }}**.
+
+            ## Description
+            ${{ env.DESC }}
+
+            ## Acceptance
+            Compiles and checks pass.
+
