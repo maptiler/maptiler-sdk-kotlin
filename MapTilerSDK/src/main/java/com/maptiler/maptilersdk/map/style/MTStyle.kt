@@ -207,6 +207,11 @@ class MTStyle(
         tiles: Array<URL>,
         source: MTSource,
     ) = stylableWorker.setTilesToSource(tiles, source)
+
+    internal fun setDataToSource(
+        data: URL,
+        source: MTSource,
+    ) = stylableWorker.setDataToSource(data, source)
 }
 
 internal class StyleTask(

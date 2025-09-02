@@ -19,6 +19,7 @@ import com.maptiler.maptilersdk.commands.style.AddSource
 import com.maptiler.maptilersdk.commands.style.IsSourceLoaded
 import com.maptiler.maptilersdk.commands.style.RemoveLayer
 import com.maptiler.maptilersdk.commands.style.RemoveSource
+import com.maptiler.maptilersdk.commands.style.SetDataToSource
 import com.maptiler.maptilersdk.commands.style.SetTilesToSource
 import com.maptiler.maptilersdk.commands.style.SetUrlToSource
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
@@ -113,6 +114,17 @@ internal class StylableWorker(
         scope.launch {
             bridge.execute(
                 SetTilesToSource(tiles, source),
+            )
+        }
+    }
+
+    fun setDataToSource(
+        data: URL,
+        source: MTSource,
+    ) {
+        scope.launch {
+            bridge.execute(
+                SetDataToSource(data, source),
             )
         }
     }

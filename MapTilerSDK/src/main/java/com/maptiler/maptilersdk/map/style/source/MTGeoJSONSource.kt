@@ -6,6 +6,7 @@
 
 package com.maptiler.maptilersdk.map.style.source
 
+import com.maptiler.maptilersdk.map.MTMapViewController
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -160,6 +161,21 @@ class MTGeoJSONSource : MTSource {
     ) {
         this.identifier = identifier
         this.jsonString = jsonString
+    }
+
+    /**
+     * Sets the data of the source.
+     *
+     * Used for updating the source data.
+     *
+     * @param data data to GeoJSON resource.
+     * @param mapViewController MTMapViewController which holds the source.
+     */
+    fun setData(
+        data: URL,
+        mapViewController: MTMapViewController,
+    ) {
+        mapViewController.style?.setDataToSource(data, this)
     }
 }
 

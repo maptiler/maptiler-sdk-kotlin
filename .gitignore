@@ -50,3 +50,7 @@ reports
 /.idea/assetWizardSettings.xml
 
 !/gradle/wrapper/gradle-wrapper.jar
+
+AGENTS.md
+CLAUDE.md
+output.txt
