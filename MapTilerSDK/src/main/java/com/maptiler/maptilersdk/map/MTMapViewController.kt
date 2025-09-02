@@ -12,11 +12,13 @@ import com.maptiler.maptilersdk.MTConfig
 import com.maptiler.maptilersdk.annotations.MTMarker
 import com.maptiler.maptilersdk.annotations.MTTextPopup
 import com.maptiler.maptilersdk.bridge.MTBridge
+import com.maptiler.maptilersdk.bridge.MTBridgeReturnType
 import com.maptiler.maptilersdk.bridge.MTJavaScriptInterface
 import com.maptiler.maptilersdk.bridge.MTJavascriptDelegate
 import com.maptiler.maptilersdk.bridge.WebViewExecutor
 import com.maptiler.maptilersdk.bridge.WebViewExecutorDelegate
 import com.maptiler.maptilersdk.commands.InitializeMap
+import com.maptiler.maptilersdk.commands.style.IsGlobeProjectionEnabled
 import com.maptiler.maptilersdk.commands.annotations.SetCoordinatesToMarker
 import com.maptiler.maptilersdk.commands.annotations.SetCoordinatesToTextPopup
 import com.maptiler.maptilersdk.events.EventProcessor
@@ -366,6 +368,34 @@ class MTMapViewController(
 
         if (event == MTEvent.ON_IDLE && style != null) {
             style?.processLayersQueueIfNeeded()
+        }
+    }
+
+    /**
+     * Returns whether the globe projection is currently enabled.
+     */
+    suspend fun isGlobeProjectionEnabled(): Boolean {
+        val returnTypeValue =
+            bridge?.execute(
+                IsGlobeProjectionEnabled(),
+            )
+
+        return when (returnTypeValue) {
+            is MTBridgeReturnType.BoolValue -> returnTypeValue.value
+            is MTBridgeReturnType.DoubleValue -> returnTypeValue.value != 0.0
+            is MTBridgeReturnType.StringValue -> returnTypeValue.value == "true"
+            else -> false
+        }
+    }
+
+    /**
+     * Asynchronously reports whether the globe projection is enabled.
+     *
+     * @param completion Callback receiving the boolean result.
+     */
+    fun isGlobeProjectionEnabled(completion: (Boolean) -> Unit) {
+        coroutineScope?.launch {
+            completion(isGlobeProjectionEnabled())
         }
     }
 }
