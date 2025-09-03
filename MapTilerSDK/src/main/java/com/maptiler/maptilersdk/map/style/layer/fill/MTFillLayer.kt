@@ -165,7 +165,7 @@ class MTFillLayer : MTLayer {
 
     @Suppress("PropertyName")
     @SerialName("paint")
-    private var _paint: MTPaintLayout = MTPaintLayout()
+    private var _paint: MTFillPaint = MTFillPaint()
 
     constructor(
         identifier: String,
@@ -181,7 +181,7 @@ class MTFillLayer : MTLayer {
         this.sourceLayer = sourceLayer
 
         this._layout = MTFillLayout(visibility)
-        this._paint = MTPaintLayout(color, shouldBeAntialised, opacity, outlineColor, translate, translateAnchor)
+        this._paint = MTFillPaint(color, shouldBeAntialised, opacity, outlineColor, translate, translateAnchor)
     }
 
     constructor(
@@ -192,7 +192,7 @@ class MTFillLayer : MTLayer {
         this.sourceIdentifier = sourceIdentifier
 
         this._layout = MTFillLayout(visibility)
-        this._paint = MTPaintLayout(color, shouldBeAntialised, opacity, outlineColor, translate, translateAnchor)
+        this._paint = MTFillPaint(color, shouldBeAntialised, opacity, outlineColor, translate, translateAnchor)
     }
 
     constructor(
@@ -226,7 +226,7 @@ class MTFillLayer : MTLayer {
         this.sortKey = sortKey
         this.visibility = visibility
         this._layout = MTFillLayout(visibility)
-        this._paint = MTPaintLayout(color, shouldBeAntialised, opacity, outlineColor, translate, translateAnchor)
+        this._paint = MTFillPaint(color, shouldBeAntialised, opacity, outlineColor, translate, translateAnchor)
     }
 }
 
@@ -237,7 +237,7 @@ internal data class MTFillLayout(
 )
 
 @Serializable
-internal data class MTPaintLayout(
+internal data class MTFillPaint(
     @Serializable(with = ColorAsHexSerializer::class)
     @SerialName("fill-color")
     var color: Int? = Color.BLACK,
