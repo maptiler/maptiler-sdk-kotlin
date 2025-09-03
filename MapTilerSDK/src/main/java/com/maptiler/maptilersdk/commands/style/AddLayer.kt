@@ -38,11 +38,11 @@ internal data class AddLayer(
         val layerString: JSString = JsonConfig.json.encodeToString(layer)
 
         if (layer.icon != null) {
-            val encodedImageString = ImageHelper.encodeImage(layer.icon!!)
+            val encoded = ImageHelper.encodeImageWithMime(layer.icon!!)
 
             val iconString = """
             var icon${layer.identifier} = new Image();
-                icon${layer.identifier}.src = 'data:image/png;base64,$encodedImageString';
+                icon${layer.identifier}.src = 'data:${encoded.mimeType};base64,${encoded.base64}';
                 icon${layer.identifier}.onload = function() {
                     map.addImage('icon${layer.identifier}', icon${layer.identifier})
         """

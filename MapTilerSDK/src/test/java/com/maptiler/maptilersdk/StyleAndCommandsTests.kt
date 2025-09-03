@@ -11,6 +11,7 @@ import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.commands.style.AddSource
 import com.maptiler.maptilersdk.commands.style.SetDataToSource
 import com.maptiler.maptilersdk.commands.style.SetTilesToSource
+import com.maptiler.maptilersdk.helpers.EncodedImage
 import com.maptiler.maptilersdk.helpers.ImageHelper
 import com.maptiler.maptilersdk.map.style.layer.symbol.MTSymbolLayer
 import com.maptiler.maptilersdk.map.style.source.MTGeoJSONSource
@@ -85,13 +86,14 @@ class StyleAndCommandsTests {
         every { bmp.compress(any(), any(), any()) } returns true
 
         mockkObject(ImageHelper)
-        every { ImageHelper.encodeImage(any()) } returns "AAA"
+        every { ImageHelper.encodeImageWithMime(any()) } returns EncodedImage("AAA", "image/png")
 
         val layer = MTSymbolLayer("sym2", "src2", bmp)
         val js = com.maptiler.maptilersdk.commands.style.AddLayer(layer).toJS()
 
-        // Check presence of image add and addLayer call
+        // Check presence of image add and addLayer call and data URL with correct mime
         assertTrue(js.contains("addImage('iconsym2'"))
+        assertTrue(js.contains("data:image/png;base64,AAA"))
         assertTrue(js.contains("${MTBridge.MAP_OBJECT}.addLayer({"))
     }
 }
