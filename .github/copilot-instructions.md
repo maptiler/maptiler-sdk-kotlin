@@ -67,11 +67,11 @@ MUST follow this end-to-end flow when wrapping a JS API into Kotlin:
 - If a new return shape is required, extend `MTBridgeReturnType` in a focused change with tests.
 
 5) Public API surface
-- Add a thin convenience method on `MTMapViewController` (or appropriate worker/service) that:
+- Add a thin convenience method on appropriate worker (NavigableWorker, ZoomableWorker etc.) and update `MTMapViewController` that uses it or StylableWorker and update MTStyle class that uses it:
   - Ensures the map/style are ready (`ON_READY`).
   - Validates inputs and applies sensible defaults.
   - Launches on the appropriate coroutine scope and calls the bridge.
-  - Uses `suspend` functions for getters and `Result`/exceptions for failures where appropriate.
+  - Uses `suspend` functions for getters only and `Result`/exceptions for failures where appropriate.
 
 6) Threading and lifecycle
 - MUST execute JS on the main thread. `WebViewExecutor` already enforces `Dispatchers.Main`; do not bypass it.
@@ -84,32 +84,72 @@ MUST follow this end-to-end flow when wrapping a JS API into Kotlin:
 Example skeleton:
 
 ```kotlin
-@Serializable
-private data class RotateToOptions(
-    val bearing: Double,
-    val duration: Double? = null,
-)
-
-internal data class RotateTo(
-    private val bearing: Double,
-    private val durationMs: Double? = null,
+internal data class FlyTo(
+    val cameraOptions: MTCameraOptions,
+    val flyToOptions: MTFlyToOptions? = null,
 ) : MTCommand {
     override val isPrimitiveReturnType: Boolean = false
 
-    override fun toJS(): JSString {
-        val opts = RotateToOptions(bearing = bearing, duration = durationMs)
-        val json = JsonConfig.json.encodeToString(opts)
-        return "${MTBridge.MAP_OBJECT}.rotateTo($json);"
+    override fun toJS(): String {
+        val surrogate = getSurrogate(cameraOptions, flyToOptions)
+        val flyToString: JSString = JsonConfig.json.encodeToString(surrogate)
+
+        return "${MTBridge.MAP_OBJECT}.flyTo($flyToString);"
     }
+
+    private fun getSurrogate(
+        cameraOptions: MTCameraOptions,
+        flyToOptions: MTFlyToOptions?,
+    ): FlyToSurrogate =
+        FlyToSurrogate(
+            cameraOptions.center,
+            cameraOptions.zoom,
+            cameraOptions.bearing,
+            cameraOptions.pitch,
+            flyToOptions?.curve,
+            flyToOptions?.minZoom,
+            flyToOptions?.speed,
+            flyToOptions?.screenSpeed,
+            flyToOptions?.maxDuration,
+        )
 }
 
-// Controller convenience API
-fun MTMapViewController.setBearing(
-    bearing: Double,
-    durationMs: Double? = null,
-) {
-    val clamped = ((bearing % 360 + 360) % 360)
-    coroutineScope?.launch { bridge?.execute(RotateTo(clamped, durationMs)) }
+@Serializable
+private data class FlyToSurrogate(
+    val center: LngLat,
+    val zoom: Double?,
+    val bearing: Double?,
+    val pitch: Double?,
+    val curve: Double?,
+    val minZoom: Double?,
+    val speed: Double?,
+    val screenSpeed: Double?,
+    val maxDuration: Double?,
+)
+
+// NavigableWorker
+    override fun flyTo(
+        cameraOptions: MTCameraOptions,
+        flyToOptions: MTFlyToOptions?,
+    ) {
+        scope.launch {
+            bridge.execute(
+                FlyTo(cameraOptions, flyToOptions),
+            )
+        }
+    }
+
+// MTMapViewController
+/**
+     * Changes any combination of center, zoom, bearing, and pitch, animating the transition along a curve that evokes flight.
+     *
+     * @param cameraOptions Options for controlling the desired location, zoom, bearing, and pitch of the camera.
+     * @param flyToOptions Options describing the destination and animation of the transition.
+     */
+    override fun flyTo(
+        cameraOptions: MTCameraOptions,
+        flyToOptions: MTFlyToOptions?,
+    ) = navigableWorker.flyTo(cameraOptions, flyToOptions)
 }
 ```
 
@@ -163,9 +203,8 @@ override fun onDestroy() {
 ## ktlint Compliance (MANDATORY)
 - ALWAYS follow the rules enforced by the `org.jlleitschuh.gradle.ktlint` plugin.
 - Key rules: spacing, imports order, trailing newline, indentation, annotation/kdoc formatting, no wildcard imports.
-- Pre-commit: a Git hook runs `./gradlew ktlintCheck`. Ensure zero violations before committing.
+- Pre-commit: a Git hook runs `./gradlew ktlintCheck`. Ensure zero violations before committing by running ./gradlew ktlintFormat
 - CI/Local requirement: run `./gradlew ktlintCheck` and ensure zero warnings/errors. PRs must be lint-clean.
-- Formatting: the project disables `ktlintFormat` by default; fix violations manually or enable formatting locally if needed.
 
 ## Development Best Practices
 
@@ -257,11 +296,10 @@ MUST wait for `ON_READY` before mutating style or layers. Changing the reference
 
 ## Tests
 
-- Before you make the Pull Request ALWAYS run unit tests to validate the code and fix potential issues.
-- Commands:
+- Before you make the Pull Request ALWAYS run linter and unit tests to validate the code and fix potential issues.
+- Commands (MUST run):
+  - `./gradlew ktlintFormat`
   - `./gradlew ktlintCheck`
-  - `./gradlew :MapTilerSDK:test`
-  - Optional: `./gradlew :MapTilerSDK:dokkaHtml` to validate docs generation
 - Add or update unit tests as required (encoding, clamping, `toJS()` contract), but leave full execution to the user/CI.
 - Prefer small, focused tests near the code you change; avoid introducing unrelated tests.
 
