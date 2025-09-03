@@ -17,5 +17,5 @@ internal data class SetDataToSource(
 ) : MTCommand {
     override val isPrimitiveReturnType: Boolean = false
 
-    override fun toJS(): String = "${MTBridge.MAP_OBJECT}.getSource('${source.identifier}').setData('$data)');"
+    override fun toJS(): String = "${MTBridge.MAP_OBJECT}.getSource('${source.identifier}').setData('$data');"
 }

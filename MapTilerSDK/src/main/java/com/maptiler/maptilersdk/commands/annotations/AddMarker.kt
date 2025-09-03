@@ -72,15 +72,22 @@ internal data class AddMarker(
             iconData = "element: icon${marker.identifier}"
         }
 
+        val markerOptions =
+            buildString {
+                append("color: '$color'")
+                append(",\n                draggable: $draggable")
+                if (iconData.isNotBlank()) {
+                    append(",\n                $iconData")
+                }
+            }
+
         return """
             $popupAttachment
             
             $iconInit
             
             const ${marker.identifier} = new maptilersdk.Marker({
-                color: '$color',
-                draggable: $draggable,
-                $iconData
+                $markerOptions
             });
             
             $popupString

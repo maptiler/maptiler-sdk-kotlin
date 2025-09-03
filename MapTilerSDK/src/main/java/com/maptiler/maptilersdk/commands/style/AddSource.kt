@@ -29,28 +29,32 @@ internal data class AddSource(
         }
 
     private fun handleMTVectorTileSource(source: MTVectorTileSource): JSString {
-        var data: JSString = ""
+        val props = mutableListOf<String>()
+
+        // Use serialized enum value (lowercase, per style spec)
+        props += "type: '${source.type}'"
+        props += "minzoom: ${source.minZoom}"
+        props += "maxzoom: ${source.maxZoom}"
+        props += "scheme: '${source.scheme}'"
+        props += "bounds: ${source.bounds.contentToString()}"
 
         if (source.url != null) {
-            data = "url: '${source.url!!}'"
+            props += "url: '${source.url!!}'"
         } else if (source.tiles != null) {
-            data = "tiles: ${source.tiles!!}}"
+            val urls: List<String> = source.tiles!!.map { it.toString() }
+            val tilesString: JSString = JsonConfig.json.encodeToString(urls)
+            props += "tiles: $tilesString"
         }
 
-        var attributionString: JSString = ""
         if (source.attribution != null) {
-            attributionString = "attribution: '${source.attribution}'"
+            props += "attribution: '${source.attribution}'"
         }
+
+        val propsString = props.joinToString(",\n            ")
 
         return """
         ${MTBridge.MAP_OBJECT}.addSource('${source.identifier}', {
-            type: '${source.type}',
-            minzoom: ${source.minZoom},
-            maxzoom: ${source.maxZoom},
-            scheme: '${source.scheme}',
-            bounds: ${source.bounds.contentToString()},
-            $data,
-            $attributionString
+            $propsString
         });
         """
     }

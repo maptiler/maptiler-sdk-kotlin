@@ -68,7 +68,7 @@ enum class MTEvent {
     /**
      * Triggered when a user taps and releases twice at the same point on the map in rapid succession.
      */
-    @SerialName("doubleTapped")
+    @SerialName("dblclick")
     ON_DOUBLE_TAP,
 
     /**

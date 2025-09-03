@@ -23,7 +23,7 @@ import java.net.URL
  * The proxy object for the current map style.
  *
  * Set of convenience methods for style, sources and layers manipulation.
- * MTStyle is nil until map loading is complete.
+ * MTStyle is null until map loading is complete.
  */
 class MTStyle(
     reference: MTMapReferenceStyle,
@@ -150,10 +150,10 @@ class MTStyle(
      * Removes a layer from the map.
      *
      * @param layer Layer to be removed.
-     * @throws MTStyleError.LayerNotFound if source does not exist on the map.
+     * @throws MTStyleError.LayerNotFound if layer does not exist on the map.
      */
     fun removeLayer(layer: MTLayer) {
-        if (mapLayers.containsKey(layer.identifier)) {
+        if (!mapLayers.containsKey(layer.identifier)) {
             throw MTStyleError.LayerNotFound
         }
 

@@ -89,7 +89,13 @@ class MTMapViewController(
         }
 
     private fun onStyleUpdate() {
-        style?.initWorker(bridge!!, coroutineScope!!)
+        val br = bridge
+        val scope = coroutineScope
+        val currentStyle = style
+
+        if (br != null && scope != null && currentStyle != null) {
+            currentStyle.initWorker(br, scope)
+        }
     }
 
     /**
@@ -120,12 +126,14 @@ class MTMapViewController(
 
         val isSessionLogicEnabled = MTConfig.isSessionLogicEnabled
 
+        val currentStyle = style ?: return
+
         bridge!!.execute(
             InitializeMap(
                 apiKey,
                 options,
-                style!!.referenceStyle,
-                style!!.styleVariant,
+                currentStyle.referenceStyle,
+                currentStyle.styleVariant,
                 isSessionLogicEnabled,
             ),
         )
