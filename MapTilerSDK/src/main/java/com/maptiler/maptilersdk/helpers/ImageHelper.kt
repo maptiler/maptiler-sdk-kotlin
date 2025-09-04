@@ -10,29 +10,37 @@ import android.graphics.Bitmap
 import android.util.Base64
 import java.io.ByteArrayOutputStream
 
+internal data class EncodedImage(
+    val base64: String,
+    val mimeType: String,
+)
+
 internal object ImageHelper {
-    fun encodeImage(bm: Bitmap): String {
+    /**
+     * Encode the given bitmap to Base64 and return the payload together with the correct MIME type.
+     * - Uses PNG when the bitmap has alpha, otherwise JPEG.
+     * - Uses Base64.NO_WRAP to avoid CR/LF in the output, which is important for embedding inside JS strings.
+     */
+    fun encodeImageWithMime(bm: Bitmap): EncodedImage {
         val baos = ByteArrayOutputStream()
 
-        val compressFormat =
+        val (compressFormat, mime) =
             if (bm.hasAlpha()) {
-                Bitmap.CompressFormat.PNG
+                Bitmap.CompressFormat.PNG to "image/png"
             } else {
-                Bitmap.CompressFormat.JPEG
+                Bitmap.CompressFormat.JPEG to "image/jpeg"
             }
 
         bm.compress(compressFormat, 100, baos)
         val byteArray = baos.toByteArray()
 
-        val base64String = Base64.encodeToString(byteArray, Base64.DEFAULT)
-        val finalString =
-            base64String
-                .replace("\\", "\\\\'")
-                .replace("'", "\\'")
-                .replace("\"", "\\\"")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
-
-        return finalString
+        val base64 = Base64.encodeToString(byteArray, Base64.NO_WRAP)
+        return EncodedImage(base64 = base64, mimeType = mime)
     }
+
+    /**
+     * Deprecated: prefer [encodeImageWithMime]. Kept for tests/backward-compatibility.
+     */
+    @Deprecated("Use encodeImageWithMime for proper MIME handling")
+    fun encodeImage(bm: Bitmap): String = encodeImageWithMime(bm).base64
 }

@@ -10,6 +10,7 @@ import android.graphics.Bitmap
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
 import com.maptiler.maptilersdk.map.style.layer.MTLayerType
 import com.maptiler.maptilersdk.map.style.layer.MTLayerVisibility
+import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -28,6 +29,7 @@ class MTSymbolLayer : MTLayer {
     /**
      * Type of the layer.
      */
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
     override var type: MTLayerType = MTLayerType.SYMBOL
         private set
 
@@ -74,20 +76,23 @@ class MTSymbolLayer : MTLayer {
      * Enum controlling whether this layer is displayed.
      */
     var visibility: MTLayerVisibility
-        get() = MTLayerVisibility.from(_layout.visibility) ?: MTLayerVisibility.VISIBLE
+        get() = _layout?.let { MTLayerVisibility.from(it.visibility) } ?: _visibility
         set(value) {
-            _layout.visibility = value
+            _layout?.let { it.visibility = value } ?: run { _visibility = value }
         }
 
     private var iconName: String
         get() = "icon$identifier"
         set(value) {
-            _layout.iconImage = value
+            _layout?.iconImage = value
         }
 
     @Suppress("PropertyName")
     @SerialName("layout")
-    private var _layout: MTSymbolLayout = MTSymbolLayout()
+    private var _layout: MTSymbolLayout? = null
+
+    @Transient
+    private var _visibility: MTLayerVisibility = MTLayerVisibility.VISIBLE
 
     constructor(
         identifier: String,
@@ -95,6 +100,7 @@ class MTSymbolLayer : MTLayer {
     ) {
         this.identifier = identifier
         this.sourceIdentifier = sourceIdentifier
+        this._layout = null
     }
 
     constructor(
@@ -137,7 +143,7 @@ class MTSymbolLayer : MTLayer {
         this.minZoom = minZoom
         this.sourceLayer = sourceLayer
         this.icon = icon
-        this.visibility = visibility
+        this._visibility = visibility
         this._layout = MTSymbolLayout(iconName, visibility)
     }
 }

@@ -11,9 +11,9 @@ import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.DoubleValue
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.StringValue
 import com.maptiler.maptilersdk.commands.navigation.EaseTo
 import com.maptiler.maptilersdk.commands.navigation.FlyTo
+import com.maptiler.maptilersdk.commands.navigation.GetBearing
 import com.maptiler.maptilersdk.commands.navigation.GetCenter
 import com.maptiler.maptilersdk.commands.navigation.GetRoll
-import com.maptiler.maptilersdk.commands.navigation.GetZoom
 import com.maptiler.maptilersdk.commands.navigation.JumpTo
 import com.maptiler.maptilersdk.commands.navigation.PanBy
 import com.maptiler.maptilersdk.commands.navigation.PanTo
@@ -82,7 +82,7 @@ internal class NavigableWorker(
     override suspend fun getBearing(): Double {
         val returnTypeValue =
             bridge.execute(
-                GetZoom(),
+                GetBearing(),
             )
 
         return when (returnTypeValue) {

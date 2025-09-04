@@ -11,7 +11,7 @@ import kotlinx.serialization.json.Json
 object JsonConfig {
     val json =
         Json {
-            prettyPrint = true
+            prettyPrint = false
             encodeDefaults = true
             explicitNulls = false
         }

@@ -11,7 +11,7 @@ package com.maptiler.maptilersdk
  */
 enum class MTUnit {
     /**
-     * Imperical units.
+     * Imperial units.
      */
     IMPERIAL,
 

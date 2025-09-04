@@ -11,6 +11,7 @@ import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTCommand
 import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.map.LngLat
+import kotlinx.serialization.json.Json
 
 internal data class PanTo(
     val coordinates: LngLat,
@@ -18,7 +19,14 @@ internal data class PanTo(
     override val isPrimitiveReturnType: Boolean = false
 
     override fun toJS(): String {
-        val coordinatesString: JSString = JsonConfig.json.encodeToString(coordinates)
+        // Pretty-printed JSON to match expected JS contract in tests
+        val prettyJson =
+            Json {
+                prettyPrint = true
+                encodeDefaults = JsonConfig.json.configuration.encodeDefaults
+                explicitNulls = JsonConfig.json.configuration.explicitNulls
+            }
+        val coordinatesString: JSString = prettyJson.encodeToString(coordinates)
 
         return "${MTBridge.MAP_OBJECT}.panTo($coordinatesString);"
     }

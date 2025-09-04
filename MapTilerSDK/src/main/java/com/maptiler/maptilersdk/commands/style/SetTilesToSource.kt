@@ -6,8 +6,10 @@
 
 package com.maptiler.maptilersdk.commands.style
 
+import com.maptiler.maptilersdk.bridge.JSString
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTCommand
+import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.map.style.source.MTSource
 import java.net.URL
 
@@ -17,7 +19,12 @@ internal data class SetTilesToSource(
 ) : MTCommand {
     override val isPrimitiveReturnType: Boolean = false
 
-    override fun toJS(): String = "${MTBridge.MAP_OBJECT}.getSource('${source.identifier}').setTiles($tiles;"
+    override fun toJS(): String {
+        val urls: List<String> = tiles.map { it.toString() }
+        val tilesString: JSString = JsonConfig.json.encodeToString(urls)
+
+        return "${MTBridge.MAP_OBJECT}.getSource('${source.identifier}').setTiles($tilesString);"
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

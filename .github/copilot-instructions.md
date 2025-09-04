@@ -300,6 +300,7 @@ MUST wait for `ON_READY` before mutating style or layers. Changing the reference
 - Commands (MUST run):
   - `./gradlew ktlintFormat`
   - `./gradlew ktlintCheck`
+  - `./gradlew test`
 - Add or update unit tests as required (encoding, clamping, `toJS()` contract), but leave full execution to the user/CI.
 - Prefer small, focused tests near the code you change; avoid introducing unrelated tests.
 

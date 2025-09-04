@@ -64,13 +64,23 @@ internal data class AddMarker(
             }
 
         if (marker.icon != null) {
+            val encoded = ImageHelper.encodeImageWithMime(marker.icon!!)
             iconInit = """
             var icon${marker.identifier} = new Image();
-            icon${marker.identifier}.src = 'data:image/png;base64,${ImageHelper.encodeImage(marker.icon!!)}';
+            icon${marker.identifier}.src = 'data:${encoded.mimeType};base64,${encoded.base64}';
         """
 
             iconData = "element: icon${marker.identifier}"
         }
+
+        val markerOptions =
+            buildString {
+                append("color: '$color'")
+                append(",\n                draggable: $draggable")
+                if (iconData.isNotBlank()) {
+                    append(",\n                $iconData")
+                }
+            }
 
         return """
             $popupAttachment
@@ -78,9 +88,7 @@ internal data class AddMarker(
             $iconInit
             
             const ${marker.identifier} = new maptilersdk.Marker({
-                color: '$color',
-                draggable: $draggable,
-                $iconData
+                $markerOptions
             });
             
             $popupString

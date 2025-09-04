@@ -49,8 +49,8 @@ object MTConfig {
      * Boolean indicating whether telemetry is enabled.
      *
      * The telemetry is very valuable to the team at MapTiler because it shares information about
-     * where to add the extra effort. It also helps spotting some incompatibility issues that may
-     * arise between the SDK and a specific version of a module. It consist in sending the SDK version,
+     * where to add extra effort. It also helps spot some incompatibility issues that may
+     * arise between the SDK and a specific version of a module. It consists of sending the SDK version,
      * API Key, MapTiler session ID, if tile caching is enabled, if language specified at initialization,
      * if terrain is activated at initialization, if globe projection is activated at initialization.
      * Defaults to true.
