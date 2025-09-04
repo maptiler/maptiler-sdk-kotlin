@@ -54,3 +54,5 @@ reports
 AGENTS.md
 CLAUDE.md
 output.txt
+.gemini/
+gha-creds-*.json
