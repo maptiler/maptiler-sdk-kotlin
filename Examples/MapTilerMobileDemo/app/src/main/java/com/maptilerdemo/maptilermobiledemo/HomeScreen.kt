@@ -34,6 +34,7 @@ import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
 import com.maptiler.maptilersdk.map.style.MTStyleError
 import com.maptiler.maptilersdk.map.style.layer.MTLayerType
 import com.maptiler.maptilersdk.map.style.layer.fill.MTFillLayer
+import com.maptiler.maptilersdk.map.style.layer.line.MTLineLayer
 import com.maptiler.maptilersdk.map.style.layer.symbol.MTSymbolLayer
 import com.maptiler.maptilersdk.map.style.source.MTVectorTileSource
 import com.maptiler.maptilersdk.map.types.MTData
@@ -84,6 +85,15 @@ fun HomeScreen(
                         mapController.controller.style?.addLayer(layer)
                     } catch (error: MTStyleError) {
                         Log.e("MTStyleError", "Fill Layer already exists.")
+                    }
+                } else if (type == MTLayerType.LINE) {
+                    try {
+                        val layer = MTLineLayer("lineLayer", "openmapsource")
+                        layer.color = Color.BLUE
+                        layer.sourceLayer = "water"
+                        mapController.controller.style?.addLayer(layer)
+                    } catch (error: MTStyleError) {
+                        Log.e("MTStyleError", "Line Layer already exists.")
                     }
                 }
             },

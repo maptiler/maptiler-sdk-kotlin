@@ -64,9 +64,15 @@ fun LayerControl(
                     text = { Text("Symbol") },
                     onClick = { onSelect(MTLayerType.SYMBOL) },
                 )
+
                 DropdownMenuItem(
                     text = { Text("Fill") },
                     onClick = { onSelect(MTLayerType.FILL) },
+                )
+
+                DropdownMenuItem(
+                    text = { Text("Line") },
+                    onClick = { onSelect(MTLayerType.LINE) },
                 )
             }
         }
