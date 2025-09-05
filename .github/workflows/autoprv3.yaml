@@ -1,4 +1,4 @@
-name: Automated PR
+name: Automated PR v3
 
 on:
   workflow_dispatch:
@@ -50,6 +50,13 @@ jobs:
       - name: Symlink agents
         run: ln -s .github/copilot-instructions.md AGENTS.md
 
+      - name: Load agent directives
+        id: agent_directives
+        run: |
+          echo "directives<<EOF" >> "$GITHUB_OUTPUT"
+          cat .github/copilot-instructions.md >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
         # Generate JS docs
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -74,93 +81,93 @@ jobs:
           echo "DESC=$DESC_CLEANED"                                    >> $GITHUB_ENV
           echo "BRANCH=${{ github.event.inputs.issue_key }}"           >> $GITHUB_ENV
 
-      # Set up LLM Agent
 
-      - name: Install Codex (npm)
-        run: npm i -g @openai/codex
+    # Run the LLM Agent and commit the output
 
-      # Run the LLM Agent and commit the output
-
-      - name: 'Run Gemini CLI'
-        id: 'run_gemini'
-        uses: 'google-github-actions/run-gemini-cli@v0' # ratchet:exclude
-        env:
-          GITHUB_TOKEN: '${{ steps.mint_identity_token.outputs.token || secrets.GITHUB_TOKEN || github.token }}'
-          IS_PULL_REQUEST: '${{ !!github.event.pull_request }}'
-          REPOSITORY: '${{ github.repository }}'
-          ADDITIONAL_CONTEXT: '${{ inputs.additional_context }}'
-          AGENT_DIRECTIVES: '${{ steps.agent_directives.outputs.directives }}'
-        with:
-          gemini_api_key: '${{ secrets.GEMINI_API_KEY }}'
-          gcp_workload_identity_provider: '${{ vars.GCP_WIF_PROVIDER }}'
-          gcp_project_id: '${{ vars.GOOGLE_CLOUD_PROJECT }}'
-          gcp_location: '${{ vars.GOOGLE_CLOUD_LOCATION }}'
-          gcp_service_account: '${{ vars.SERVICE_ACCOUNT_EMAIL }}'
-          use_vertex_ai: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI }}'
-          google_api_key: '${{ secrets.GOOGLE_API_KEY }}'
-          use_gemini_code_assist: '${{ vars.GOOGLE_GENAI_USE_GCA }}'
-          gemini_debug: '${{ fromJSON(vars.DEBUG || vars.ACTIONS_STEP_DEBUG || false) }}'
-          gemini_model: '${{ vars.GEMINI_MODEL }}'
-          settings: |-
-            {
-              "maxSessionTurns": 25,
-              "telemetry": {
-                "enabled": ${{ vars.GOOGLE_CLOUD_PROJECT != '' }},
-                "target": "gcp"
-              },
-              "mcpServers": {
-                "github": {
-                  "command": "docker",
-                  "args": [
-                    "run",
-                    "-i",
-                    "--rm",
-                    "-e",
-                    "GITHUB_PERSONAL_ACCESS_TOKEN",
-                    "ghcr.io/github/github-mcp-server"
-                  ],
-                  "includeTools": [
-                    "add_issue_comment",
-                    "get_issue",
-                    "get_issue_comments",
-                    "list_issues",
-                    "search_issues",
-                    "create_pull_request",
-                    "get_pull_request",
-                    "get_pull_request_comments",
-                    "get_pull_request_diff",
-                    "get_pull_request_files",
-                    "list_pull_requests",
-                    "search_pull_requests",
-                    "create_branch",
-                    "create_or_update_file",
-                    "delete_file",
-                    "fork_repository",
-                    "get_commit",
-                    "get_file_contents",
-                    "list_commits",
-                    "push_files",
-                    "search_code"
-                  ],
-                  "env": {
-                    "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
-                  }
+    - name: 'Run Gemini CLI'
+      id: 'run_gemini'
+      uses: 'google-github-actions/run-gemini-cli@v0' # ratchet:exclude
+      env:
+        GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN || github.token }}'
+        IS_PULL_REQUEST: '${{ !!github.event.pull_request }}'
+        REPOSITORY: '${{ github.repository }}'
+        AGENT_DIRECTIVES: '${{ steps.agent_directives.outputs.directives }}'
+      with:
+        gemini_api_key: '${{ secrets.GEMINI_API_KEY }}'
+        gcp_workload_identity_provider: '${{ vars.GCP_WIF_PROVIDER }}'
+        gcp_project_id: '${{ vars.GOOGLE_CLOUD_PROJECT }}'
+        gcp_location: '${{ vars.GOOGLE_CLOUD_LOCATION }}'
+        gcp_service_account: '${{ vars.SERVICE_ACCOUNT_EMAIL }}'
+        use_vertex_ai: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI }}'
+        google_api_key: '${{ secrets.GOOGLE_API_KEY }}'
+        use_gemini_code_assist: '${{ vars.GOOGLE_GENAI_USE_GCA }}'
+        gemini_debug: '${{ fromJSON(vars.DEBUG || vars.ACTIONS_STEP_DEBUG || false) }}'
+        gemini_model: '${{ vars.GEMINI_MODEL }}'
+        settings: |-
+          {
+            "maxSessionTurns": 50,
+            "telemetry": {
+              "enabled": ${{ vars.GOOGLE_CLOUD_PROJECT != '' }},
+              "target": "gcp"
+            },
+            "mcpServers": {
+              "github": {
+                "command": "docker",
+                "args": [
+                  "run",
+                  "-i",
+                  "--rm",
+                  "-e",
+                  "GITHUB_PERSONAL_ACCESS_TOKEN",
+                  "ghcr.io/github/github-mcp-server"
+                ],
+                "includeTools": [
+                  "add_issue_comment",
+                  "get_issue",
+                  "get_issue_comments",
+                  "list_issues",
+                  "search_issues",
+                  "create_pull_request",
+                  "get_pull_request",
+                  "get_pull_request_comments",
+                  "get_pull_request_diff",
+                  "get_pull_request_files",
+                  "list_pull_requests",
+                  "search_pull_requests",
+                  "create_branch",
+                  "create_or_update_file",
+                  "delete_file",
+                  "fork_repository",
+                  "get_commit",
+                  "get_file_contents",
+                  "list_commits",
+                  "push_files",
+                  "search_code"
+                ],
+                "env": {
+                  "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
                 }
-              },
-              "coreTools": [
-                "run_shell_command(cat)",
-                "run_shell_command(echo)",
-                "run_shell_command(grep)",
-                "run_shell_command(head)",
-                "run_shell_command(tail)"
-              ]            }
-          prompt: |-
-            ${{ env.AGENT_DIRECTIVES }} 
-            Implement ticket ${{ env.ISSUE_KEY }}: ${{ env.TITLE }}. ${{ env.DESC }}
-      - name: Agent commit
-        run: |
-          git add -A
-          git commit -m "$ISSUE_KEY: $TITLE"
+              }
+            },
+            "coreTools": [
+              "read_file",
+              "write_file",
+              "replace",
+              "list_directory",
+              "glob",
+              "search_file_content",
+              "run_shell_command(cat)",
+              "run_shell_command(echo)",
+              "run_shell_command(grep)",
+              "run_shell_command(head)",
+              "run_shell_command(tail)"
+            ]            }
+        prompt: |-
+          Implement ticket ${{ env.ISSUE_KEY }}: ${{ env.TITLE }}. ${{ env.DESC }}
+    - name: Agent commit
+      run: |
+        git add -A
+        git commit -m "$ISSUE_KEY: $TITLE"
 
       # Prepare and push Pull Request
 

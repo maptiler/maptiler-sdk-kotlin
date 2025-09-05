@@ -37,40 +37,14 @@ jobs:
           permission-contents: 'read'
           permission-issues: 'write'
           permission-pull-requests: 'write'
+      - name: 'Checkout repository'
+        uses: 'actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8' # ratchet:actions/checkout@v5
 
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          submodules: recursive
-
-      # Symlink agents file to the root
-
-      - name: Symlink agents
-        run: ln -s .github/copilot-instructions.md AGENTS.md
-
-      # Generate JS docs
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install JS deps
-        working-directory: js
-        run: npm ci
-
-      - name: Build JS docs
-        working-directory: js
-        run: npm run doc
-
-      - name: 'Read agent directives'
-        id: 'agent_directives'
-        run: |-
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "directives<<$EOF" >> "${GITHUB_OUTPUT}"
-          cat .github/copilot-instructions.md >> "${GITHUB_OUTPUT}"
-          echo "$EOF" >> "${GITHUB_OUTPUT}"
-
+      - name: 'Get PR number'
+        id: 'get_pr_number'
+        if: github.event.issue.pull_request
+        run: |
+          echo "PULL_REQUEST_NUMBER=$(jq --raw-output .issue.number "$GITHUB_EVENT_PATH")" >> "$GITHUB_OUTPUT"
       - name: 'Run Gemini pull request review'
         uses: 'google-github-actions/run-gemini-cli@v0' # ratchet:exclude
         id: 'gemini_pr_review'
@@ -78,10 +52,9 @@ jobs:
           GITHUB_TOKEN: '${{ steps.mint_identity_token.outputs.token || secrets.GITHUB_TOKEN || github.token }}'
           ISSUE_TITLE: '${{ github.event.pull_request.title || github.event.issue.title }}'
           ISSUE_BODY: '${{ github.event.pull_request.body || github.event.issue.body }}'
-          PULL_REQUEST_NUMBER: '${{ github.event.pull_request.number || github.event.issue.number }}'
+          PULL_REQUEST_NUMBER: '${{ steps.get_pr_number.outputs.PULL_REQUEST_NUMBER || github.event.pull_request.number || github.event.issue.number }}'
           REPOSITORY: '${{ github.repository }}'
           ADDITIONAL_CONTEXT: '${{ inputs.additional_context }}'
-          AGENT_DIRECTIVES: '${{ steps.agent_directives.outputs.directives }}'
         with:
           gemini_cli_version: '${{ vars.GEMINI_CLI_VERSION }}'
           gcp_workload_identity_provider: '${{ vars.GCP_WIF_PROVIDER }}'
@@ -95,7 +68,7 @@ jobs:
           gemini_debug: '${{ fromJSON(vars.DEBUG || vars.ACTIONS_STEP_DEBUG || false) }}'
           settings: |-
             {
-              "maxSessionTurns": 25,
+              "maxSessionTurns": 50,
               "telemetry": {
                 "enabled": ${{ vars.GOOGLE_CLOUD_PROJECT != '' }},
                 "target": "gcp"
@@ -133,8 +106,6 @@ jobs:
               ]
             }
           prompt: |-
-            ${{ env.AGENT_DIRECTIVES }}
-
             ## Role
 
             You are a world-class autonomous code review agent. You operate within a secure GitHub Actions environment. Your analysis is precise, your feedback is constructive, and your adherence to instructions is absolute. You do not deviate from your programming. You are tasked with reviewing a GitHub Pull Request.
