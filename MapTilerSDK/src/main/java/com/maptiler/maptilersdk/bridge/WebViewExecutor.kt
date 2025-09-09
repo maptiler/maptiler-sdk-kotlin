@@ -7,6 +7,7 @@
 package com.maptiler.maptilersdk.bridge
 
 import android.content.Context
+import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
@@ -52,6 +53,8 @@ internal class WebViewExecutor(
     }
 
     private var _webView: WebView? = null
+    private var hasLoadedContent: Boolean = false
+    private var jsInterfaceAdded: Boolean = false
     internal val webView: WebView
         get() {
             if (_webView == null) {
@@ -69,6 +72,8 @@ internal class WebViewExecutor(
                 WebView(context).apply {
                     settings.javaScriptEnabled = true
                     settings.allowFileAccess = true
+                    settings.allowFileAccessFromFileURLs = true
+                    settings.allowUniversalAccessFromFileURLs = true
                     settings.domStorageEnabled = true
                     settings.cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
                     settings.useWideViewPort = true
@@ -93,13 +98,55 @@ internal class WebViewExecutor(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                         )
 
-                    loadUrl("file:///android_asset/${Constants.JSResources.MAPTILER_MAP}.${Constants.JSResources.HTML_EXTENSION}")
+                    // Defer loading until JS interface is attached and the view is attached.
+                    // This prevents early page load causing "Android is not defined" on some devices.
+                    if (isAttachedToWindow) {
+                        ensureContentLoadedIfReady(this)
+                    } else {
+                        addOnAttachStateChangeListener(
+                            object : View.OnAttachStateChangeListener {
+                                override fun onViewAttachedToWindow(v: View) {
+                                    ensureContentLoadedIfReady(this@apply)
+                                    removeOnAttachStateChangeListener(this)
+                                }
+
+                                override fun onViewDetachedFromWindow(v: View) = Unit
+                            },
+                        )
+                    }
                 }
         }
     }
 
     internal fun setWebView(webView: WebView) {
         this._webView = webView
+        // Ensure our clients are attached so navigation callbacks work consistently.
+        webView.webChromeClient = WebChromeClient()
+        webView.webViewClient =
+            object : WebViewClient() {
+                override fun onPageFinished(
+                    view: WebView?,
+                    url: String?,
+                ) {
+                    url?.let { delegate?.onNavigationFinished(it) }
+                }
+            }
+
+        // If provided WebView is already attached, try loading if ready.
+        if (webView.isAttachedToWindow) {
+            ensureContentLoadedIfReady(webView)
+        } else {
+            webView.addOnAttachStateChangeListener(
+                object : View.OnAttachStateChangeListener {
+                    override fun onViewAttachedToWindow(v: View) {
+                        ensureContentLoadedIfReady(webView)
+                        webView.removeOnAttachStateChangeListener(this)
+                    }
+
+                    override fun onViewDetachedFromWindow(v: View) = Unit
+                },
+            )
+        }
     }
 
     internal fun getAttachableWebView(): WebView? = webView
@@ -151,9 +198,21 @@ internal class WebViewExecutor(
 
     internal fun addJSInterface(jsInterface: MTJavaScriptInterface) {
         webView.addJavascriptInterface(jsInterface, "Android")
+        jsInterfaceAdded = true
+        // Attempt to load content now that the interface is ready.
+        ensureContentLoadedIfReady(webView)
     }
 
     internal fun reload() {
         webView.reload()
+    }
+
+    private fun ensureContentLoadedIfReady(webView: WebView) {
+        if (!hasLoadedContent && jsInterfaceAdded && webView.isAttachedToWindow) {
+            hasLoadedContent = true
+            webView.loadUrl(
+                "file:///android_asset/${Constants.JSResources.MAPTILER_MAP}.${Constants.JSResources.HTML_EXTENSION}",
+            )
+        }
     }
 }
