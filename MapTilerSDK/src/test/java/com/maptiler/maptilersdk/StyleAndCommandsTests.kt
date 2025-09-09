@@ -75,7 +75,10 @@ class StyleAndCommandsTests {
 
     @Test fun addLayer_Symbol_NoIcon_AddsLayerDirectly() {
         val layer = MTSymbolLayer("sym1", "src1")
-        val js = com.maptiler.maptilersdk.commands.style.AddLayer(layer).toJS()
+        val js =
+            com.maptiler.maptilersdk.commands.style
+                .AddLayer(layer)
+                .toJS()
         assertEquals("${MTBridge.MAP_OBJECT}.addLayer({\"id\":\"sym1\",\"type\":\"symbol\",\"source\":\"src1\"});", js)
     }
 
@@ -89,7 +92,10 @@ class StyleAndCommandsTests {
         every { ImageHelper.encodeImageWithMime(any()) } returns EncodedImage("AAA", "image/png")
 
         val layer = MTSymbolLayer("sym2", "src2", bmp)
-        val js = com.maptiler.maptilersdk.commands.style.AddLayer(layer).toJS()
+        val js =
+            com.maptiler.maptilersdk.commands.style
+                .AddLayer(layer)
+                .toJS()
 
         // Check presence of image add and addLayer call and data URL with correct mime
         assertTrue(js.contains("addImage('iconsym2'"))
