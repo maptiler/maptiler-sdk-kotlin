@@ -16,6 +16,8 @@ import com.maptiler.maptilersdk.commands.annotations.RemoveMarker
 import com.maptiler.maptilersdk.commands.annotations.RemoveTextPopup
 import com.maptiler.maptilersdk.commands.style.AddLayer
 import com.maptiler.maptilersdk.commands.style.AddSource
+import com.maptiler.maptilersdk.commands.style.EnableGlobeProjection
+import com.maptiler.maptilersdk.commands.style.EnableMercatorProjection
 import com.maptiler.maptilersdk.commands.style.IsSourceLoaded
 import com.maptiler.maptilersdk.commands.style.RemoveLayer
 import com.maptiler.maptilersdk.commands.style.RemoveSource
@@ -125,6 +127,22 @@ internal class StylableWorker(
         scope.launch {
             bridge.execute(
                 SetDataToSource(data, source),
+            )
+        }
+    }
+
+    fun enableGlobeProjection() {
+        scope.launch {
+            bridge.execute(
+                EnableGlobeProjection(),
+            )
+        }
+    }
+
+    fun enableMercatorProjection() {
+        scope.launch {
+            bridge.execute(
+                EnableMercatorProjection(),
             )
         }
     }

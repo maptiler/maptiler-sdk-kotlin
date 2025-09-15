@@ -9,6 +9,8 @@ package com.maptiler.maptilersdk
 import android.graphics.Bitmap
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.commands.style.AddSource
+import com.maptiler.maptilersdk.commands.style.EnableGlobeProjection
+import com.maptiler.maptilersdk.commands.style.EnableMercatorProjection
 import com.maptiler.maptilersdk.commands.style.SetDataToSource
 import com.maptiler.maptilersdk.commands.style.SetTilesToSource
 import com.maptiler.maptilersdk.helpers.EncodedImage
@@ -101,5 +103,15 @@ class StyleAndCommandsTests {
         assertTrue(js.contains("addImage('iconsym2'"))
         assertTrue(js.contains("data:image/png;base64,AAA"))
         assertTrue(js.contains("${MTBridge.MAP_OBJECT}.addLayer({"))
+    }
+
+    @Test fun enableGlobeProjectionToJS_ReturnsValidJSString() {
+        val js = EnableGlobeProjection().toJS()
+        assertEquals("${MTBridge.MAP_OBJECT}.enableGlobeProjection();", js)
+    }
+
+    @Test fun enableMercatorProjectionToJS_ReturnsValidJSString() {
+        val js = EnableMercatorProjection().toJS()
+        assertEquals("${MTBridge.MAP_OBJECT}.enableMercatorProjection();", js)
     }
 }
