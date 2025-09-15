@@ -8,22 +8,33 @@ package com.maptilerdemo.maptilermobiledemo
 
 import android.content.Context
 import android.graphics.BitmapFactory
-import android.graphics.Color
+import android.location.Location
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.maptiler.maptilersdk.MTConfig
 import com.maptiler.maptilersdk.annotations.MTMarker
 import com.maptiler.maptilersdk.annotations.MTTextPopup
 import com.maptiler.maptilersdk.events.MTEvent
+import com.maptiler.maptilersdk.location.MTLocationError
+import com.maptiler.maptilersdk.location.MTLocationManager
+import com.maptiler.maptilersdk.location.MTLocationManagerDelegate
 import com.maptiler.maptilersdk.map.LngLat
 import com.maptiler.maptilersdk.map.MTMapOptions
 import com.maptiler.maptilersdk.map.MTMapView
@@ -47,6 +58,54 @@ fun HomeScreen(
     context: Context,
 ) {
     val mapController = MapController(context)
+    val locationManager = remember(context) { MTLocationManager(context) }
+    val userMarker: MutableState<MTMarker?> = remember { mutableStateOf(null) }
+
+    val permissionLauncher =
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions(),
+        ) { grants ->
+            val granted =
+                (grants[android.Manifest.permission.ACCESS_FINE_LOCATION] == true) ||
+                    (grants[android.Manifest.permission.ACCESS_COARSE_LOCATION] == true)
+            if (granted) {
+                locationManager.startLocationUpdates()
+            } else {
+                Log.w("Demo App", "Location permission denied by user")
+            }
+        }
+
+    DisposableEffect(Unit) {
+        // Wire delegate; stop on dispose
+        locationManager.delegate =
+            object : MTLocationManagerDelegate {
+                override fun didUpdateLocation(location: Location) {
+                    val lngLat = LngLat(location.longitude, location.latitude)
+                    val marker = userMarker.value
+                    if (marker == null) {
+                        val newMarker = MTMarker(lngLat, Color.Blue.toArgb())
+                        userMarker.value = newMarker
+                        mapController.controller.style?.addMarker(newMarker)
+
+                        mapController.controller.easeTo(MTCameraOptions((lngLat)))
+                    } else {
+                        marker.setCoordinates(lngLat, mapController.controller)
+                    }
+                }
+
+                override fun didFailWithError(error: Throwable) {
+                    if (error is MTLocationError) {
+                        Log.e("Demo App", "Location error: ${error.message}")
+                    } else {
+                        Log.e("Demo App", "Location error: $error")
+                    }
+                }
+            }
+        onDispose {
+            locationManager.stopLocationUpdates()
+            locationManager.delegate = null
+        }
+    }
 
     val options = MTMapOptions()
     options.setMapTilerLogoIsVisible(true)
@@ -79,8 +138,8 @@ fun HomeScreen(
                 } else if (type == MTLayerType.FILL) {
                     try {
                         val layer = MTFillLayer("fillLayer", "openmapsource")
-                        layer.color = Color.BLUE
-                        layer.outlineColor = Color.CYAN
+                        layer.color = Color.Blue.toArgb()
+                        layer.outlineColor = Color.Cyan.toArgb()
                         layer.sourceLayer = "aeroway"
                         mapController.controller.style?.addLayer(layer)
                     } catch (error: MTStyleError) {
@@ -89,7 +148,7 @@ fun HomeScreen(
                 } else if (type == MTLayerType.LINE) {
                     try {
                         val layer = MTLineLayer("lineLayer", "openmapsource")
-                        layer.color = Color.BLUE
+                        layer.color = Color.Blue.toArgb()
                         layer.sourceLayer = "water"
                         mapController.controller.style?.addLayer(layer)
                     } catch (error: MTStyleError) {
@@ -123,6 +182,24 @@ fun HomeScreen(
             ZoomControl(
                 onZoomIn = { mapController.controller.zoomIn() },
                 onZoomOut = { mapController.controller.zoomOut() },
+                modifier =
+                    Modifier
+                        .padding(10.dp),
+            )
+
+            LocationControl(
+                onLocate = {
+                    if (locationManager.hasLocationPermission()) {
+                        locationManager.startLocationUpdates()
+                    } else {
+                        permissionLauncher.launch(
+                            arrayOf(
+                                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                            ),
+                        )
+                    }
+                },
                 modifier =
                     Modifier
                         .padding(10.dp),
