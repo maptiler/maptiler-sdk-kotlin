@@ -212,6 +212,16 @@ class MTStyle(
         data: URL,
         source: MTSource,
     ) = stylableWorker.setDataToSource(data, source)
+
+    /**
+     * Enables the globe projection visualization.
+     */
+    fun enableGlobeProjection() = stylableWorker.enableGlobeProjection()
+
+    /**
+     * Enables the mercator projection visualization.
+     */
+    fun enableMercatorProjection() = stylableWorker.enableMercatorProjection()
 }
 
 internal class StyleTask(
