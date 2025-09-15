@@ -327,6 +327,11 @@ class MTMapViewController(
     override suspend fun getCenter(): LngLat = navigableWorker.getCenter()
 
     /**
+     * Project coordinates to point on the container.
+     */
+    override suspend fun project(coordinates: LngLat): com.maptiler.maptilersdk.map.types.MTPoint = navigableWorker.project(coordinates)
+
+    /**
      * Sets the geographical center of the map.
      *
      *@param center Geographical center of the map.

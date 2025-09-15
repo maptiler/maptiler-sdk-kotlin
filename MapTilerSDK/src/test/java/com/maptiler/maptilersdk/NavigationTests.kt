@@ -10,6 +10,7 @@ import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.commands.navigation.GetZoom
 import com.maptiler.maptilersdk.commands.navigation.PanBy
 import com.maptiler.maptilersdk.commands.navigation.PanTo
+import com.maptiler.maptilersdk.commands.navigation.Project
 import com.maptiler.maptilersdk.commands.navigation.SetMaxZoom
 import com.maptiler.maptilersdk.commands.navigation.SetMinZoom
 import com.maptiler.maptilersdk.commands.navigation.SetZoom
@@ -73,5 +74,10 @@ class NavigationTests {
                 "});",
             command.toJS(),
         )
+    }
+
+    @Test fun projectToJS_ReturnsCorrectJSString() {
+        val cmd = Project(LngLat(14.42, 50.09))
+        assertEquals("${MTBridge.MAP_OBJECT}.project([14.42, 50.09]);", cmd.toJS())
     }
 }

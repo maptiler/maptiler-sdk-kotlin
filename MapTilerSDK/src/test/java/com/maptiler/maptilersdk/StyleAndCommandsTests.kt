@@ -9,8 +9,11 @@ package com.maptiler.maptilersdk
 import android.graphics.Bitmap
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.commands.style.AddSource
+import com.maptiler.maptilersdk.commands.style.DisableTerrain
 import com.maptiler.maptilersdk.commands.style.EnableGlobeProjection
 import com.maptiler.maptilersdk.commands.style.EnableMercatorProjection
+import com.maptiler.maptilersdk.commands.style.EnableTerrain
+import com.maptiler.maptilersdk.commands.style.GetProjection
 import com.maptiler.maptilersdk.commands.style.SetDataToSource
 import com.maptiler.maptilersdk.commands.style.SetTilesToSource
 import com.maptiler.maptilersdk.helpers.EncodedImage
@@ -113,5 +116,25 @@ class StyleAndCommandsTests {
     @Test fun enableMercatorProjectionToJS_ReturnsValidJSString() {
         val js = EnableMercatorProjection().toJS()
         assertEquals("${MTBridge.MAP_OBJECT}.enableMercatorProjection();", js)
+    }
+
+    @Test fun enableTerrainWithoutExaggerationToJS_ReturnsValidJSString() {
+        val js = EnableTerrain().toJS()
+        assertEquals("${MTBridge.MAP_OBJECT}.enableTerrain();", js)
+    }
+
+    @Test fun enableTerrainWithExaggerationToJS_ReturnsValidJSString() {
+        val js = EnableTerrain(1.5).toJS()
+        assertEquals("${MTBridge.MAP_OBJECT}.enableTerrain(1.5);", js)
+    }
+
+    @Test fun disableTerrainToJS_ReturnsValidJSString() {
+        val js = DisableTerrain().toJS()
+        assertEquals("${MTBridge.MAP_OBJECT}.disableTerrain();", js)
+    }
+
+    @Test fun getProjectionToJS_ReturnsValidJSString() {
+        val js = GetProjection().toJS()
+        assertEquals("(${MTBridge.MAP_OBJECT}.getProjection() || {}).type;", js)
     }
 }

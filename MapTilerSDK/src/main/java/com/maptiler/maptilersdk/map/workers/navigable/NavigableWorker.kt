@@ -17,6 +17,7 @@ import com.maptiler.maptilersdk.commands.navigation.GetRoll
 import com.maptiler.maptilersdk.commands.navigation.JumpTo
 import com.maptiler.maptilersdk.commands.navigation.PanBy
 import com.maptiler.maptilersdk.commands.navigation.PanTo
+import com.maptiler.maptilersdk.commands.navigation.Project
 import com.maptiler.maptilersdk.commands.navigation.SetBearing
 import com.maptiler.maptilersdk.commands.navigation.SetCenter
 import com.maptiler.maptilersdk.commands.navigation.SetCenterClampedToGround
@@ -31,6 +32,7 @@ import com.maptiler.maptilersdk.map.options.MTPaddingOptions
 import com.maptiler.maptilersdk.map.types.MTPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
 
 internal class NavigableWorker(
     private val bridge: MTBridge,
@@ -130,6 +132,18 @@ internal class NavigableWorker(
         return when (returnTypeValue) {
             is StringValue -> JsonConfig.json.decodeFromString<LngLat>(returnTypeValue.value)
             else -> LngLat(0.0, 0.0)
+        }
+    }
+
+    override suspend fun project(coordinates: LngLat): MTPoint {
+        val returnTypeValue =
+            bridge.execute(
+                Project(coordinates),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> JsonConfig.json.decodeFromString<MTPoint>(returnTypeValue.value)
+            else -> MTPoint(0.0, 0.0)
         }
     }
 
