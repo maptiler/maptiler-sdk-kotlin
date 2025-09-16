@@ -204,6 +204,18 @@ fun HomeScreen(
                     Modifier
                         .padding(10.dp),
             )
+
+            TerrainGlobeControl(
+                onTerrain = {
+                    mapController.controller.style?.enableTerrain()
+                },
+                onGlobe = {
+                    mapController.controller.style?.enableGlobeProjection()
+                },
+                modifier =
+                    Modifier
+                        .padding(10.dp),
+            )
         }
 
         NavigationControl(
