@@ -12,6 +12,7 @@ import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTError
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
 import com.maptiler.maptilersdk.map.style.source.MTSource
+import com.maptiler.maptilersdk.map.types.MTProjectionType
 import com.maptiler.maptilersdk.map.workers.stylable.MTStylable
 import com.maptiler.maptilersdk.map.workers.stylable.StylableWorker
 import kotlinx.coroutines.CoroutineScope
@@ -222,6 +223,23 @@ class MTStyle(
      * Enables the mercator projection visualization.
      */
     fun enableMercatorProjection() = stylableWorker.enableMercatorProjection()
+
+    /**
+     * Enables the 3D terrain visualization.
+     *
+     * @param exaggerationFactor Optional exaggeration factor to apply when enabling terrain.
+     */
+    fun enableTerrain(exaggerationFactor: Double? = null) = stylableWorker.enableTerrain(exaggerationFactor)
+
+    /**
+     * Disables the 3D terrain visualization.
+     */
+    fun disableTerrain() = stylableWorker.disableTerrain()
+
+    /**
+     * Gets the current projection type if set.
+     */
+    suspend fun getProjection(): MTProjectionType? = stylableWorker.getProjection()
 }
 
 internal class StyleTask(

@@ -16,8 +16,11 @@ import com.maptiler.maptilersdk.commands.annotations.RemoveMarker
 import com.maptiler.maptilersdk.commands.annotations.RemoveTextPopup
 import com.maptiler.maptilersdk.commands.style.AddLayer
 import com.maptiler.maptilersdk.commands.style.AddSource
+import com.maptiler.maptilersdk.commands.style.DisableTerrain
 import com.maptiler.maptilersdk.commands.style.EnableGlobeProjection
 import com.maptiler.maptilersdk.commands.style.EnableMercatorProjection
+import com.maptiler.maptilersdk.commands.style.EnableTerrain
+import com.maptiler.maptilersdk.commands.style.GetProjection
 import com.maptiler.maptilersdk.commands.style.IsSourceLoaded
 import com.maptiler.maptilersdk.commands.style.RemoveLayer
 import com.maptiler.maptilersdk.commands.style.RemoveSource
@@ -26,6 +29,7 @@ import com.maptiler.maptilersdk.commands.style.SetTilesToSource
 import com.maptiler.maptilersdk.commands.style.SetUrlToSource
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
 import com.maptiler.maptilersdk.map.style.source.MTSource
+import com.maptiler.maptilersdk.map.types.MTProjectionType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.net.URL
@@ -144,6 +148,37 @@ internal class StylableWorker(
             bridge.execute(
                 EnableMercatorProjection(),
             )
+        }
+    }
+
+    fun enableTerrain(exaggerationFactor: Double? = null) {
+        scope.launch {
+            bridge.execute(
+                EnableTerrain(exaggerationFactor),
+            )
+        }
+    }
+
+    fun disableTerrain() {
+        scope.launch {
+            bridge.execute(
+                DisableTerrain(),
+            )
+        }
+    }
+
+    suspend fun getProjection(): MTProjectionType? {
+        val returnTypeValue = bridge.execute(GetProjection())
+
+        return when (returnTypeValue) {
+            is MTBridgeReturnType.StringValue ->
+                when (returnTypeValue.value.trim('"')) { // Android webview returns quoted strings
+                    "mercator" -> MTProjectionType.MERCATOR
+                    "globe" -> MTProjectionType.GLOBE
+                    else -> null
+                }
+            is MTBridgeReturnType.Null, MTBridgeReturnType.UnsupportedType -> null
+            else -> null
         }
     }
 
