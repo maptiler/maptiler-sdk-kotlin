@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.maptiler.maptilersdk.MTConfig
+import com.maptiler.maptilersdk.annotations.MTCustomAnnotationView
 import com.maptiler.maptilersdk.annotations.MTMarker
 import com.maptiler.maptilersdk.annotations.MTTextPopup
 import com.maptiler.maptilersdk.events.MTEvent
@@ -119,6 +120,26 @@ fun HomeScreen(
                 Modifier
                     .fillMaxSize(),
         )
+
+        MTCustomAnnotationView(mapController.controller, LngLat(16.626576, 49.212596)) {
+            LocationControl(
+                onLocate = {
+                    if (locationManager.hasLocationPermission()) {
+                        locationManager.startLocationUpdates()
+                    } else {
+                        permissionLauncher.launch(
+                            arrayOf(
+                                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                            ),
+                        )
+                    }
+                },
+                modifier =
+                    Modifier
+                        .padding(10.dp),
+            )
+        }
 
         LayerControl(
             onSelect = { type: MTLayerType ->
