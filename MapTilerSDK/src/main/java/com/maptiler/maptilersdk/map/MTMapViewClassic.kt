@@ -20,6 +20,11 @@ import com.maptiler.maptilersdk.map.style.MTStyle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
+/**
+ * Object representing the map on the screen. Used with XML.
+ *
+ * For Compose use [MTMapView].
+ */
 class MTMapViewClassic(
     context: Context,
     attrs: AttributeSet,
