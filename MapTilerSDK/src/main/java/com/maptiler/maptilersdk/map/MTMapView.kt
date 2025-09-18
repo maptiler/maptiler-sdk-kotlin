@@ -13,6 +13,8 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.viewinterop.AndroidView
 import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
 import com.maptiler.maptilersdk.map.style.MTMapStyleVariant
@@ -50,7 +52,17 @@ fun MTMapView(
     key(webView) {
         AndroidView(
             factory = { webView },
-            modifier = modifier,
+            modifier =
+                modifier.onGloballyPositioned { coords ->
+                    val pos = coords.positionInParent()
+                    val size = coords.size
+                    controller.updateMapContainerLayout(
+                        originX = pos.x.toInt(),
+                        originY = pos.y.toInt(),
+                        width = size.width,
+                        height = size.height,
+                    )
+                },
         )
     }
 }

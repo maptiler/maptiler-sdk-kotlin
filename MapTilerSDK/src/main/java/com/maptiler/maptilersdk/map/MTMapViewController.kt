@@ -113,6 +113,24 @@ class MTMapViewController(
      */
     var gestureService: MTGestureService? = null
 
+    /**
+     * Additional listeners that want to observe map events (e.g., overlay content).
+     */
+    private val contentDelegates: MutableSet<MTMapViewContentDelegate> = mutableSetOf()
+
+    // Map container layout (in parent coordinates, pixels). Used by Compose overlays to align.
+    @Volatile
+    internal var mapContainerOriginXPx: Int = 0
+
+    @Volatile
+    internal var mapContainerOriginYPx: Int = 0
+
+    @Volatile
+    internal var mapContainerWidthPx: Int = 0
+
+    @Volatile
+    internal var mapContainerHeightPx: Int = 0
+
     init {
         bridge = MTBridge(webViewExecutor)
     }
@@ -371,14 +389,47 @@ class MTMapViewController(
     ) {
         MTLogger.log("MTEvent triggered: $event", MTLogType.EVENT)
 
-        delegate?.onEventTriggered(event, data)
+        // Ensure all UI callbacks happen on the main thread.
+        coroutineScope?.launch(Dispatchers.Main) {
+            delegate?.onEventTriggered(event, data)
 
-        if (event == MTEvent.ON_READY) {
-            delegate?.onMapViewInitialized()
-        }
+            if (contentDelegates.isNotEmpty()) {
+                contentDelegates.forEach { it.onEvent(event, data) }
+            }
 
-        if (event == MTEvent.ON_IDLE && style != null) {
-            style?.processLayersQueueIfNeeded()
+            if (event == MTEvent.ON_READY) {
+                delegate?.onMapViewInitialized()
+            }
+
+            if (event == MTEvent.ON_IDLE && style != null) {
+                style?.processLayersQueueIfNeeded()
+            }
         }
+    }
+
+    /**
+     * Registers a content delegate that observes map events without replacing the primary [delegate].
+     */
+    fun addContentDelegate(delegate: MTMapViewContentDelegate) {
+        contentDelegates.add(delegate)
+    }
+
+    /**
+     * Unregisters a previously registered content delegate.
+     */
+    fun removeContentDelegate(delegate: MTMapViewContentDelegate) {
+        contentDelegates.remove(delegate)
+    }
+
+    internal fun updateMapContainerLayout(
+        originX: Int,
+        originY: Int,
+        width: Int,
+        height: Int,
+    ) {
+        mapContainerOriginXPx = originX
+        mapContainerOriginYPx = originY
+        mapContainerWidthPx = width
+        mapContainerHeightPx = height
     }
 }
