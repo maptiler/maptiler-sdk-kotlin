@@ -389,19 +389,21 @@ class MTMapViewController(
     ) {
         MTLogger.log("MTEvent triggered: $event", MTLogType.EVENT)
 
-        delegate?.onEventTriggered(event, data)
+        // Ensure all UI callbacks happen on the main thread.
+        coroutineScope?.launch(Dispatchers.Main) {
+            delegate?.onEventTriggered(event, data)
 
-        // Fan out to any registered content delegates (Compose overlays etc.)
-        if (contentDelegates.isNotEmpty()) {
-            contentDelegates.forEach { it.onEvent(event, data) }
-        }
+            if (contentDelegates.isNotEmpty()) {
+                contentDelegates.forEach { it.onEvent(event, data) }
+            }
 
-        if (event == MTEvent.ON_READY) {
-            delegate?.onMapViewInitialized()
-        }
+            if (event == MTEvent.ON_READY) {
+                delegate?.onMapViewInitialized()
+            }
 
-        if (event == MTEvent.ON_IDLE && style != null) {
-            style?.processLayersQueueIfNeeded()
+            if (event == MTEvent.ON_IDLE && style != null) {
+                style?.processLayersQueueIfNeeded()
+            }
         }
     }
 

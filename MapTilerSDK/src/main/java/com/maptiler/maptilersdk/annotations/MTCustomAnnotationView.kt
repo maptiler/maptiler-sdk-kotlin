@@ -104,11 +104,6 @@ fun MTCustomAnnotationView(
                 ) {
                     when (event) {
                         MTEvent.ON_MOVE,
-                        MTEvent.ON_ZOOM,
-                        MTEvent.ON_ROTATE,
-                        MTEvent.ON_PITCH_UPDATE,
-                        MTEvent.ON_RENDER,
-                        MTEvent.ON_RESIZE,
                         -> recalculatePosition()
                         else -> Unit
                     }
