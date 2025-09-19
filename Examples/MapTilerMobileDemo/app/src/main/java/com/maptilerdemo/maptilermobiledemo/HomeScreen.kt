@@ -121,25 +121,11 @@ fun HomeScreen(
                     .fillMaxSize(),
         )
 
-        MTCustomAnnotationView(mapController.controller, LngLat(16.626576, 49.212596)) {
-            LocationControl(
-                onLocate = {
-                    if (locationManager.hasLocationPermission()) {
-                        locationManager.startLocationUpdates()
-                    } else {
-                        permissionLauncher.launch(
-                            arrayOf(
-                                android.Manifest.permission.ACCESS_FINE_LOCATION,
-                                android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                            ),
-                        )
-                    }
-                },
-                modifier =
-                    Modifier
-                        .padding(10.dp),
-            )
-        }
+        CustomViewControl(
+            modifier = Modifier,
+            mapController.controller,
+            LngLat(-75.500000, 39.000000)
+        )
 
         LayerControl(
             onSelect = { type: MTLayerType ->
