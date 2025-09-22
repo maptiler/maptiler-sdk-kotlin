@@ -80,6 +80,18 @@ interface MTNavigable {
     fun setRoll(roll: Double)
 
     /**
+     * Returns the map's current pitch.
+     */
+    suspend fun getPitch(): Double
+
+    /**
+     * Sets the map's pitch.
+     *
+     * @param pitch Desired pitch in degrees (0-85 default constraints).
+     */
+    fun setPitch(pitch: Double)
+
+    /**
      * Returns the map's current center.
      */
     suspend fun getCenter(): LngLat

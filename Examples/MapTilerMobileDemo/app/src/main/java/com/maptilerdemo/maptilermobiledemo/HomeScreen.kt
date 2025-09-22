@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
@@ -29,7 +31,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.maptiler.maptilersdk.MTConfig
-import com.maptiler.maptilersdk.annotations.MTCustomAnnotationView
 import com.maptiler.maptilersdk.annotations.MTMarker
 import com.maptiler.maptilersdk.annotations.MTTextPopup
 import com.maptiler.maptilersdk.events.MTEvent
@@ -121,11 +122,26 @@ fun HomeScreen(
                     .fillMaxSize(),
         )
 
+        // Long press on CustomViewControl reveals the Benchmark button
+        val showBenchmark = remember { mutableStateOf(false) }
         CustomViewControl(
             modifier = Modifier,
-            mapController.controller,
-            LngLat(-75.500000, 39.000000)
+            controller = mapController.controller,
+            position = LngLat(-75.500000, 39.000000),
+            onLongPress = { showBenchmark.value = true },
         )
+
+        if (showBenchmark.value) {
+            Button(
+                onClick = {
+                    showBenchmark.value = false
+                    navController.navigate("benchmark")
+                },
+                modifier = Modifier.align(Alignment.TopCenter).padding(8.dp),
+            ) {
+                Text("Benchmark")
+            }
+        }
 
         LayerControl(
             onSelect = { type: MTLayerType ->

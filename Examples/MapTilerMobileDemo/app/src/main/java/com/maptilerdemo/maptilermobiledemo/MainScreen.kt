@@ -29,6 +29,7 @@ fun MainScreen(context: Context) {
             Modifier.padding(paddingValues),
         ) {
             composable("home") { HomeScreen(navController, context) }
+            composable("benchmark") { BenchmarkScreen(context, navController) }
         }
     }
 }

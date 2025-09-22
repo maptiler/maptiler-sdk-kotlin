@@ -340,6 +340,16 @@ class MTMapViewController(
     override fun setRoll(roll: Double) = navigableWorker.setRoll(roll)
 
     /**
+     * Returns the map's current pitch.
+     */
+    override suspend fun getPitch(): Double = navigableWorker.getPitch()
+
+    /**
+     * Sets the map's pitch in degrees (0-85).
+     */
+    override fun setPitch(pitch: Double) = navigableWorker.setPitch(pitch)
+
+    /**
      * Returns the map's current center.
      */
     override suspend fun getCenter(): LngLat = navigableWorker.getCenter()
