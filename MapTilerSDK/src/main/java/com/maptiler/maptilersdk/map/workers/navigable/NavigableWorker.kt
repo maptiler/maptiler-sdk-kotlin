@@ -13,6 +13,7 @@ import com.maptiler.maptilersdk.commands.navigation.EaseTo
 import com.maptiler.maptilersdk.commands.navigation.FlyTo
 import com.maptiler.maptilersdk.commands.navigation.GetBearing
 import com.maptiler.maptilersdk.commands.navigation.GetCenter
+import com.maptiler.maptilersdk.commands.navigation.GetPitch
 import com.maptiler.maptilersdk.commands.navigation.GetRoll
 import com.maptiler.maptilersdk.commands.navigation.JumpTo
 import com.maptiler.maptilersdk.commands.navigation.PanBy
@@ -23,6 +24,7 @@ import com.maptiler.maptilersdk.commands.navigation.SetCenter
 import com.maptiler.maptilersdk.commands.navigation.SetCenterClampedToGround
 import com.maptiler.maptilersdk.commands.navigation.SetCenterElevation
 import com.maptiler.maptilersdk.commands.navigation.SetPadding
+import com.maptiler.maptilersdk.commands.navigation.SetPitch
 import com.maptiler.maptilersdk.commands.navigation.SetRoll
 import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.map.LngLat
@@ -119,6 +121,28 @@ internal class NavigableWorker(
         scope.launch {
             bridge.execute(
                 SetRoll(roll),
+            )
+        }
+    }
+
+    override suspend fun getPitch(): Double {
+        val returnTypeValue =
+            bridge.execute(
+                GetPitch(),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> returnTypeValue.value.toDouble()
+            is DoubleValue -> returnTypeValue.value
+            else -> 0.0
+        }
+    }
+
+    override fun setPitch(pitch: Double) {
+        val clamped = pitch.coerceIn(0.0, 85.0)
+        scope.launch {
+            bridge.execute(
+                SetPitch(clamped),
             )
         }
     }

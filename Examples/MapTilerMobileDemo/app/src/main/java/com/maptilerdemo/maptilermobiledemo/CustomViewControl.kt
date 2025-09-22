@@ -7,6 +7,7 @@
 package com.maptilerdemo.maptilermobiledemo
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.maptiler.maptilersdk.annotations.MTCustomAnnotationView
 import com.maptiler.maptilersdk.map.LngLat
@@ -30,6 +32,7 @@ fun CustomViewControl(
     modifier: Modifier = Modifier,
     controller: MTMapViewController,
     position: LngLat,
+    onLongPress: () -> Unit = {},
 ) {
     MTCustomAnnotationView(controller, position) {
         val shadowElevation = 4.dp
@@ -46,7 +49,10 @@ fun CustomViewControl(
                     .background(containerColor, shadowShape)
                     .width(width)
                     .height(height)
-                    .padding(horizontal = 25.dp),
+                    .padding(horizontal = 25.dp)
+                    .pointerInput(Unit) {
+                        detectTapGestures(onLongPress = { onLongPress() })
+                    },
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text("Native Control", color = Color.Black)
