@@ -57,6 +57,13 @@ class MTBenchmark(
     // Readiness gate to avoid style mutations before ON_READY
     private val readySignal = CompletableDeferred<Unit>()
 
+    // Startup timing
+    private var initStartNs: Long? = null
+    private var mapInitEndNs: Long? = null
+    private var readyEndNs: Long? = null
+
+    // FPS tracking removed per request; only startup timings remain
+
     /** Set the MapTiler Cloud API key before rendering the map or running benchmarks. */
     fun setApiKey(key: String) {
         MTConfig.apiKey = key
@@ -69,6 +76,11 @@ class MTBenchmark(
         modifier: Modifier = Modifier,
         styleVariant: MTMapStyleVariant? = null,
     ) {
+        // Record the moment we first add the map view to the UI
+        if (initStartNs == null) {
+            initStartNs = System.nanoTime()
+            onLog?.invoke("t: $initStartNs - MapViewInitStarted")
+        }
         MTMapView(
             referenceStyle = referenceStyle,
             options = options,
@@ -81,8 +93,15 @@ class MTBenchmark(
     // MTMapViewDelegate
     override fun onMapViewInitialized() {
         if (!readySignal.isCompleted) readySignal.complete(Unit)
+        val now = System.nanoTime()
         MTLogger.log("MapView initialized.", MTLogType.INFO)
         onLog?.invoke("MapView initialized.")
+        mapInitEndNs = now
+        initStartNs?.let { start ->
+            val elapsedSec = (now - start) / 1_000_000_000.0
+            onLog?.invoke("t: $now - MapViewInitEnded")
+            onLog?.invoke("t: ${"%.6f".format(Locale.US, elapsedSec)} s - MapViewInitElapsed")
+        }
     }
 
     private val eventWaiters: MutableMap<MTEvent, MutableList<CompletableDeferred<Unit>>> = mutableMapOf()
@@ -93,6 +112,20 @@ class MTBenchmark(
     ) {
         synchronized(eventWaiters) {
             eventWaiters.remove(event)?.forEach { d -> if (!d.isCompleted) d.complete(Unit) }
+        }
+
+        // Startup milestones
+        when (event) {
+            MTEvent.ON_READY -> {
+                val now = System.nanoTime()
+                readyEndNs = now
+                initStartNs?.let { start ->
+                    val elapsedSec = (now - start) / 1_000_000_000.0
+                    onLog?.invoke("t: $now - MapReady")
+                    onLog?.invoke("t: ${"%.6f".format(Locale.US, elapsedSec)} s - MapReadyElapsed")
+                }
+            }
+            else -> Unit
         }
     }
 
@@ -175,20 +208,21 @@ class MTBenchmark(
             onLog?.invoke(msg)
         }
 
-        // ZoomIn
+        // ZoomIn (measure until animation starts, not until idle)
         run {
             val start = System.nanoTime()
             controller.zoomIn()
-            waitFor(MTEvent.ON_IDLE)
+            // Wait for the zoom to begin to mirror Swift's short scope
+            waitFor(MTEvent.ON_ZOOM_START)
             val elapsedSeconds = (System.nanoTime() - start) / 1_000_000_000.0
             log("ZoomIn", elapsedSeconds)
         }
 
-        // ZoomOut
+        // ZoomOut (measure until animation starts, not until idle)
         run {
             val start = System.nanoTime()
             controller.zoomOut()
-            waitFor(MTEvent.ON_IDLE)
+            waitFor(MTEvent.ON_ZOOM_START)
             val elapsedSeconds = (System.nanoTime() - start) / 1_000_000_000.0
             log("ZoomOut", elapsedSeconds)
         }
@@ -201,11 +235,11 @@ class MTBenchmark(
             log("GetPitch (value=$pitch)", elapsedSeconds)
         }
 
-        // SetPitch
+        // SetPitch (measure until pitch update begins)
         run {
             val start = System.nanoTime()
             controller.setPitch(2.0)
-            waitFor(MTEvent.ON_IDLE)
+            waitFor(MTEvent.ON_PITCH_UPDATE_START)
             val elapsedSeconds = (System.nanoTime() - start) / 1_000_000_000.0
             log("SetPitch", elapsedSeconds)
         }
