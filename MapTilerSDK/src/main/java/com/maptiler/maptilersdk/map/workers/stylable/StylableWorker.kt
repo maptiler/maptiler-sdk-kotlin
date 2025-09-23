@@ -14,21 +14,34 @@ import com.maptiler.maptilersdk.commands.annotations.AddMarker
 import com.maptiler.maptilersdk.commands.annotations.AddTextPopup
 import com.maptiler.maptilersdk.commands.annotations.RemoveMarker
 import com.maptiler.maptilersdk.commands.annotations.RemoveTextPopup
+import com.maptiler.maptilersdk.commands.misc.AddLogoControl
 import com.maptiler.maptilersdk.commands.style.AddLayer
 import com.maptiler.maptilersdk.commands.style.AddSource
 import com.maptiler.maptilersdk.commands.style.DisableTerrain
 import com.maptiler.maptilersdk.commands.style.EnableGlobeProjection
 import com.maptiler.maptilersdk.commands.style.EnableMercatorProjection
 import com.maptiler.maptilersdk.commands.style.EnableTerrain
+import com.maptiler.maptilersdk.commands.style.GetIdForReferenceStyle
+import com.maptiler.maptilersdk.commands.style.GetIdForStyleVariant
+import com.maptiler.maptilersdk.commands.style.GetNameForReferenceStyle
+import com.maptiler.maptilersdk.commands.style.GetNameForStyleVariant
 import com.maptiler.maptilersdk.commands.style.GetProjection
 import com.maptiler.maptilersdk.commands.style.IsSourceLoaded
 import com.maptiler.maptilersdk.commands.style.RemoveLayer
 import com.maptiler.maptilersdk.commands.style.RemoveSource
 import com.maptiler.maptilersdk.commands.style.SetDataToSource
+import com.maptiler.maptilersdk.commands.style.SetGlyphs
+import com.maptiler.maptilersdk.commands.style.SetLanguage
+import com.maptiler.maptilersdk.commands.style.SetLight
+import com.maptiler.maptilersdk.commands.style.SetRenderWorldCopies
+import com.maptiler.maptilersdk.commands.style.SetStyle
 import com.maptiler.maptilersdk.commands.style.SetTilesToSource
 import com.maptiler.maptilersdk.commands.style.SetUrlToSource
+import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
+import com.maptiler.maptilersdk.map.style.MTMapStyleVariant
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
 import com.maptiler.maptilersdk.map.style.source.MTSource
+import com.maptiler.maptilersdk.map.types.MTLanguage
 import com.maptiler.maptilersdk.map.types.MTProjectionType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -43,6 +56,81 @@ internal class StylableWorker(
             bridge.execute(
                 AddMarker(marker),
             )
+        }
+    }
+
+    fun addLogoControl() {
+        scope.launch {
+            bridge.execute(AddLogoControl())
+        }
+    }
+
+    suspend fun getIdForReferenceStyle(reference: MTMapReferenceStyle): String? {
+        val returnTypeValue = bridge.execute(GetIdForReferenceStyle(reference))
+
+        return when (returnTypeValue) {
+            is MTBridgeReturnType.StringValue -> returnTypeValue.value.trim('"')
+            else -> null
+        }
+    }
+
+    suspend fun getIdForStyleVariant(variant: MTMapStyleVariant): String? {
+        val returnTypeValue = bridge.execute(GetIdForStyleVariant(variant))
+
+        return when (returnTypeValue) {
+            is MTBridgeReturnType.StringValue -> returnTypeValue.value.trim('"')
+            else -> null
+        }
+    }
+
+    suspend fun getNameForReferenceStyle(reference: MTMapReferenceStyle): String? {
+        val returnTypeValue = bridge.execute(GetNameForReferenceStyle(reference))
+
+        return when (returnTypeValue) {
+            is MTBridgeReturnType.StringValue -> returnTypeValue.value.trim('"')
+            else -> null
+        }
+    }
+
+    suspend fun getNameForStyleVariant(variant: MTMapStyleVariant): String? {
+        val returnTypeValue = bridge.execute(GetNameForStyleVariant(variant))
+
+        return when (returnTypeValue) {
+            is MTBridgeReturnType.StringValue -> returnTypeValue.value.trim('"')
+            else -> null
+        }
+    }
+
+    fun setGlyphs(url: URL) {
+        scope.launch {
+            bridge.execute(SetGlyphs(url))
+        }
+    }
+
+    fun setLanguage(language: MTLanguage) {
+        scope.launch {
+            bridge.execute(SetLanguage(language))
+        }
+    }
+
+    fun setLight(lightOptionsJson: String) {
+        scope.launch {
+            bridge.execute(SetLight(lightOptionsJson))
+        }
+    }
+
+    fun setRenderWorldCopies(shouldRenderWorldCopies: Boolean) {
+        scope.launch {
+            bridge.execute(SetRenderWorldCopies(shouldRenderWorldCopies))
+        }
+    }
+
+    fun setStyle(
+        referenceStyle: MTMapReferenceStyle,
+        styleVariant: MTMapStyleVariant?,
+    ) {
+        scope.launch {
+            bridge.execute(SetStyle(referenceStyle, styleVariant))
         }
     }
 
