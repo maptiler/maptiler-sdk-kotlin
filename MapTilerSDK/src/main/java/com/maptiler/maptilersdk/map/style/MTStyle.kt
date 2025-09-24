@@ -12,6 +12,7 @@ import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTError
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
 import com.maptiler.maptilersdk.map.style.source.MTSource
+import com.maptiler.maptilersdk.map.types.MTLanguage
 import com.maptiler.maptilersdk.map.types.MTProjectionType
 import com.maptiler.maptilersdk.map.workers.stylable.MTStylable
 import com.maptiler.maptilersdk.map.workers.stylable.StylableWorker
@@ -240,6 +241,87 @@ class MTStyle(
      * Gets the current projection type if set.
      */
     suspend fun getProjection(): MTProjectionType? = stylableWorker.getProjection()
+
+    // CONTROLS / STYLE HELPERS
+
+    /**
+     * Adds the MapTiler logo control to the map.
+     */
+    fun addLogoControl() = stylableWorker.addLogoControl()
+
+    /**
+     * Returns SDK style id for a given reference style.
+     *
+     * @param reference Reference style.
+     */
+    suspend fun getIdForReferenceStyle(reference: MTMapReferenceStyle): String? = stylableWorker.getIdForReferenceStyle(reference)
+
+    /**
+     * Returns SDK style id for a given style variant.
+     *
+     * @param variant Style variant.
+     */
+    suspend fun getIdForStyleVariant(variant: MTMapStyleVariant): String? = stylableWorker.getIdForStyleVariant(variant)
+
+    /**
+     * Returns display name for a given reference style.
+     *
+     * @param reference Reference style.
+     */
+    suspend fun getNameForReferenceStyle(reference: MTMapReferenceStyle): String? = stylableWorker.getNameForReferenceStyle(reference)
+
+    /**
+     * Returns display name for a given style variant.
+     *
+     * @param variant Style variant.
+     */
+    suspend fun getNameForStyleVariant(variant: MTMapStyleVariant): String? = stylableWorker.getNameForStyleVariant(variant)
+
+    /**
+     * Sets the glyphs URL template.
+     *
+     * @param url URL template for glyphs.
+     */
+    fun setGlyphs(url: java.net.URL) = stylableWorker.setGlyphs(url)
+
+    /**
+     * Sets the map language.
+     *
+     * @param language Desired language of the map labels.
+     */
+    fun setLanguage(language: MTLanguage) = stylableWorker.setLanguage(language)
+
+    /**
+     * Sets the global light options for the current style.
+     * Provide a JSON object string compatible with MapLibre GL Light specification.
+     * Example: { "anchor": "viewport", "intensity": 0.5 }
+     *
+     * @param lightOptionsJson Raw JSON object string with light options.
+     */
+    fun setLight(lightOptionsJson: String) = stylableWorker.setLight(lightOptionsJson)
+
+    /**
+     * Sets whether world copies should render.
+     *
+     * @param shouldRenderWorldCopies If true, wrap the world horizontally.
+     */
+    fun setRenderWorldCopies(shouldRenderWorldCopies: Boolean) = stylableWorker.setRenderWorldCopies(shouldRenderWorldCopies)
+
+    /**
+     * Sets the current style by reference style and optional variant.
+     * Changing the style resets sources and layers.
+     *
+     * @param reference Reference style.
+     * @param variant Optional style variant.
+     */
+    fun setStyle(
+        reference: MTMapReferenceStyle,
+        variant: MTMapStyleVariant? = null,
+    ) {
+        this.referenceStyle = reference
+        this.styleVariant = variant
+        stylableWorker.setStyle(reference, variant)
+    }
 }
 
 internal class StyleTask(

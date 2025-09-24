@@ -48,6 +48,7 @@ fun JumpControl(
         ) {
             Text(
                 "Jump To:",
+                color = Color.Black,
                 modifier =
                     Modifier
                         .padding(start = 16.dp),
@@ -60,15 +61,15 @@ fun JumpControl(
                 onDismissRequest = { expanded = false },
             ) {
                 DropdownMenuItem(
-                    text = { Text("Tokyo") },
+                    text = { Text("Tokyo", color = Color.Black) },
                     onClick = { onJump(LngLat(139.839478, 35.652832)) },
                 )
                 DropdownMenuItem(
-                    text = { Text("Miami") },
+                    text = { Text("Miami", color = Color.Black) },
                     onClick = { onJump(LngLat(-80.139198, 25.793449)) },
                 )
                 DropdownMenuItem(
-                    text = { Text("Nairobi") },
+                    text = { Text("Nairobi", color = Color.Black) },
                     onClick = { onJump(LngLat(36.81722, -1.286389)) },
                 )
             }

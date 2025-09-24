@@ -18,12 +18,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -112,6 +115,7 @@ fun HomeScreen(
     val options = MTMapOptions()
     options.setMapTilerLogoIsVisible(true)
 
+    CompositionLocalProvider(LocalContentColor provides Color.Black) {
     Box(modifier = Modifier.fillMaxSize()) {
         MTMapView(
             MTMapReferenceStyle.STREETS,
@@ -138,8 +142,9 @@ fun HomeScreen(
                     navController.navigate("benchmark")
                 },
                 modifier = Modifier.align(Alignment.TopCenter).padding(8.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE0E0E0), contentColor = Color.Black),
             ) {
-                Text("Benchmark")
+                Text("Benchmark", color = Color.Black)
             }
         }
 
@@ -257,6 +262,7 @@ fun HomeScreen(
                     .align(Alignment.BottomCenter)
                     .padding(20.dp),
         )
+    }
     }
 }
 
