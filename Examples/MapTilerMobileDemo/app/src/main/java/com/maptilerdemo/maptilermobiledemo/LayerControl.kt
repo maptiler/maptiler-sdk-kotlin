@@ -55,23 +55,24 @@ fun LayerControl(
             ) {
                 Text(
                     "Add Layer",
+                    color = Color.Black,
                     modifier =
                         Modifier
                             .padding(start = 10.dp),
                 )
 
                 DropdownMenuItem(
-                    text = { Text("Symbol") },
+                    text = { Text("Symbol", color = Color.Black) },
                     onClick = { onSelect(MTLayerType.SYMBOL) },
                 )
 
                 DropdownMenuItem(
-                    text = { Text("Fill") },
+                    text = { Text("Fill", color = Color.Black) },
                     onClick = { onSelect(MTLayerType.FILL) },
                 )
 
                 DropdownMenuItem(
-                    text = { Text("Line") },
+                    text = { Text("Line", color = Color.Black) },
                     onClick = { onSelect(MTLayerType.LINE) },
                 )
             }
