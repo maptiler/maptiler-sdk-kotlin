@@ -47,25 +47,19 @@ class MTBenchmark(
 ) : MTMapViewDelegate {
     private companion object {
         private const val ARCGIS_TILE_TEMPLATE =
-            "https://vectortileservices3.arcgis.com/" +
-                "GVgbJbqm8hXASVYi/arcgis/rest/services/" +
-                "Santa_Monica_Mountains_Parcels_VTL/VectorTileServer/tile/{z}/{y}/{x}.pbf"
+            "https://docs.maptiler.com/sdk-js/assets/earthquakes.geojson"
     }
 
     // Map setup
     private val center = LngLat(-102.981521, 35.742443)
     private val zoom = 1.0
 
-    /** Controller driving the map and the bridge. */
     val controller: MTMapViewController = MTMapViewController(context).also { it.delegate = this }
 
-    /** Options applied to the map. */
     val options: MTMapOptions = MTMapOptions(center, zoom)
 
-    /** Style selection (default variant). */
     val referenceStyle: MTMapReferenceStyle = MTMapReferenceStyle.STREETS
 
-    /** Optional callback for surfacing benchmark log lines to UI. */
     var onLog: ((String) -> Unit)? = null
 
     // Readiness gate to avoid style mutations before ON_READY
@@ -78,12 +72,10 @@ class MTBenchmark(
 
     // FPS tracking removed per request; only startup timings remain
 
-    /** Set the MapTiler Cloud API key before rendering the map or running benchmarks. */
     fun setApiKey(key: String) {
         MTConfig.apiKey = key
     }
 
-    /** Compose wrapper that renders the map using this benchmark's configuration. */
     @Suppress("FunctionName")
     @Composable
     fun Map(
@@ -160,11 +152,6 @@ class MTBenchmark(
         return res == true
     }
 
-    /**
-     * Kotlin-only micro-benchmarks
-     * - Fibonacci(30) recursive
-     * - Memory allocation of 100K UUID strings
-     */
     suspend fun benchmarkKotlin() =
         withContext(Dispatchers.Default) {
             fun formatSeconds(seconds: Double): String = String.format(Locale.US, "%.6f", seconds)
@@ -199,14 +186,6 @@ class MTBenchmark(
             }
         }
 
-    /**
-     * Simple JS bridge benchmarks using available Kotlin APIs.
-     * Waits for ON_READY, then exercises:
-     * - GetZoom (suspend getter; measures round-trip)
-     * - ZoomIn + subsequent GetZoom (proxy for navigation command cost)
-     * - AddSource + wait for isSourceLoaded
-     * - AddLayer (fill) referencing the source
-     */
     suspend fun benchmarkJS() {
         // Ensure the map/style is ready before mutating
         readySignal.await()
@@ -592,7 +571,6 @@ class MTBenchmark(
         onLog?.invoke(">>> SOURCES AND LAYERS Benchmark elapsed: ${"%.6f".format(Locale.US, totalElapsed)}")
     }
 
-    /** Public entry to run the Multiple Source + Multiple Layers stress benchmark from UI. */
     suspend fun runMultipleSourceAndMultipleLayers() {
         readySignal.await()
         stressMultipleSourceAndMultipleLayers(0)
@@ -608,9 +586,6 @@ class MTBenchmark(
         singleSourceMultipleLayers(1_000, tileTemplate, sourceLayerName)
     }
 
-    /**
-     * Runs Single Source + Multiple Layers benchmark for a selected layer count.
-     */
     suspend fun runSingleSourceMultipleLayers(
         count: Int,
         tileTemplate: String = ARCGIS_TILE_TEMPLATE,
@@ -725,10 +700,6 @@ class MTBenchmark(
         onLog?.invoke(">>> RealTime Test elapsed: ${"%.6f".format(Locale.US, elapsedSec)}")
     }
 
-    /**
-     * GeoJSON Single Source + Multiple Symbol Layers benchmark.
-     * Uses earthquakes.geojson and adds many symbol layers referencing the same source.
-     */
     suspend fun runGeoJSONSingleSourceMultipleSymbolLayers(
         count: Int,
         dataUrl: String = "https://docs.maptiler.com/sdk-js/assets/earthquakes.geojson",
