@@ -19,6 +19,7 @@ import com.maptiler.maptilersdk.map.style.MTMapStyleVariant
 import com.maptiler.maptilersdk.map.style.MTStyle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 
 /**
  * Object representing the map on the screen. Used with XML.
@@ -83,5 +84,15 @@ class MTMapViewClassic(
 
         val style = MTStyle(referenceStyle, styleVariant)
         _controller.style = style
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+
+        // Ensure we release resources and cancel background work when the view is detached.
+        if (this::_controller.isInitialized) {
+            _controller.destroy()
+        }
+        scope.cancel()
     }
 }

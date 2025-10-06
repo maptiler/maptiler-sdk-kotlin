@@ -4,7 +4,7 @@
 </p>
 
 
-The MapTiler SDK Kotlin is a native SDK written in Kotlin, designed to work with the well-established MapTiler Cloud service, which provides all the data required to fuel a complete mobile mapping experience: vector tiles, geojson, map interaction, custom styles, data visualization and more.
+The MapTiler SDK Kotlin is a native SDK written in Kotlin, designed to work with the well-established MapTiler Cloud service, which provides all the data required to fuel a complete mobile mapping experience: vector tiles, GeoJSON, map interaction, custom styles, data visualization and more.
 
 ## Features
 - [x] Map interaction
@@ -47,7 +47,7 @@ MTMapView(
 
 ### XML
 
-Add MTMapViewClassic to your layout xml:
+Add MTMapViewClassic to your layout XML:
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -85,11 +85,11 @@ private lateinit var mapView: MTMapViewClassic
     }
 ```
 
-For detailed functionality overview refer to the API Reference documentation.
+For a detailed functionality overview, refer to the API reference documentation.
 
 ## Sources and Layers
 
-Sources and layers can be added to the map view style object as soon as map is initialized. Setting the style after adding layers resets them to default, so make sure style is finished loading first.
+Sources and layers can be added to the map view style object as soon as the map is initialized. Setting the style after adding layers resets them to default, so make sure the style has finished loading first.
 
 ```kotlin
 val sourceURL = URL("https://api.maptiler.com/tiles/v3-openmaptiles/tiles.json?key=$YOUR_API_KEY")
@@ -151,7 +151,7 @@ class MapController(
 ```
 
 # Installation
-MapTiler Kotlin SDK is a Kotlin Library and can be added as dependency in your Gradle file (**Maven Central**).
+MapTiler Kotlin SDK is a Kotlin library and can be added as a dependency in your Gradle file (**Maven Central**).
 
 <p align="center">
 <img src="Examples/streets.png" alt="MapTiler" title="MapTiler"/>

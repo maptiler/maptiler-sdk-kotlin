@@ -320,7 +320,14 @@ class MTStyle(
     ) {
         this.referenceStyle = reference
         this.styleVariant = variant
+        // Apply the new style on the JS side first.
         stylableWorker.setStyle(reference, variant)
+
+        // After a style change, the underlying map resets sources and layers.
+        // Clear local caches and any pending tasks to avoid stale state.
+        mapSources.clear()
+        mapLayers.clear()
+        queue.clear()
     }
 }
 
