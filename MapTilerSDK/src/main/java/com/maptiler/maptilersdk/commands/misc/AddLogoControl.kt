@@ -14,5 +14,5 @@ internal data class AddLogoControl(
 ) : MTCommand {
     override val isPrimitiveReturnType: Boolean = false
 
-    override fun toJS(): String = "${MTBridge.MAP_OBJECT}.addLogoControl();"
+    override fun toJS(): String = "${MTBridge.MAP_OBJECT}.addControl(new ${MTBridge.SDK_OBJECT}.MaptilerLogoControl());"
 }
