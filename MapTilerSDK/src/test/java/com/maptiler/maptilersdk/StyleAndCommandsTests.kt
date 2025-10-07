@@ -118,6 +118,11 @@ class StyleAndCommandsTests {
         assertEquals("${MTBridge.MAP_OBJECT}.enableMercatorProjection();", js)
     }
 
+    @Test fun addLogoControlToJS_ReturnsValidJSString() {
+        val js = com.maptiler.maptilersdk.commands.misc.AddLogoControl().toJS()
+        assertEquals("${MTBridge.MAP_OBJECT}.addControl(new ${MTBridge.SDK_OBJECT}.MaptilerLogoControl());", js)
+    }
+
     @Test fun enableTerrainWithoutExaggerationToJS_ReturnsValidJSString() {
         val js = EnableTerrain().toJS()
         assertEquals("${MTBridge.MAP_OBJECT}.enableTerrain();", js)

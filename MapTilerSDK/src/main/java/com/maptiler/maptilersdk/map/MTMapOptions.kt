@@ -204,7 +204,7 @@ class MTMapOptions {
     /**
      * Boolean indicating whether MapTiler logo is visible on the map.
      *
-     * If true, the MapTiler logo will be shown. false will only work on premium accounts.
+     * If true, the MapTiler logo will be shown. False will only work on premium accounts.
      */
     @SerialName("maptilerLogo")
     var maptilerLogoIsVisible: Boolean? = null
@@ -250,7 +250,7 @@ class MTMapOptions {
         private set
 
     /**
-     * Boolean indicating whether the drag to pitch" interaction is enabled.
+     * Boolean indicating whether the drag to pitch interaction is enabled.
      */
     @SerialName("touchPitch")
     var shouldDragToPitch: Boolean? = null

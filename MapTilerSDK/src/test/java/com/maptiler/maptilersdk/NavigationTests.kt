@@ -55,13 +55,7 @@ class NavigationTests {
     @Test fun panByToJS_ReturnsCorrectJSString() {
         val offset = MTPoint(1.0, 1.0)
         val command = PanBy(offset)
-        assertEquals(
-            "${MTBridge.MAP_OBJECT}.panBy({\n" +
-                "    \"x\": 1.0,\n" +
-                "    \"y\": 1.0\n" +
-                "});",
-            command.toJS(),
-        )
+        assertEquals("${MTBridge.MAP_OBJECT}.panBy([1.0, 1.0]);", command.toJS())
     }
 
     @Test fun panToToJS_ReturnsCorrectJSString() {

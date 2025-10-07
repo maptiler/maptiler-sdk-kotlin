@@ -304,14 +304,14 @@ class MTMapViewController(
     /**
      * Changes any combination of center, zoom, bearing, and pitch, without an animated transition
      *
-     *@param cameraOptions Options for controlling the desired location, zoom, bearing, and pitch of the camera.
+     * @param cameraOptions Options for controlling the desired location, zoom, bearing, and pitch of the camera.
      */
     override fun jumpTo(cameraOptions: MTCameraOptions) = navigableWorker.jumpTo(cameraOptions)
 
     /**
      * Changes any combination of center, zoom, bearing and pitch with an animated transition between old and new values.
      *
-     *@param cameraOptions Options for controlling the desired location, zoom, bearing, and pitch of the camera.
+     * @param cameraOptions Options for controlling the desired location, zoom, bearing, and pitch of the camera.
      */
     override fun easeTo(cameraOptions: MTCameraOptions) = navigableWorker.easeTo(cameraOptions)
 
@@ -323,7 +323,7 @@ class MTMapViewController(
     /**
      * Sets bearing of the map.
      *
-     *@param bearing The bearing of the map, measured in degrees counter-clockwise from north.
+     * @param bearing The bearing of the map, measured in degrees counter-clockwise from north.
      */
     override fun setBearing(bearing: Double) = navigableWorker.setBearing(bearing)
 
@@ -335,7 +335,7 @@ class MTMapViewController(
     /**
      * Sets the map's roll angle.
      *
-     *@param roll Desired roll.
+     * @param roll Desired roll.
      */
     override fun setRoll(roll: Double) = navigableWorker.setRoll(roll)
 
@@ -362,7 +362,7 @@ class MTMapViewController(
     /**
      * Sets the geographical center of the map.
      *
-     *@param center Geographical center of the map.
+     * @param center Geographical center of the map.
      */
     override fun setCenter(center: LngLat) = navigableWorker.setCenter(center)
 
@@ -373,7 +373,7 @@ class MTMapViewController(
      * terrain elevation (or zero if terrain is not enabled). If false, the elevation
      * of the center point will default to sea level and will not automatically update.
      *
-     *@param isCenterClampedToGround Boolean indicating whether center is clamped to the ground.
+     * @param isCenterClampedToGround Boolean indicating whether center is clamped to the ground.
      */
     override fun setIsCenterClampedToGround(isCenterClampedToGround: Boolean) =
         navigableWorker.setIsCenterClampedToGround(isCenterClampedToGround)
@@ -381,14 +381,14 @@ class MTMapViewController(
     /**
      * Sets the elevation of the map's center point, in meters above sea level.
      *
-     *@param elevation Desired elevation.
+     * @param elevation Desired elevation.
      */
     override fun setCenterElevation(elevation: Double) = navigableWorker.setCenterElevation(elevation)
 
     /**
      * Sets the padding in pixels around the viewport.
      *
-     *@param padding Custom options to use.
+     * @param padding Custom options to use.
      */
     override fun setPadding(padding: MTPaddingOptions) = navigableWorker.setPadding(padding)
 
