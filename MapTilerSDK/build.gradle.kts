@@ -5,6 +5,9 @@ plugins {
     id("org.jetbrains.dokka")
     id("org.jetbrains.kotlin.plugin.compose")
     kotlin("plugin.serialization") version "2.1.21"
+
+    `maven-publish`
+    signing
 }
 
 tasks.named("ktlintFormat") {
@@ -25,6 +28,10 @@ tasks.preBuild {
     dependsOn("copyPreCommitHook")
 }
 
+// Library coordinates
+group = "com.maptiler"
+version = "1.0.0"
+
 android {
     namespace = "com.maptiler.maptilersdk"
     compileSdk = 35
@@ -32,8 +39,16 @@ android {
     defaultConfig {
         minSdk = 26
 
+        aarMetadata {
+            minCompileSdk = 30
+        }
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+    }
+
+    testFixtures {
+        enable = true
     }
 
     buildTypes {
@@ -45,16 +60,24 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
 
     buildFeatures {
         compose = true
+    }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
     }
 }
 
@@ -79,4 +102,76 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+}
+
+// Generate a javadoc jar from Dokka HTML output (required by Maven Central)
+val dokkaHtml by tasks.existing(org.jetbrains.dokka.gradle.DokkaTask::class)
+
+tasks.register<org.gradle.jvm.tasks.Jar>("javadocJar") {
+    dependsOn(dokkaHtml)
+    from(dokkaHtml.flatMap { it.outputDirectory })
+    archiveClassifier.set("javadoc")
+}
+
+publishing {
+    publications {
+        create<org.gradle.api.publish.maven.MavenPublication>("release") {
+            // Defer attaching the Android 'release' component until it's created
+            val releaseComponent = components.findByName("release")
+            if (releaseComponent != null) {
+                from(releaseComponent)
+            } else {
+                afterEvaluate {
+                    from(components["release"])
+                }
+            }
+
+            groupId = "com.maptiler"
+            artifactId = "maptiler-sdk-kotlin"
+            artifact(tasks["javadocJar"])
+
+            pom {
+                name.set("MapTiler SDK Kotlin")
+                description.set(
+                    "SDK designed to work with the well-established MapTiler Cloud service.",
+                )
+                url.set("https://github.com/maptiler/maptiler-sdk-kotlin")
+
+                licenses {
+                    license {
+                        name.set("BSD-3-Clause")
+                        url.set("https://opensource.org/licenses/BSD-3-Clause")
+                    }
+                }
+
+                developers {
+                    developer {
+                        id.set("maptiler")
+                        name.set("MapTiler")
+                        url.set("https://www.maptiler.com")
+                    }
+                }
+
+                scm {
+                    connection.set("scm:git:https://github.com/maptiler/maptiler-sdk-kotlin.git")
+                    developerConnection.set("scm:git:ssh://git@github.com/maptiler/maptiler-sdk-kotlin.git")
+                    url.set("https://github.com/maptiler/maptiler-sdk-kotlin")
+                }
+            }
+        }
+    }
+}
+
+// Only sign if signing keys are provided via Gradle properties or environment
+val shouldSign =
+    (
+        project.findProperty("signing.keyId") != null ||
+            project.findProperty("signingKeyId") != null ||
+            System.getenv("SIGNING_KEY") != null
+    )
+
+if (shouldSign) {
+    signing {
+        sign(publishing.publications)
+    }
 }
