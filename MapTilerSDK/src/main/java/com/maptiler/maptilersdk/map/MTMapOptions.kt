@@ -6,6 +6,10 @@
 
 package com.maptiler.maptilersdk.map
 
+import com.maptiler.maptilersdk.map.options.MTHalo
+import com.maptiler.maptilersdk.map.options.MTHaloOption
+import com.maptiler.maptilersdk.map.options.MTSpace
+import com.maptiler.maptilersdk.map.options.MTSpaceOption
 import com.maptiler.maptilersdk.map.types.MTLanguage
 import com.maptiler.maptilersdk.map.types.MTLanguageSerializer
 import com.maptiler.maptilersdk.map.types.MTMapCorner
@@ -340,6 +344,22 @@ class MTMapOptions {
         private set
 
     /**
+     * Space option for the globe background. Can be a simple enable flag or a detailed config.
+     * Requires globe projection to be enabled to be visible.
+     */
+    @SerialName("space")
+    var space: MTSpaceOption? = null
+        private set
+
+    /**
+     * Halo option for the atmospheric glow. Can be a simple enable flag or a detailed config.
+     * Requires globe projection to be enabled to be visible.
+     */
+    @SerialName("halo")
+    var halo: MTHaloOption? = null
+        private set
+
+    /**
      * Boolean indicating whether session logic is enabled.
      *
      * This allows MapTiler to enable "session based billing".
@@ -394,5 +414,149 @@ class MTMapOptions {
 
     fun setMapTilerLogoIsVisible(isVisible: Boolean) {
         maptilerLogoIsVisible = isVisible
+    }
+
+    /** Initializes map options with projection and space option. */
+    constructor(projection: MTProjectionType?, space: MTSpaceOption?) {
+        this.projection = projection
+        this.space = space
+    }
+
+    /** Convenience: configuration-only space. */
+    constructor(space: MTSpace) {
+        this.space = MTSpaceOption.Config(space)
+    }
+
+    /** Convenience: enable space with default preset. */
+    constructor(spaceEnabled: Boolean) {
+        if (spaceEnabled) this.space = MTSpaceOption.Enabled
+    }
+
+    /** Convenience: configuration-only halo. */
+    constructor(halo: MTHalo) {
+        this.halo = MTHaloOption.Config(halo)
+    }
+
+    /** Convenience: pass halo option directly (enabled or config). */
+    constructor(halo: MTHaloOption?) {
+        this.halo = halo
+    }
+
+    /** Convenience: projection + halo option (enabled or config). */
+    constructor(projection: MTProjectionType?, halo: MTHaloOption?) {
+        this.projection = projection
+        this.halo = halo
+    }
+
+    /** Enables halo with default gradient. */
+    fun enableHalo() {
+        this.halo = MTHaloOption.Enabled
+    }
+
+    /** Sets halo configuration. */
+    fun setHalo(halo: MTHalo) {
+        this.halo = MTHaloOption.Config(halo)
+    }
+
+    /**
+     * Flexible constructor: all options optional so you can mix and match with named args.
+     *
+     * Example usages:
+     * - MTMapOptions(projection = MTProjectionType.GLOBE, space = MTSpaceOption.Enabled, halo = MTHaloOption.Enabled)
+     * - MTMapOptions(projection = MTProjectionType.GLOBE, halo = MTHaloOption.Config(MTHalo(scale = 1.2)))
+     * - MTMapOptions(center = LngLat(14.4, 50.1), zoom = 6.0, pitch = 45.0)
+     */
+    constructor(
+        language: MTLanguage? = null,
+        center: LngLat? = null,
+        projection: MTProjectionType? = null,
+        zoom: Double? = null,
+        maxZoom: Double? = null,
+        minZoom: Double? = null,
+        bearing: Double? = null,
+        bearingSnap: Double? = null,
+        pitch: Double? = null,
+        maxPitch: Double? = null,
+        minPitch: Double? = null,
+        roll: Double? = null,
+        rollIsEnabled: Boolean? = null,
+        elevation: Double? = null,
+        terrainIsEnabled: Boolean? = null,
+        terrainExaggeration: Double? = null,
+        cancelPendingTileRequestsWhileZooming: Boolean? = null,
+        isCenterClampedToGround: Boolean? = null,
+        shouldCollectResourceTiming: Boolean? = null,
+        crossSourceCollisionsAreEnabled: Boolean? = null,
+        fadeDuration: Double? = null,
+        isInteractionEnabled: Boolean? = null,
+        logoPosition: MTMapCorner? = MTMapCorner.TOP_LEFT,
+        maptilerLogoIsVisible: Boolean? = null,
+        maxTileCacheSize: Double? = null,
+        maxTileCacheZoomLevels: Double? = null,
+        shouldPitchWithRotate: Boolean? = null,
+        shouldRefreshExpiredTiles: Boolean? = null,
+        shouldRenderWorldCopies: Boolean? = null,
+        shouldDragToPitch: Boolean? = null,
+        shouldPinchToRotateAndZoom: Boolean? = null,
+        doubleTapShouldZoom: Boolean? = null,
+        dragPanIsEnabled: Boolean? = null,
+        dragRotateIsEnabled: Boolean? = null,
+        shouldValidateStyle: Boolean? = null,
+        minimapIsVisible: Boolean? = false,
+        attributionControlIsVisible: Boolean? = null,
+        geolocateControlIsVisible: Boolean? = false,
+        navigationControlIsVisible: Boolean? = false,
+        projectionControlIsVisible: Boolean? = false,
+        scaleControlIsVisible: Boolean? = false,
+        terrainControlIsVisible: Boolean? = false,
+        space: MTSpaceOption? = null,
+        halo: MTHaloOption? = null,
+        isSessionLogicEnabled: Boolean = true,
+    ) {
+        this.language = language
+        this.center = center
+        this.projection = projection
+        this.zoom = zoom
+        this.maxZoom = maxZoom
+        this.minZoom = minZoom
+        this.bearing = bearing
+        this.bearingSnap = bearingSnap
+        this.pitch = pitch
+        this.maxPitch = maxPitch
+        this.minPitch = minPitch
+        this.roll = roll
+        this.rollIsEnabled = rollIsEnabled
+        this.elevation = elevation
+        this.terrainIsEnabled = terrainIsEnabled
+        this.terrainExaggeration = terrainExaggeration
+        this.cancelPendingTileRequestsWhileZooming = cancelPendingTileRequestsWhileZooming
+        this.isCenterClampedToGround = isCenterClampedToGround
+        this.shouldCollectResourceTiming = shouldCollectResourceTiming
+        this.crossSourceCollisionsAreEnabled = crossSourceCollisionsAreEnabled
+        this.fadeDuration = fadeDuration
+        this.isInteractionEnabled = isInteractionEnabled
+        this.logoPosition = logoPosition
+        this.maptilerLogoIsVisible = maptilerLogoIsVisible
+        this.maxTileCacheSize = maxTileCacheSize
+        this.maxTileCacheZoomLevels = maxTileCacheZoomLevels
+        this.shouldPitchWithRotate = shouldPitchWithRotate
+        this.shouldRefreshExpiredTiles = shouldRefreshExpiredTiles
+        this.shouldRenderWorldCopies = shouldRenderWorldCopies
+        this.shouldDragToPitch = shouldDragToPitch
+        this.shouldPinchToRotateAndZoom = shouldPinchToRotateAndZoom
+        this.doubleTapShouldZoom = doubleTapShouldZoom
+        this.dragPanIsEnabled = dragPanIsEnabled
+        this.dragRotateIsEnabled = dragRotateIsEnabled
+        this.shouldValidateStyle = shouldValidateStyle
+        this.minimapIsVisible = minimapIsVisible
+        this.attributionControlIsVisible = attributionControlIsVisible
+        this.geolocateControlIsVisible = geolocateControlIsVisible
+        this.navigationControlIsVisible = navigationControlIsVisible
+        this.projectionControlIsVisible = projectionControlIsVisible
+        this.scaleControlIsVisible = scaleControlIsVisible
+        this.terrainControlIsVisible = terrainControlIsVisible
+        this.space = space
+        this.halo = halo
+        this.isSessionLogicEnabled = isSessionLogicEnabled
     }
 }

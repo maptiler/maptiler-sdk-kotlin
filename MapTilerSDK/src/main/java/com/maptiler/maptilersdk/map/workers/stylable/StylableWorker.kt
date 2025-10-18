@@ -17,8 +17,12 @@ import com.maptiler.maptilersdk.commands.annotations.RemoveTextPopup
 import com.maptiler.maptilersdk.commands.misc.AddLogoControl
 import com.maptiler.maptilersdk.commands.style.AddLayer
 import com.maptiler.maptilersdk.commands.style.AddSource
+import com.maptiler.maptilersdk.commands.style.DisableHalo
+import com.maptiler.maptilersdk.commands.style.DisableHaloAnimations
+import com.maptiler.maptilersdk.commands.style.DisableSpaceAnimations
 import com.maptiler.maptilersdk.commands.style.DisableTerrain
 import com.maptiler.maptilersdk.commands.style.EnableGlobeProjection
+import com.maptiler.maptilersdk.commands.style.EnableHalo
 import com.maptiler.maptilersdk.commands.style.EnableMercatorProjection
 import com.maptiler.maptilersdk.commands.style.EnableTerrain
 import com.maptiler.maptilersdk.commands.style.GetIdForReferenceStyle
@@ -31,12 +35,16 @@ import com.maptiler.maptilersdk.commands.style.RemoveLayer
 import com.maptiler.maptilersdk.commands.style.RemoveSource
 import com.maptiler.maptilersdk.commands.style.SetDataToSource
 import com.maptiler.maptilersdk.commands.style.SetGlyphs
+import com.maptiler.maptilersdk.commands.style.SetHalo
 import com.maptiler.maptilersdk.commands.style.SetLanguage
 import com.maptiler.maptilersdk.commands.style.SetLight
 import com.maptiler.maptilersdk.commands.style.SetRenderWorldCopies
+import com.maptiler.maptilersdk.commands.style.SetSpace
 import com.maptiler.maptilersdk.commands.style.SetStyle
 import com.maptiler.maptilersdk.commands.style.SetTilesToSource
 import com.maptiler.maptilersdk.commands.style.SetUrlToSource
+import com.maptiler.maptilersdk.map.options.MTHalo
+import com.maptiler.maptilersdk.map.options.MTSpace
 import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
 import com.maptiler.maptilersdk.map.style.MTMapStyleVariant
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
@@ -123,6 +131,32 @@ internal class StylableWorker(
         scope.launch {
             bridge.execute(SetRenderWorldCopies(shouldRenderWorldCopies))
         }
+    }
+
+    fun setSpace(space: MTSpace) {
+        scope.launch {
+            bridge.execute(SetSpace(space))
+        }
+    }
+
+    fun setHalo(halo: MTHalo) {
+        scope.launch { bridge.execute(SetHalo(halo)) }
+    }
+
+    fun enableHalo() {
+        scope.launch { bridge.execute(EnableHalo()) }
+    }
+
+    fun disableHalo() {
+        scope.launch { bridge.execute(DisableHalo()) }
+    }
+
+    fun disableHaloAnimations() {
+        scope.launch { bridge.execute(DisableHaloAnimations()) }
+    }
+
+    fun disableSpaceAnimations() {
+        scope.launch { bridge.execute(DisableSpaceAnimations()) }
     }
 
     fun setStyle(
