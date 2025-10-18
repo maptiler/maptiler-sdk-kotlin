@@ -301,6 +301,29 @@ class MTStyle(
     fun setLight(lightOptionsJson: String) = stylableWorker.setLight(lightOptionsJson)
 
     /**
+     * Sets the globe space background (deep space/skybox).
+     * Any field not explicitly provided keeps its previous value.
+     */
+    fun setSpace(space: com.maptiler.maptilersdk.map.options.MTSpace) = stylableWorker.setSpace(space)
+
+    /**
+     * Sets the atmospheric halo (glow) configuration on the globe.
+     */
+    fun setHalo(halo: com.maptiler.maptilersdk.map.options.MTHalo) = stylableWorker.setHalo(halo)
+
+    /** Enables halo with default gradient. */
+    fun enableHalo() = stylableWorker.enableHalo()
+
+    /** Disables halo (animates out). */
+    fun disableHalo() = stylableWorker.disableHalo()
+
+    /** Disables halo state transitions (animations). */
+    fun disableHaloAnimations() = stylableWorker.disableHaloAnimations()
+
+    /** Disables space state transitions (animations). */
+    fun disableSpaceAnimations() = stylableWorker.disableSpaceAnimations()
+
+    /**
      * Sets whether world copies should render.
      *
      * @param shouldRenderWorldCopies If true, wrap the world horizontally.
