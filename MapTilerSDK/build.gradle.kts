@@ -36,7 +36,7 @@ tasks.preBuild {
 
 // Library coordinates
 group = "com.maptiler"
-version = "1.0.0"
+version = "1.1.0"
 
 android {
     namespace = "com.maptiler.maptilersdk"
