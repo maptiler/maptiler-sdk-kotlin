@@ -10,7 +10,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import com.maptiler.maptilersdk.MTConfig
 import com.maptiler.maptilersdk.map.MTMapOptions
 import com.maptiler.maptilersdk.map.MTMapView
@@ -29,8 +28,7 @@ import java.net.URL
  */
 @Composable
 fun SourcesAndLayers() {
-    val context = LocalContext.current
-    val controller = remember { MTMapViewController(context) }
+    val controller = remember { MTMapViewController(baseContext) }
 
     LaunchedEffect(controller) {
         controller.delegate =
