@@ -9,7 +9,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import com.maptiler.maptilersdk.MTConfig
 import com.maptiler.maptilersdk.annotations.MTMarker
 import com.maptiler.maptilersdk.annotations.MTTextPopup
@@ -30,8 +29,7 @@ import com.maptiler.maptilersdk.map.types.MTData
  */
 @Composable
 fun MarkersAndPopups() {
-    val context = LocalContext.current
-    val controller = remember { MTMapViewController(context) }
+    val controller = remember { MTMapViewController(baseContext) }
 
     // Add annotations when the map is ready.
     LaunchedEffect(controller) {

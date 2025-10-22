@@ -171,7 +171,7 @@ class MTMapViewController(
         webViewExecutor?.addJSInterface(jsInterface)
     }
 
-    internal fun destroy() {
+    fun destroy() {
         webViewExecutor?.destroy()
     }
 

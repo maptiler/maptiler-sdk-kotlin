@@ -343,6 +343,9 @@ controller.style?.disableHaloAnimations()
 controller.style?.disableSpaceAnimations()
 ```
 
+### Developer Docs
+For more information and API Reference visit: https://docs.maptiler.com/mobile-sdk/android/ or browse ready-to-use code examples at the [Examples](https://github.com/maptiler/maptiler-sdk-kotlin/tree/main/Examples) directory in this repo.
+
 # Installation
 MapTiler Kotlin SDK is a Kotlin library and can be added as a dependency in your Gradle file (**Maven Central**):
 
