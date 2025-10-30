@@ -74,21 +74,23 @@ jobs:
           echo "DESC=$DESC_CLEANED"                                    >> $GITHUB_ENV
           echo "BRANCH=${{ github.event.inputs.issue_key }}"           >> $GITHUB_ENV
 
-      # Set up LLM Agent
+      # Run the LLM Agent and then commit the output
 
-      - name: Install Codex (npm)
-        run: npm i -g @openai/codex
-
-      # Run the LLM Agent and commit the output
-
-      - name: Agent implement & commit
+      - name: Run Codex Action
+        uses: openai/codex-action@v1
         env:
           OPENAI_API_KEY:  ${{ secrets.OPENAI_API_KEY }}
           GH_TOKEN:        ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN:    ${{ secrets.GITHUB_TOKEN }}
-          CODEX_QUIET_MODE: "1"
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          prompt: |
+            Implement ticket ${{ env.ISSUE_KEY }}: ${{ env.TITLE }}. ${{ env.DESC }}
+
+      # Commit any changes produced by Codex
+
+      - name: Commit changes
         run: |
-          codex exec --full-auto "Implement ticket $ISSUE_KEY: $TITLE. $DESC"
           git add -A
           git commit -m "$ISSUE_KEY: $TITLE" || echo "No changes to commit"
 
@@ -113,4 +115,3 @@ jobs:
 
             ## Acceptance
             Compiles and checks pass.
-
