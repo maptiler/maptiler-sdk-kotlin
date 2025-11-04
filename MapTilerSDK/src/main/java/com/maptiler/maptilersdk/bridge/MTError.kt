@@ -18,7 +18,7 @@ data class MTException(
  */
 sealed class MTError : Exception() {
     /**
-     * Method execution failed with exception.
+     * Method execution failed with an exception.
      *
      * @param body Exception details.
      */
@@ -36,9 +36,9 @@ sealed class MTError : Exception() {
     ) : MTError()
 
     /**
-     * Method execution returned unsupported type.
+     * Method execution returned an unsupported type.
      *
-     * @param description Debug description of the command that returned unsupported type.
+     * @param description Debug description of the command that returned an unsupported type.
      */
     data class UnsupportedReturnType(
         val description: String,
@@ -47,7 +47,7 @@ sealed class MTError : Exception() {
     /**
      * Method execution resulted in an unknown error.
      *
-     * @param description  Debug description of error.
+     * @param description Debug description of the error.
      */
     data class Unknown(
         val description: String,
@@ -61,7 +61,7 @@ sealed class MTError : Exception() {
     }
 
     /**
-     * Method execution failed due to missing parent entity.
+     * Method execution failed due to a missing parent entity.
      */
     data object MissingParent : MTError() {
         private fun readResolve(): Any = MissingParent

@@ -362,7 +362,7 @@ class MTMapOptions {
     /**
      * Boolean indicating whether session logic is enabled.
      *
-     * This allows MapTiler to enable "session based billing".
+     * This allows MapTiler to enable session-based billing.
      * Defaults to true.
      * @see <https://docs.maptiler.com/guides/maps-apis/maps-platform/what-is-map-session-in-maptiler-cloud/>
      */
