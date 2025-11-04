@@ -349,7 +349,7 @@ For more information and API Reference visit: https://docs.maptiler.com/mobile-s
 # Installation
 MapTiler Kotlin SDK is a Kotlin library and can be added as a dependency in your Gradle file (**Maven Central**):
 
-- Make sure you have mavenCentral() added to your repositores inside your build.gradle
+- Make sure you have mavenCentral() added to your repositories inside your build.gradle
 - Add the library as dependency in your module build.gradle file.
 
 ```kotlin
