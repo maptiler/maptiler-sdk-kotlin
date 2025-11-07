@@ -355,6 +355,16 @@ class MTMapViewController(
     override suspend fun getCenter(): LngLat = navigableWorker.getCenter()
 
     /**
+     * Returns whether the map's center is clamped to the ground.
+     */
+    override suspend fun getCenterClampedToGround(): Boolean = navigableWorker.getCenterClampedToGround()
+
+    /**
+     * Returns the elevation of the map's center point in meters above sea level.
+     */
+    override suspend fun getCenterElevation(): Double = navigableWorker.getCenterElevation()
+
+    /**
      * Project coordinates to point on the container.
      */
     override suspend fun project(coordinates: LngLat): com.maptiler.maptilersdk.map.types.MTPoint = navigableWorker.project(coordinates)

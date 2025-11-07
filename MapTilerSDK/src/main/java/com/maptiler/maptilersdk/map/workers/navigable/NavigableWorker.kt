@@ -7,12 +7,15 @@
 package com.maptiler.maptilersdk.map.workers.navigable
 
 import com.maptiler.maptilersdk.bridge.MTBridge
+import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.BoolValue
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.DoubleValue
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.StringValue
 import com.maptiler.maptilersdk.commands.navigation.EaseTo
 import com.maptiler.maptilersdk.commands.navigation.FlyTo
 import com.maptiler.maptilersdk.commands.navigation.GetBearing
 import com.maptiler.maptilersdk.commands.navigation.GetCenter
+import com.maptiler.maptilersdk.commands.navigation.GetCenterClampedToGround
+import com.maptiler.maptilersdk.commands.navigation.GetCenterElevation
 import com.maptiler.maptilersdk.commands.navigation.GetPitch
 import com.maptiler.maptilersdk.commands.navigation.GetRoll
 import com.maptiler.maptilersdk.commands.navigation.JumpTo
@@ -156,6 +159,40 @@ internal class NavigableWorker(
         return when (returnTypeValue) {
             is StringValue -> JsonConfig.json.decodeFromString<LngLat>(returnTypeValue.value)
             else -> LngLat(0.0, 0.0)
+        }
+    }
+
+    override suspend fun getCenterClampedToGround(): Boolean {
+        val returnTypeValue =
+            bridge.execute(
+                GetCenterClampedToGround(),
+            )
+
+        return when (returnTypeValue) {
+            is BoolValue -> returnTypeValue.value
+            is DoubleValue -> returnTypeValue.value != 0.0
+            is StringValue -> {
+                val normalized = returnTypeValue.value.trim().lowercase()
+                when (normalized) {
+                    "true" -> true
+                    "false" -> false
+                    else -> normalized.toDoubleOrNull()?.let { it != 0.0 } ?: false
+                }
+            }
+            else -> false
+        }
+    }
+
+    override suspend fun getCenterElevation(): Double {
+        val returnTypeValue =
+            bridge.execute(
+                GetCenterElevation(),
+            )
+
+        return when (returnTypeValue) {
+            is DoubleValue -> returnTypeValue.value
+            is StringValue -> returnTypeValue.value.toDoubleOrNull() ?: 0.0
+            else -> 0.0
         }
     }
 

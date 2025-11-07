@@ -97,6 +97,16 @@ interface MTNavigable {
     suspend fun getCenter(): LngLat
 
     /**
+     * Returns whether the map's center is clamped to the ground.
+     */
+    suspend fun getCenterClampedToGround(): Boolean
+
+    /**
+     * Returns the elevation of the map's center point in meters above sea level.
+     */
+    suspend fun getCenterElevation(): Double
+
+    /**
      * Projects geographical coordinates to a point on the container.
      *
      * @param coordinates The geographical coordinate to project.
