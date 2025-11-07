@@ -71,6 +71,14 @@ class MTSymbolLayer : MTLayer {
      */
     @Transient
     var icon: Bitmap? = null
+        set(value) {
+            field = value
+            // If an icon is assigned post-construction and layout wasn't initialized,
+            // ensure the layout exists and references this layer's icon image name.
+            if (value != null && _layout == null) {
+                _layout = MTSymbolLayout(iconName, visibility)
+            }
+        }
 
     /**
      * Enum controlling whether this layer is displayed.

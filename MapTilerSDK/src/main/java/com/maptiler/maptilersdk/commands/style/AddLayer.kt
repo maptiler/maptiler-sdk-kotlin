@@ -40,19 +40,18 @@ internal data class AddLayer(
         if (layer.icon != null) {
             val encoded = ImageHelper.encodeImageWithMime(layer.icon!!)
 
-            val iconString = """
-            var icon${layer.identifier} = new Image();
-                icon${layer.identifier}.src = 'data:${encoded.mimeType};base64,${encoded.base64}';
-                icon${layer.identifier}.onload = function() {
-                    map.addImage('icon${layer.identifier}', icon${layer.identifier})
-        """
-
+            // Wrap in an IIFE and use a local variable name to avoid issues when
+            // layer identifiers contain characters that are invalid in JS identifiers (e.g., hyphens).
+            // Keep the image name used in the style as 'icon{identifier}' as before.
             return """
-                $iconString
-                
-                ${MTBridge.MAP_OBJECT}.addLayer($layerString)
-                };
-                
+                (function() {
+                    const __mtImg = new Image();
+                    __mtImg.src = 'data:${encoded.mimeType};base64,${encoded.base64}';
+                    __mtImg.onload = function() {
+                        ${MTBridge.MAP_OBJECT}.addImage('icon${layer.identifier}', __mtImg);
+                        ${MTBridge.MAP_OBJECT}.addLayer($layerString);
+                    };
+                })();
                 """.trimIndent()
         } else {
             // No icon to register; add the layer directly

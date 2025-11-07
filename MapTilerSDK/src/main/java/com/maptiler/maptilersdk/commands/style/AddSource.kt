@@ -13,6 +13,11 @@ import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.map.style.source.MTGeoJSONSource
 import com.maptiler.maptilersdk.map.style.source.MTSource
 import com.maptiler.maptilersdk.map.style.source.MTVectorTileSource
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 
 internal data class AddSource(
     val source: MTSource,
@@ -60,19 +65,32 @@ internal data class AddSource(
     }
 
     private fun handleGeoJSONSource(source: MTGeoJSONSource): JSString {
-        val sourceString: JSString = JsonConfig.json.encodeToString(source)
+        val obj =
+            buildJsonObject {
+                put("type", JsonPrimitive(source.type.toString().lowercase()))
 
-        val jsSourceString =
-            when {
-                source.url?.protocol == "file" -> replaceDataString(sourceString)
-                !source.jsonString.isNullOrEmpty() -> replaceDataString(sourceString)
-                else -> sourceString
+                // Set data from URL or inline JSON string
+                when {
+                    source.url != null -> put("data", JsonPrimitive(source.url.toString()))
+                    !source.jsonString.isNullOrBlank() -> {
+                        // Parse inline GeoJSON into a JsonElement so it serializes as an object, not a string
+                        val dataEl = Json.parseToJsonElement(source.jsonString!!)
+                        put("data", dataEl)
+                    }
+                }
+
+                source.attribution?.let { put("attribution", JsonPrimitive(it)) }
+                source.buffer?.let { put("buffer", JsonPrimitive(it)) }
+                // Include cluster flag only when true to keep payload concise
+                if (source.isCluster) put("cluster", JsonPrimitive(true))
+                source.clusterMaxZoom?.let { put("clusterMaxZoom", JsonPrimitive(it)) }
+                source.clusterRadius?.let { put("clusterRadius", JsonPrimitive(it)) }
+                source.maxZoom?.let { put("maxzoom", JsonPrimitive(it)) }
+                source.tolerance?.let { put("tolerance", JsonPrimitive(it)) }
+                source.lineMetrics?.let { put("lineMetrics", JsonPrimitive(it)) }
             }
-        return "${MTBridge.MAP_OBJECT}.addSource('${source.identifier}', $jsSourceString);"
-    }
 
-    private fun replaceDataString(sourceString: String): String {
-        val regex = Regex("""("data":\s*)"([^"]*)"""")
-        return regex.replace(sourceString, "$1$2")
+        val jsSourceString = JsonConfig.json.encodeToString(JsonObject.serializer(), obj)
+        return "${MTBridge.MAP_OBJECT}.addSource('${source.identifier}', $jsSourceString);"
     }
 }
