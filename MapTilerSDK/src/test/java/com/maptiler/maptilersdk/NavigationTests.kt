@@ -7,6 +7,8 @@
 package com.maptiler.maptilersdk
 
 import com.maptiler.maptilersdk.bridge.MTBridge
+import com.maptiler.maptilersdk.commands.navigation.GetCenterClampedToGround
+import com.maptiler.maptilersdk.commands.navigation.GetCenterElevation
 import com.maptiler.maptilersdk.commands.navigation.GetZoom
 import com.maptiler.maptilersdk.commands.navigation.PanBy
 import com.maptiler.maptilersdk.commands.navigation.PanTo
@@ -22,6 +24,16 @@ import junit.framework.TestCase.assertEquals
 import org.junit.Test
 
 class NavigationTests {
+    @Test fun getCenterClampedToGroundToJS_ReturnsCorrectJSString() {
+        val command = GetCenterClampedToGround()
+        assertEquals("${MTBridge.MAP_OBJECT}.getCenterClampedToGround();", command.toJS())
+    }
+
+    @Test fun getCenterElevationToJS_ReturnsCorrectJSString() {
+        val command = GetCenterElevation()
+        assertEquals("${MTBridge.MAP_OBJECT}.getCenterElevation();", command.toJS())
+    }
+
     @Test fun getZoomToJS_ReturnsCorrectJSString() {
         val command = GetZoom()
         assertEquals("${MTBridge.MAP_OBJECT}.getZoom();", command.toJS())
