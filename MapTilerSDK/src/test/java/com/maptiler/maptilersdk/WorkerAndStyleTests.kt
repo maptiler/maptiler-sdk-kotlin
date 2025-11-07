@@ -20,10 +20,10 @@ import com.maptiler.maptilersdk.map.style.layer.fill.MTFillLayer
 import com.maptiler.maptilersdk.map.workers.navigable.NavigableWorker
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.runBlocking
-import kotlin.collections.ArrayDeque
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Test
+import kotlin.collections.ArrayDeque
 
 class WorkerAndStyleTests {
     @Test fun navigableWorker_getBearing_UsesGetBearingCommand() =
