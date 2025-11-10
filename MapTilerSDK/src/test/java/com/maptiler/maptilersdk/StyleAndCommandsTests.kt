@@ -165,4 +165,20 @@ class StyleAndCommandsTests {
         val js = GetProjection().toJS()
         assertEquals("(${MTBridge.MAP_OBJECT}.getProjection() || {}).type;", js)
     }
+
+    @Test fun addLayer_Symbol_WithTextAndFilter_EncodesLayoutAndFilter() {
+        val layer = MTSymbolLayer("cluster-count", "earthquakes")
+        layer.textField = "{point_count_abbreviated}"
+        layer.textSize = 12.0
+        layer.setFilterHas("point_count")
+
+        val js =
+            com.maptiler.maptilersdk.commands.style
+                .AddLayer(layer)
+                .toJS()
+
+        assertTrue(js.contains("\"text-field\":\"{point_count_abbreviated}\""))
+        assertTrue(js.contains("\"text-size\":12.0"))
+        assertTrue(js.contains("\"filter\":[\"has\",\"point_count\"]"))
+    }
 }
