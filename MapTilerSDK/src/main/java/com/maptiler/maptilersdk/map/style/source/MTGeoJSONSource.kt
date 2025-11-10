@@ -37,7 +37,6 @@ class MTGeoJSONSource : MTSource {
     /**
      * Unique identifier of a source.
      */
-    @SerialName("id")
     override var identifier: String
 
     /**
