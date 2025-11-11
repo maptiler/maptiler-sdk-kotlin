@@ -10,6 +10,7 @@ import com.maptiler.maptilersdk.bridge.JSString
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTCommand
 import com.maptiler.maptilersdk.helpers.JsonConfig
+import com.maptiler.maptilersdk.helpers.formatUrlForJs
 import com.maptiler.maptilersdk.map.style.source.MTGeoJSONSource
 import com.maptiler.maptilersdk.map.style.source.MTSource
 import com.maptiler.maptilersdk.map.style.source.MTVectorTileSource
@@ -71,7 +72,7 @@ internal data class AddSource(
 
                 // Set data from URL or inline JSON string
                 when {
-                    source.url != null -> put("data", JsonPrimitive(source.url.toString()))
+                    source.url != null -> put("data", JsonPrimitive(formatUrlForJs(source.url!!)))
                     !source.jsonString.isNullOrBlank() -> {
                         // Parse inline GeoJSON into a JsonElement so it serializes as an object, not a string
                         val dataEl = Json.parseToJsonElement(source.jsonString!!)
@@ -93,4 +94,6 @@ internal data class AddSource(
         val jsSourceString = JsonConfig.json.encodeToString(JsonObject.serializer(), obj)
         return "${MTBridge.MAP_OBJECT}.addSource('${source.identifier}', $jsSourceString);"
     }
+
+    // shared helper in helpers package
 }

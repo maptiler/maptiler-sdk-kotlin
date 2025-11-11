@@ -185,7 +185,14 @@ object URLAsStringSerializer : KSerializer<URL> {
         encoder: Encoder,
         value: URL,
     ) {
-        encoder.encodeString(value.toString())
+        val encoded =
+            if (value.protocol.equals("file", ignoreCase = true) && (value.authority.isNullOrEmpty())) {
+                // Preserve triple-slash form for file URLs (file:///path)
+                "file://" + value.path
+            } else {
+                value.toString()
+            }
+        encoder.encodeString(encoded)
     }
 
     override fun deserialize(decoder: Decoder): URL = URL(decoder.decodeString())
