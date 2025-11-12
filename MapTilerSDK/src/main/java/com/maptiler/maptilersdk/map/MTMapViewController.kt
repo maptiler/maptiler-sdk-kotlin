@@ -256,6 +256,16 @@ class MTMapViewController(
     override suspend fun getZoom(): Double = zoomableWorker.getZoom()
 
     /**
+     * Returns the map's maximum zoom level.
+     */
+    override suspend fun getMaxZoom(): Double = zoomableWorker.getMaxZoom()
+
+    /**
+     * Returns the map's minimum zoom level.
+     */
+    override suspend fun getMinZoom(): Double = zoomableWorker.getMinZoom()
+
+    /**
      * Sets the map's zoom level.
      *
      * @param zoom The zoom level to set (0-20).
@@ -343,6 +353,16 @@ class MTMapViewController(
      * Returns the map's current pitch.
      */
     override suspend fun getPitch(): Double = navigableWorker.getPitch()
+
+    /**
+     * Returns the map's maximum pitch.
+     */
+    override suspend fun getMaxPitch(): Double = navigableWorker.getMaxPitch()
+
+    /**
+     * Returns the map's minimum pitch.
+     */
+    override suspend fun getMinPitch(): Double = navigableWorker.getMinPitch()
 
     /**
      * Sets the map's pitch in degrees (0-85).

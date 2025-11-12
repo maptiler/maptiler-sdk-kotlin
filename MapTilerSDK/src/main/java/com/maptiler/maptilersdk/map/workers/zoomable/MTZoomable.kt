@@ -26,6 +26,16 @@ interface MTZoomable {
     suspend fun getZoom(): Double
 
     /**
+     * Returns the map's maximum zoom level.
+     */
+    suspend fun getMaxZoom(): Double
+
+    /**
+     * Returns the map's minimum zoom level.
+     */
+    suspend fun getMinZoom(): Double
+
+    /**
      * Sets the map's zoom level.
      *
      * @param zoom The zoom level to set (0-20).
