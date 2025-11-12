@@ -9,6 +9,8 @@ package com.maptiler.maptilersdk.map.workers.zoomable
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.DoubleValue
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.StringValue
+import com.maptiler.maptilersdk.commands.navigation.GetMaxZoom
+import com.maptiler.maptilersdk.commands.navigation.GetMinZoom
 import com.maptiler.maptilersdk.commands.navigation.GetZoom
 import com.maptiler.maptilersdk.commands.navigation.SetMaxZoom
 import com.maptiler.maptilersdk.commands.navigation.SetMinZoom
@@ -42,6 +44,32 @@ internal class ZoomableWorker(
         val returnTypeValue =
             bridge.execute(
                 GetZoom(),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> returnTypeValue.value.toDouble()
+            is DoubleValue -> returnTypeValue.value
+            else -> 0.0
+        }
+    }
+
+    override suspend fun getMaxZoom(): Double {
+        val returnTypeValue =
+            bridge.execute(
+                GetMaxZoom(),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> returnTypeValue.value.toDouble()
+            is DoubleValue -> returnTypeValue.value
+            else -> 0.0
+        }
+    }
+
+    override suspend fun getMinZoom(): Double {
+        val returnTypeValue =
+            bridge.execute(
+                GetMinZoom(),
             )
 
         return when (returnTypeValue) {

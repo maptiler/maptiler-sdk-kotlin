@@ -85,6 +85,16 @@ interface MTNavigable {
     suspend fun getPitch(): Double
 
     /**
+     * Returns the map's maximum pitch.
+     */
+    suspend fun getMaxPitch(): Double
+
+    /**
+     * Returns the map's minimum pitch.
+     */
+    suspend fun getMinPitch(): Double
+
+    /**
      * Sets the map's pitch.
      *
      * @param pitch Desired pitch in degrees (0-85 default constraints).

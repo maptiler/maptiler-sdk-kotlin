@@ -16,6 +16,8 @@ import com.maptiler.maptilersdk.commands.navigation.GetBearing
 import com.maptiler.maptilersdk.commands.navigation.GetCenter
 import com.maptiler.maptilersdk.commands.navigation.GetCenterClampedToGround
 import com.maptiler.maptilersdk.commands.navigation.GetCenterElevation
+import com.maptiler.maptilersdk.commands.navigation.GetMaxPitch
+import com.maptiler.maptilersdk.commands.navigation.GetMinPitch
 import com.maptiler.maptilersdk.commands.navigation.GetPitch
 import com.maptiler.maptilersdk.commands.navigation.GetRoll
 import com.maptiler.maptilersdk.commands.navigation.JumpTo
@@ -132,6 +134,32 @@ internal class NavigableWorker(
         val returnTypeValue =
             bridge.execute(
                 GetPitch(),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> returnTypeValue.value.toDouble()
+            is DoubleValue -> returnTypeValue.value
+            else -> 0.0
+        }
+    }
+
+    override suspend fun getMaxPitch(): Double {
+        val returnTypeValue =
+            bridge.execute(
+                GetMaxPitch(),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> returnTypeValue.value.toDouble()
+            is DoubleValue -> returnTypeValue.value
+            else -> 0.0
+        }
+    }
+
+    override suspend fun getMinPitch(): Double {
+        val returnTypeValue =
+            bridge.execute(
+                GetMinPitch(),
             )
 
         return when (returnTypeValue) {
