@@ -13,6 +13,7 @@ import com.maptiler.maptilersdk.commands.navigation.GetMaxPitch
 import com.maptiler.maptilersdk.commands.navigation.GetMaxZoom
 import com.maptiler.maptilersdk.commands.navigation.GetMinPitch
 import com.maptiler.maptilersdk.commands.navigation.GetMinZoom
+import com.maptiler.maptilersdk.commands.navigation.GetRenderWorldCopies
 import com.maptiler.maptilersdk.commands.navigation.GetZoom
 import com.maptiler.maptilersdk.commands.navigation.PanBy
 import com.maptiler.maptilersdk.commands.navigation.PanTo
@@ -31,6 +32,11 @@ class NavigationTests {
     @Test fun getCenterClampedToGroundToJS_ReturnsCorrectJSString() {
         val command = GetCenterClampedToGround()
         assertEquals("${MTBridge.MAP_OBJECT}.getCenterClampedToGround();", command.toJS())
+    }
+
+    @Test fun getRenderWorldCopiesToJS_ReturnsCorrectJSString() {
+        val command = GetRenderWorldCopies()
+        assertEquals("${MTBridge.MAP_OBJECT}.getRenderWorldCopies();", command.toJS())
     }
 
     @Test fun getCenterElevationToJS_ReturnsCorrectJSString() {

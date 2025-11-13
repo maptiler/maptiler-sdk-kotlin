@@ -380,6 +380,8 @@ class MTMapViewController(
      */
     override suspend fun getCenterClampedToGround(): Boolean = navigableWorker.getCenterClampedToGround()
 
+    override suspend fun getRenderWorldCopies(): Boolean = navigableWorker.getRenderWorldCopies()
+
     /**
      * Returns the elevation of the map's center point in meters above sea level.
      */
