@@ -289,7 +289,7 @@ internal class StylableWorker(
         }
     }
 
-    suspend fun getProjection(): MTProjectionType? {
+    suspend fun getProjection(): MTProjectionType {
         val returnTypeValue = bridge.execute(GetProjection())
 
         return when (returnTypeValue) {
@@ -297,10 +297,10 @@ internal class StylableWorker(
                 when (returnTypeValue.value.trim('"')) { // Android webview returns quoted strings
                     "mercator" -> MTProjectionType.MERCATOR
                     "globe" -> MTProjectionType.GLOBE
-                    else -> null
+                    else -> MTProjectionType.MERCATOR
                 }
-            is MTBridgeReturnType.Null, MTBridgeReturnType.UnsupportedType -> null
-            else -> null
+            is MTBridgeReturnType.Null, MTBridgeReturnType.UnsupportedType -> MTProjectionType.MERCATOR
+            else -> MTProjectionType.MERCATOR
         }
     }
 

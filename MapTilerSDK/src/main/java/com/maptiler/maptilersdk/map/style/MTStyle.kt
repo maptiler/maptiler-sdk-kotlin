@@ -238,9 +238,9 @@ class MTStyle(
     fun disableTerrain() = stylableWorker.disableTerrain()
 
     /**
-     * Gets the current projection type if set.
+     * Gets the current projection type. Defaults to [MTProjectionType.MERCATOR] when unavailable.
      */
-    suspend fun getProjection(): MTProjectionType? = stylableWorker.getProjection()
+    suspend fun getProjection(): MTProjectionType = stylableWorker.getProjection()
 
     // CONTROLS / STYLE HELPERS
 

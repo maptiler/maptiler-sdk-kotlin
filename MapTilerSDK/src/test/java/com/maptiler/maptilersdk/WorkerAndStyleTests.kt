@@ -13,11 +13,14 @@ import com.maptiler.maptilersdk.bridge.MTCommandExecutable
 import com.maptiler.maptilersdk.commands.navigation.GetBearing
 import com.maptiler.maptilersdk.commands.navigation.GetCenterClampedToGround
 import com.maptiler.maptilersdk.commands.navigation.GetCenterElevation
+import com.maptiler.maptilersdk.commands.style.GetProjection
 import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
 import com.maptiler.maptilersdk.map.style.MTStyle
 import com.maptiler.maptilersdk.map.style.MTStyleError
 import com.maptiler.maptilersdk.map.style.layer.fill.MTFillLayer
+import com.maptiler.maptilersdk.map.types.MTProjectionType
 import com.maptiler.maptilersdk.map.workers.navigable.NavigableWorker
+import com.maptiler.maptilersdk.map.workers.stylable.StylableWorker
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -93,6 +96,39 @@ class WorkerAndStyleTests {
             val result = worker.getCenterElevation()
             assertEquals(42.5, result, 0.0)
             assertTrue(usedGetCenterElevation)
+        }
+
+    @Test fun stylableWorker_getProjection_UsesGetProjectionCommand() =
+        runBlocking {
+            var usedGetProjection = false
+            val exec =
+                object : MTCommandExecutable {
+                    override suspend fun execute(command: MTCommand): MTBridgeReturnType {
+                        if (command is GetProjection) {
+                            usedGetProjection = true
+                        }
+                        return MTBridgeReturnType.StringValue("\"globe\"")
+                    }
+                }
+            val bridge = MTBridge(exec)
+            val worker = StylableWorker(bridge, this)
+
+            val result = worker.getProjection()
+            assertTrue(usedGetProjection)
+            assertEquals(MTProjectionType.GLOBE, result)
+        }
+
+    @Test fun stylableWorker_getProjection_DefaultsToMercatorWhenNull() =
+        runBlocking {
+            val exec =
+                object : MTCommandExecutable {
+                    override suspend fun execute(command: MTCommand): MTBridgeReturnType = MTBridgeReturnType.Null
+                }
+            val bridge = MTBridge(exec)
+            val worker = StylableWorker(bridge, this)
+
+            val result = worker.getProjection()
+            assertEquals(MTProjectionType.MERCATOR, result)
         }
 
     @Test fun mtStyle_removeLayer_ThrowsWhenMissing() {
