@@ -19,6 +19,7 @@ import com.maptiler.maptilersdk.commands.navigation.GetCenterElevation
 import com.maptiler.maptilersdk.commands.navigation.GetMaxPitch
 import com.maptiler.maptilersdk.commands.navigation.GetMinPitch
 import com.maptiler.maptilersdk.commands.navigation.GetPitch
+import com.maptiler.maptilersdk.commands.navigation.GetRenderWorldCopies
 import com.maptiler.maptilersdk.commands.navigation.GetRoll
 import com.maptiler.maptilersdk.commands.navigation.JumpTo
 import com.maptiler.maptilersdk.commands.navigation.PanBy
@@ -194,6 +195,27 @@ internal class NavigableWorker(
         val returnTypeValue =
             bridge.execute(
                 GetCenterClampedToGround(),
+            )
+
+        return when (returnTypeValue) {
+            is BoolValue -> returnTypeValue.value
+            is DoubleValue -> returnTypeValue.value != 0.0
+            is StringValue -> {
+                val normalized = returnTypeValue.value.trim().lowercase()
+                when (normalized) {
+                    "true" -> true
+                    "false" -> false
+                    else -> normalized.toDoubleOrNull()?.let { it != 0.0 } ?: false
+                }
+            }
+            else -> false
+        }
+    }
+
+    override suspend fun getRenderWorldCopies(): Boolean {
+        val returnTypeValue =
+            bridge.execute(
+                GetRenderWorldCopies(),
             )
 
         return when (returnTypeValue) {

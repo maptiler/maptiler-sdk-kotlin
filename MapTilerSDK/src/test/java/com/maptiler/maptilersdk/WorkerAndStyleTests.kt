@@ -13,6 +13,7 @@ import com.maptiler.maptilersdk.bridge.MTCommandExecutable
 import com.maptiler.maptilersdk.commands.navigation.GetBearing
 import com.maptiler.maptilersdk.commands.navigation.GetCenterClampedToGround
 import com.maptiler.maptilersdk.commands.navigation.GetCenterElevation
+import com.maptiler.maptilersdk.commands.navigation.GetRenderWorldCopies
 import com.maptiler.maptilersdk.commands.style.GetProjection
 import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
 import com.maptiler.maptilersdk.map.style.MTStyle
@@ -76,6 +77,51 @@ class WorkerAndStyleTests {
             assertEquals(false, second)
             assertEquals(false, third)
             assertTrue(executedCommands.all { it is GetCenterClampedToGround })
+        }
+
+    @Test fun navigableWorker_getRenderWorldCopies_ParsesPrimitiveReturnTypes() =
+        runBlocking {
+            val executedCommands = mutableListOf<MTCommand>()
+            val responses =
+                ArrayDeque(
+                    listOf(
+                        MTBridgeReturnType.BoolValue(true),
+                        MTBridgeReturnType.StringValue("false"),
+                        MTBridgeReturnType.StringValue("1"),
+                        MTBridgeReturnType.DoubleValue(0.0),
+                        MTBridgeReturnType.DoubleValue(2.0),
+                        MTBridgeReturnType.StringValue("  TRUE "),
+                        MTBridgeReturnType.StringValue("invalid"),
+                    ),
+                )
+
+            val exec =
+                object : MTCommandExecutable {
+                    override suspend fun execute(command: MTCommand): MTBridgeReturnType {
+                        executedCommands.add(command)
+                        return responses.removeFirst()
+                    }
+                }
+
+            val bridge = MTBridge(exec)
+            val worker = NavigableWorker(bridge, this)
+
+            val first = worker.getRenderWorldCopies()
+            val second = worker.getRenderWorldCopies()
+            val third = worker.getRenderWorldCopies()
+            val fourth = worker.getRenderWorldCopies()
+            val fifth = worker.getRenderWorldCopies()
+            val sixth = worker.getRenderWorldCopies()
+            val seventh = worker.getRenderWorldCopies()
+
+            assertEquals(true, first)
+            assertEquals(false, second)
+            assertEquals(true, third)
+            assertEquals(false, fourth)
+            assertEquals(true, fifth)
+            assertEquals(true, sixth)
+            assertEquals(false, seventh)
+            assertTrue(executedCommands.all { it is GetRenderWorldCopies })
         }
 
     @Test fun navigableWorker_getCenterElevation_ParsesStringReturnType() =

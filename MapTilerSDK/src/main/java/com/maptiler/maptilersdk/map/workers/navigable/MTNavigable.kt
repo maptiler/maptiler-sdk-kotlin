@@ -112,6 +112,11 @@ interface MTNavigable {
     suspend fun getCenterClampedToGround(): Boolean
 
     /**
+     * Returns whether the map is set to render multiple world copies.
+     */
+    suspend fun getRenderWorldCopies(): Boolean
+
+    /**
      * Returns the elevation of the map's center point in meters above sea level.
      */
     suspend fun getCenterElevation(): Double
