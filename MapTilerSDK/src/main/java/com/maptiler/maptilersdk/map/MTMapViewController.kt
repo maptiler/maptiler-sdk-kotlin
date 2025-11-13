@@ -31,6 +31,7 @@ import com.maptiler.maptilersdk.map.options.MTPaddingOptions
 import com.maptiler.maptilersdk.map.style.MTStyle
 import com.maptiler.maptilersdk.map.types.MTData
 import com.maptiler.maptilersdk.map.types.MTPoint
+import com.maptiler.maptilersdk.map.types.MTProjectionType
 import com.maptiler.maptilersdk.map.workers.navigable.MTNavigable
 import com.maptiler.maptilersdk.map.workers.navigable.NavigableWorker
 import com.maptiler.maptilersdk.map.workers.zoomable.MTZoomable
@@ -383,6 +384,11 @@ class MTMapViewController(
      * Returns the elevation of the map's center point in meters above sea level.
      */
     override suspend fun getCenterElevation(): Double = navigableWorker.getCenterElevation()
+
+    /**
+     * Returns the current map projection type. Defaults to [MTProjectionType.MERCATOR] if unavailable.
+     */
+    suspend fun getProjection(): MTProjectionType = style?.getProjection() ?: MTProjectionType.MERCATOR
 
     /**
      * Project coordinates to point on the container.
