@@ -18,9 +18,9 @@ import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
 import com.maptiler.maptilersdk.map.style.MTStyle
 import com.maptiler.maptilersdk.map.style.MTStyleError
 import com.maptiler.maptilersdk.map.style.layer.fill.MTFillLayer
+import com.maptiler.maptilersdk.map.types.MTProjectionType
 import com.maptiler.maptilersdk.map.workers.navigable.NavigableWorker
 import com.maptiler.maptilersdk.map.workers.stylable.StylableWorker
-import com.maptiler.maptilersdk.map.types.MTProjectionType
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
