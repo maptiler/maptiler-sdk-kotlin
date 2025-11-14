@@ -131,6 +131,17 @@ class MTStyle(
     ) = stylableWorker.addImage(identifier, image, options)
 
     /**
+     * Registers a sprite hosted at the provided URL under the given identifier.
+     *
+     * @param identifier Unique name for the sprite resource.
+     * @param url Fully qualified URL pointing to the sprite image.
+     */
+    fun addSprite(
+        identifier: String,
+        url: URL,
+    ) = stylableWorker.addSprite(identifier, url)
+
+    /**
      * Adds a layer to the map.
      *
      * @param layer Layer to be added.

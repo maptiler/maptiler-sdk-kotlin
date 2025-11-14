@@ -19,6 +19,7 @@ import com.maptiler.maptilersdk.commands.misc.AddLogoControl
 import com.maptiler.maptilersdk.commands.style.AddImage
 import com.maptiler.maptilersdk.commands.style.AddLayer
 import com.maptiler.maptilersdk.commands.style.AddSource
+import com.maptiler.maptilersdk.commands.style.AddSprite
 import com.maptiler.maptilersdk.commands.style.DisableHalo
 import com.maptiler.maptilersdk.commands.style.DisableHaloAnimations
 import com.maptiler.maptilersdk.commands.style.DisableSpaceAnimations
@@ -211,6 +212,17 @@ internal class StylableWorker(
         scope.launch {
             bridge.execute(
                 AddImage(identifier, image, options),
+            )
+        }
+    }
+
+    fun addSprite(
+        identifier: String,
+        spriteUrl: URL,
+    ) {
+        scope.launch {
+            bridge.execute(
+                AddSprite(identifier, spriteUrl),
             )
         }
     }

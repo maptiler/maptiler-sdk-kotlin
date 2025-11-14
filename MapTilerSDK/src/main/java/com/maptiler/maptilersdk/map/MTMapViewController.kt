@@ -41,6 +41,7 @@ import com.maptiler.maptilersdk.map.workers.zoomable.ZoomableWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.net.URL
 
 interface MTMapViewDelegate {
     fun onMapViewInitialized()
@@ -424,6 +425,19 @@ class MTMapViewController(
      * Returns the current map projection type. Defaults to [MTProjectionType.MERCATOR] if unavailable.
      */
     suspend fun getProjection(): MTProjectionType = style?.getProjection() ?: MTProjectionType.MERCATOR
+
+    /**
+     * Registers a sprite resource that can be referenced from style layers.
+     *
+     * @param identifier Unique identifier for the sprite.
+     * @param url Fully qualified URL to the sprite image.
+     */
+    fun addSprite(
+        identifier: String,
+        url: URL,
+    ) {
+        style?.addSprite(identifier, url)
+    }
 
     /**
      * Project coordinates to point on the container.
