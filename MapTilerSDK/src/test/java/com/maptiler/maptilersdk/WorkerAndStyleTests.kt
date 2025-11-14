@@ -10,6 +10,7 @@ import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType
 import com.maptiler.maptilersdk.bridge.MTCommand
 import com.maptiler.maptilersdk.bridge.MTCommandExecutable
+import com.maptiler.maptilersdk.commands.navigation.AreTilesLoaded
 import com.maptiler.maptilersdk.commands.navigation.GetBearing
 import com.maptiler.maptilersdk.commands.navigation.GetCenterClampedToGround
 import com.maptiler.maptilersdk.commands.navigation.GetCenterElevation
@@ -122,6 +123,51 @@ class WorkerAndStyleTests {
             assertEquals(true, sixth)
             assertEquals(false, seventh)
             assertTrue(executedCommands.all { it is GetRenderWorldCopies })
+        }
+
+    @Test fun navigableWorker_areTilesLoaded_ParsesPrimitiveReturnTypes() =
+        runBlocking {
+            val executedCommands = mutableListOf<MTCommand>()
+            val responses =
+                ArrayDeque(
+                    listOf(
+                        MTBridgeReturnType.BoolValue(true),
+                        MTBridgeReturnType.DoubleValue(0.0),
+                        MTBridgeReturnType.DoubleValue(1.0),
+                        MTBridgeReturnType.StringValue("false"),
+                        MTBridgeReturnType.StringValue("  TRUE  "),
+                        MTBridgeReturnType.StringValue("0"),
+                        MTBridgeReturnType.StringValue("unexpected"),
+                    ),
+                )
+
+            val exec =
+                object : MTCommandExecutable {
+                    override suspend fun execute(command: MTCommand): MTBridgeReturnType {
+                        executedCommands.add(command)
+                        return responses.removeFirst()
+                    }
+                }
+
+            val bridge = MTBridge(exec)
+            val worker = NavigableWorker(bridge, this)
+
+            val first = worker.areTilesLoaded()
+            val second = worker.areTilesLoaded()
+            val third = worker.areTilesLoaded()
+            val fourth = worker.areTilesLoaded()
+            val fifth = worker.areTilesLoaded()
+            val sixth = worker.areTilesLoaded()
+            val seventh = worker.areTilesLoaded()
+
+            assertEquals(true, first)
+            assertEquals(false, second)
+            assertEquals(true, third)
+            assertEquals(false, fourth)
+            assertEquals(true, fifth)
+            assertEquals(false, sixth)
+            assertEquals(false, seventh)
+            assertTrue(executedCommands.all { it is AreTilesLoaded })
         }
 
     @Test fun navigableWorker_getCenterElevation_ParsesStringReturnType() =

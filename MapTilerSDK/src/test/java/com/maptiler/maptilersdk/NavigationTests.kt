@@ -7,6 +7,7 @@
 package com.maptiler.maptilersdk
 
 import com.maptiler.maptilersdk.bridge.MTBridge
+import com.maptiler.maptilersdk.commands.navigation.AreTilesLoaded
 import com.maptiler.maptilersdk.commands.navigation.GetCenterClampedToGround
 import com.maptiler.maptilersdk.commands.navigation.GetCenterElevation
 import com.maptiler.maptilersdk.commands.navigation.GetMaxPitch
@@ -39,6 +40,11 @@ class NavigationTests {
     @Test fun getRenderWorldCopiesToJS_ReturnsCorrectJSString() {
         val command = GetRenderWorldCopies()
         assertEquals("${MTBridge.MAP_OBJECT}.getRenderWorldCopies();", command.toJS())
+    }
+
+    @Test fun areTilesLoadedToJS_ReturnsCorrectJSString() {
+        val command = AreTilesLoaded()
+        assertEquals("${MTBridge.MAP_OBJECT}.areTilesLoaded();", command.toJS())
     }
 
     @Test fun getPixelRatioToJS_ReturnsCorrectJSString() {
