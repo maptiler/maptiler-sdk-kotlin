@@ -10,6 +10,7 @@ import com.maptiler.maptilersdk.map.options.MTHalo
 import com.maptiler.maptilersdk.map.options.MTHaloOption
 import com.maptiler.maptilersdk.map.options.MTSpace
 import com.maptiler.maptilersdk.map.options.MTSpaceOption
+import com.maptiler.maptilersdk.map.types.MTBounds
 import com.maptiler.maptilersdk.map.types.MTLanguage
 import com.maptiler.maptilersdk.map.types.MTLanguageSerializer
 import com.maptiler.maptilersdk.map.types.MTMapCorner
@@ -39,6 +40,12 @@ class MTMapOptions {
         private set
 
     /**
+     * Geographical area that should be visible when the map initializes.
+     */
+    var bounds: MTBounds? = null
+        private set
+
+    /**
      * Projection type of the map object.
      *
      * This will overwrite the projection property from the style (if any).
@@ -59,6 +66,12 @@ class MTMapOptions {
      * The maximum zoom level of the map (0-24).
      */
     var maxZoom: Double? = null
+        private set
+
+    /**
+     * Restricts the viewport to the provided geographical bounds.
+     */
+    var maxBounds: MTBounds? = null
         private set
 
     /**
@@ -478,9 +491,11 @@ class MTMapOptions {
     constructor(
         language: MTLanguage? = null,
         center: LngLat? = null,
+        bounds: MTBounds? = null,
         projection: MTProjectionType? = null,
         zoom: Double? = null,
         maxZoom: Double? = null,
+        maxBounds: MTBounds? = null,
         minZoom: Double? = null,
         bearing: Double? = null,
         bearingSnap: Double? = null,
@@ -525,9 +540,11 @@ class MTMapOptions {
     ) {
         this.language = language
         this.center = center
+        this.bounds = bounds
         this.projection = projection
         this.zoom = zoom
         this.maxZoom = maxZoom
+        this.maxBounds = maxBounds
         this.minZoom = minZoom
         this.bearing = bearing
         this.bearingSnap = bearingSnap

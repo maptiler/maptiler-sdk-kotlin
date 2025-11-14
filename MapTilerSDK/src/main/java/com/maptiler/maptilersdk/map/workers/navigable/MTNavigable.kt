@@ -8,8 +8,10 @@ package com.maptiler.maptilersdk.map.workers.navigable
 
 import com.maptiler.maptilersdk.map.LngLat
 import com.maptiler.maptilersdk.map.options.MTCameraOptions
+import com.maptiler.maptilersdk.map.options.MTFitBoundsOptions
 import com.maptiler.maptilersdk.map.options.MTFlyToOptions
 import com.maptiler.maptilersdk.map.options.MTPaddingOptions
+import com.maptiler.maptilersdk.map.types.MTBounds
 import com.maptiler.maptilersdk.map.types.MTPoint
 
 /**
@@ -54,6 +56,30 @@ interface MTNavigable {
      * @param cameraOptions Options for controlling the desired location, zoom, bearing, and pitch of the camera.
      */
     fun easeTo(cameraOptions: MTCameraOptions)
+
+    /**
+     * Adjusts the camera to ensure the entire bounding box is visible.
+     *
+     * @param bounds Geographical area that must be visible once the transition completes.
+     * @param options Optional animation and padding configuration applied while fitting the bounds.
+     */
+    fun fitBounds(
+        bounds: MTBounds,
+        options: MTFitBoundsOptions? = null,
+    )
+
+    /**
+     * Returns the geographical bounds currently visible in the viewport.
+     */
+    suspend fun getBounds(): MTBounds
+
+    /**
+     * Fits the camera to the coarse bounds inferred from the user's public IP address.
+     *
+     * This triggers a network lookup in the embedded JavaScript SDK and animates the map to the returned country bounds.
+     * The animation runs on the JS side; this call only initiates the process.
+     */
+    fun fitToIpBounds()
 
     /**
      * Returns the map's current bearing.
@@ -127,6 +153,11 @@ interface MTNavigable {
     suspend fun getCenterElevation(): Double
 
     /**
+     * Returns the geographical constraints currently applied to the map, if any.
+     */
+    suspend fun getMaxBounds(): MTBounds?
+
+    /**
      * Projects geographical coordinates to a point on the container.
      *
      * @param coordinates The geographical coordinate to project.
@@ -172,4 +203,13 @@ interface MTNavigable {
      * @param padding Custom options to use.
      */
     fun setPadding(padding: MTPaddingOptions)
+
+    /**
+     * Applies or clears the geographical constraints that clamp user interaction.
+     *
+     * Passing `null` removes the bounds restriction.
+     *
+     * @param bounds Geographical limits for map interactions, or null to remove restrictions.
+     */
+    fun setMaxBounds(bounds: MTBounds?)
 }
