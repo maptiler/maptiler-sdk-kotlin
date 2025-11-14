@@ -9,13 +9,18 @@ package com.maptiler.maptilersdk.map.workers.navigable
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.BoolValue
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.DoubleValue
+import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.Null
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.StringValue
 import com.maptiler.maptilersdk.commands.navigation.EaseTo
+import com.maptiler.maptilersdk.commands.navigation.FitBounds
+import com.maptiler.maptilersdk.commands.navigation.FitToIpBounds
 import com.maptiler.maptilersdk.commands.navigation.FlyTo
 import com.maptiler.maptilersdk.commands.navigation.GetBearing
+import com.maptiler.maptilersdk.commands.navigation.GetBounds
 import com.maptiler.maptilersdk.commands.navigation.GetCenter
 import com.maptiler.maptilersdk.commands.navigation.GetCenterClampedToGround
 import com.maptiler.maptilersdk.commands.navigation.GetCenterElevation
+import com.maptiler.maptilersdk.commands.navigation.GetMaxBounds
 import com.maptiler.maptilersdk.commands.navigation.GetMaxPitch
 import com.maptiler.maptilersdk.commands.navigation.GetMinPitch
 import com.maptiler.maptilersdk.commands.navigation.GetPitch
@@ -30,6 +35,7 @@ import com.maptiler.maptilersdk.commands.navigation.SetBearing
 import com.maptiler.maptilersdk.commands.navigation.SetCenter
 import com.maptiler.maptilersdk.commands.navigation.SetCenterClampedToGround
 import com.maptiler.maptilersdk.commands.navigation.SetCenterElevation
+import com.maptiler.maptilersdk.commands.navigation.SetMaxBounds
 import com.maptiler.maptilersdk.commands.navigation.SetPadding
 import com.maptiler.maptilersdk.commands.navigation.SetPitch
 import com.maptiler.maptilersdk.commands.navigation.SetPixelRatio
@@ -37,8 +43,10 @@ import com.maptiler.maptilersdk.commands.navigation.SetRoll
 import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.map.LngLat
 import com.maptiler.maptilersdk.map.options.MTCameraOptions
+import com.maptiler.maptilersdk.map.options.MTFitBoundsOptions
 import com.maptiler.maptilersdk.map.options.MTFlyToOptions
 import com.maptiler.maptilersdk.map.options.MTPaddingOptions
+import com.maptiler.maptilersdk.map.types.MTBounds
 import com.maptiler.maptilersdk.map.types.MTPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -87,6 +95,58 @@ internal class NavigableWorker(
         scope.launch {
             bridge.execute(
                 EaseTo(cameraOptions),
+            )
+        }
+    }
+
+    override fun fitBounds(
+        bounds: MTBounds,
+        options: MTFitBoundsOptions?,
+    ) {
+        scope.launch {
+            bridge.execute(
+                FitBounds(bounds, options),
+            )
+        }
+    }
+
+    override suspend fun getBounds(): MTBounds {
+        val returnTypeValue =
+            bridge.execute(
+                GetBounds(),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> JsonConfig.json.decodeFromString<MTBounds>(returnTypeValue.value)
+            else -> MTBounds(-180.0, -90.0, 180.0, 90.0)
+        }
+    }
+
+    override fun fitToIpBounds() {
+        scope.launch {
+            bridge.execute(
+                FitToIpBounds(),
+            )
+        }
+    }
+
+    override suspend fun getMaxBounds(): MTBounds? {
+        val returnTypeValue =
+            bridge.execute(
+                GetMaxBounds(),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> JsonConfig.json.decodeFromString<MTBounds>(returnTypeValue.value)
+            is Null -> null
+            else -> null
+        }
+    }
+
+    override fun setMaxBounds(bounds: MTBounds?) {
+        scope.launch {
+            bridge.execute(
+                SetMaxBounds(bounds),
             )
         }
     }

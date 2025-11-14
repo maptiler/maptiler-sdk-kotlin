@@ -26,9 +26,11 @@ import com.maptiler.maptilersdk.logging.MTLogType
 import com.maptiler.maptilersdk.logging.MTLogger
 import com.maptiler.maptilersdk.map.gestures.MTGestureService
 import com.maptiler.maptilersdk.map.options.MTCameraOptions
+import com.maptiler.maptilersdk.map.options.MTFitBoundsOptions
 import com.maptiler.maptilersdk.map.options.MTFlyToOptions
 import com.maptiler.maptilersdk.map.options.MTPaddingOptions
 import com.maptiler.maptilersdk.map.style.MTStyle
+import com.maptiler.maptilersdk.map.types.MTBounds
 import com.maptiler.maptilersdk.map.types.MTData
 import com.maptiler.maptilersdk.map.types.MTPoint
 import com.maptiler.maptilersdk.map.types.MTProjectionType
@@ -327,6 +329,27 @@ class MTMapViewController(
     override fun easeTo(cameraOptions: MTCameraOptions) = navigableWorker.easeTo(cameraOptions)
 
     /**
+     * Fits the viewport so that the supplied bounds are fully visible, applying optional padding or animation overrides.
+     *
+     * @param bounds Geographical box that must be visible when the transition finishes.
+     * @param options Optional animation and padding configuration that fine-tunes the fitting behaviour.
+     */
+    override fun fitBounds(
+        bounds: MTBounds,
+        options: MTFitBoundsOptions?,
+    ) = navigableWorker.fitBounds(bounds, options)
+
+    /**
+     * Returns the geographical bounds currently visible within the viewport.
+     */
+    override suspend fun getBounds(): MTBounds = navigableWorker.getBounds()
+
+    /**
+     * Initiates an animated fit to the coarse bounds derived from the device's public IP address.
+     */
+    override fun fitToIpBounds() = navigableWorker.fitToIpBounds()
+
+    /**
      * Returns the map's current bearing.
      */
     override suspend fun getBearing(): Double = navigableWorker.getBearing()
@@ -393,6 +416,11 @@ class MTMapViewController(
     override suspend fun getCenterElevation(): Double = navigableWorker.getCenterElevation()
 
     /**
+     * Returns the geographical constraints currently applied to the map, if any.
+     */
+    override suspend fun getMaxBounds(): MTBounds? = navigableWorker.getMaxBounds()
+
+    /**
      * Returns the current map projection type. Defaults to [MTProjectionType.MERCATOR] if unavailable.
      */
     suspend fun getProjection(): MTProjectionType = style?.getProjection() ?: MTProjectionType.MERCATOR
@@ -408,6 +436,13 @@ class MTMapViewController(
      * @param center Geographical center of the map.
      */
     override fun setCenter(center: LngLat) = navigableWorker.setCenter(center)
+
+    /**
+     * Constrains map interactions to the provided bounds, or removes the constraint when null is supplied.
+     *
+     * @param bounds Bounding box limiting map navigation. Use null to clear existing constraints.
+     */
+    override fun setMaxBounds(bounds: MTBounds?) = navigableWorker.setMaxBounds(bounds)
 
     /**
      * Sets the center clamped to the ground.
