@@ -11,6 +11,7 @@ import com.maptiler.maptilersdk.bridge.MTBridgeReturnType
 import com.maptiler.maptilersdk.bridge.MTCommand
 import com.maptiler.maptilersdk.bridge.MTCommandExecutable
 import com.maptiler.maptilersdk.commands.navigation.AreTilesLoaded
+import com.maptiler.maptilersdk.commands.navigation.CenterOnIpPoint
 import com.maptiler.maptilersdk.commands.navigation.GetBearing
 import com.maptiler.maptilersdk.commands.navigation.GetCenterClampedToGround
 import com.maptiler.maptilersdk.commands.navigation.GetCenterElevation
@@ -46,6 +47,23 @@ class WorkerAndStyleTests {
             val worker = NavigableWorker(bridge, this)
             worker.getBearing()
             assertTrue(usedGetBearing)
+        }
+
+    @Test fun navigableWorker_centerOnIpPoint_UsesCenterOnIpPointCommand() =
+        runBlocking {
+            var usedCenterOnIpPoint = false
+            val exec =
+                object : MTCommandExecutable {
+                    override suspend fun execute(command: MTCommand): MTBridgeReturnType {
+                        if (command is CenterOnIpPoint) usedCenterOnIpPoint = true
+                        return MTBridgeReturnType.Null
+                    }
+                }
+
+            val bridge = MTBridge(exec)
+            val worker = NavigableWorker(bridge, this)
+            worker.centerOnIpPoint()
+            assertTrue(usedCenterOnIpPoint)
         }
 
     @Test fun navigableWorker_getCenterClampedToGround_ParsesPrimitiveReturnTypes() =

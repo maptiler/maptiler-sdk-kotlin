@@ -79,6 +79,11 @@ interface MTNavigable {
     fun fitToIpBounds()
 
     /**
+     * Centers the map on the visitor's location inferred from their public IP address.
+     */
+    fun centerOnIpPoint()
+
+    /**
      * Returns the map's current bearing.
      */
     suspend fun getBearing(): Double

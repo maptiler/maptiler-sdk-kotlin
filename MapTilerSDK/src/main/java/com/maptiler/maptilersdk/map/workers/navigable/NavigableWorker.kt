@@ -12,6 +12,7 @@ import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.DoubleValue
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.Null
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.StringValue
 import com.maptiler.maptilersdk.commands.navigation.AreTilesLoaded
+import com.maptiler.maptilersdk.commands.navigation.CenterOnIpPoint
 import com.maptiler.maptilersdk.commands.navigation.EaseTo
 import com.maptiler.maptilersdk.commands.navigation.FitBounds
 import com.maptiler.maptilersdk.commands.navigation.FitToIpBounds
@@ -127,6 +128,14 @@ internal class NavigableWorker(
         scope.launch {
             bridge.execute(
                 FitToIpBounds(),
+            )
+        }
+    }
+
+    override fun centerOnIpPoint() {
+        scope.launch {
+            bridge.execute(
+                CenterOnIpPoint(),
             )
         }
     }

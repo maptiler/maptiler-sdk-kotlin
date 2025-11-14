@@ -49,6 +49,14 @@ class BoundsCommandsTest {
     }
 
     @Test
+    fun `centerOnIpPoint emits expected invocation`() {
+        val command = CenterOnIpPoint()
+
+        assertEquals("map.centerOnIpPoint();", command.toJS())
+        assertTrue(!command.isPrimitiveReturnType)
+    }
+
+    @Test
     fun `getBounds uses primitive return`() {
         val command = GetBounds()
 
