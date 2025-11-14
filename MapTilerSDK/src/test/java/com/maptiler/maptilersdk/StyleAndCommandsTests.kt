@@ -11,8 +11,8 @@ import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType
 import com.maptiler.maptilersdk.bridge.MTCommand
 import com.maptiler.maptilersdk.bridge.MTCommandExecutable
-import com.maptiler.maptilersdk.commands.style.AddSource
 import com.maptiler.maptilersdk.commands.style.AddImage
+import com.maptiler.maptilersdk.commands.style.AddSource
 import com.maptiler.maptilersdk.commands.style.DisableTerrain
 import com.maptiler.maptilersdk.commands.style.EnableGlobeProjection
 import com.maptiler.maptilersdk.commands.style.EnableMercatorProjection
@@ -32,10 +32,10 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
 import junit.framework.TestCase.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Test
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import org.junit.Assert.assertTrue
+import org.junit.Test
 import java.net.URL
 
 class StyleAndCommandsTests {

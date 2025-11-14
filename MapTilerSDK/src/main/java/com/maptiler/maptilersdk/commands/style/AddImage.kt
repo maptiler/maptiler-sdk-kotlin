@@ -52,7 +52,7 @@ internal data class AddImage(
                     $addImageCall
                 };
             })();
-        """.trimIndent()
+            """.trimIndent()
     }
 }
 

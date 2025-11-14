@@ -41,8 +41,7 @@ internal object ImageHelper {
     /**
      * Returns a data URI for the given encoded image payload.
      */
-    fun getEncodedString(encodedImage: EncodedImage): String =
-        "data:${encodedImage.mimeType};base64,${encodedImage.base64}"
+    fun getEncodedString(encodedImage: EncodedImage): String = "data:${encodedImage.mimeType};base64,${encodedImage.base64}"
 
     /**
      * Deprecated: prefer [encodeImageWithMime]. Kept for tests/backward-compatibility.
