@@ -140,6 +140,11 @@ interface MTNavigable {
     suspend fun getRenderWorldCopies(): Boolean
 
     /**
+     * Returns whether all currently requested tiles are loaded.
+     */
+    suspend fun areTilesLoaded(): Boolean
+
+    /**
      * Returns the pixel ratio currently used to render the map.
      */
     suspend fun getPixelRatio(): Double

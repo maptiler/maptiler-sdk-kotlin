@@ -404,7 +404,15 @@ class MTMapViewController(
      */
     override suspend fun getCenterClampedToGround(): Boolean = navigableWorker.getCenterClampedToGround()
 
+    /**
+     * Returns whether the map is set to render multiple world copies.
+     */
     override suspend fun getRenderWorldCopies(): Boolean = navigableWorker.getRenderWorldCopies()
+
+    /**
+     * Returns whether all currently requested tiles are loaded.
+     */
+    override suspend fun areTilesLoaded(): Boolean = navigableWorker.areTilesLoaded()
 
     /**
      * Returns the pixel ratio currently used to render the map.

@@ -11,6 +11,7 @@ import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.BoolValue
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.DoubleValue
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.Null
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.StringValue
+import com.maptiler.maptilersdk.commands.navigation.AreTilesLoaded
 import com.maptiler.maptilersdk.commands.navigation.EaseTo
 import com.maptiler.maptilersdk.commands.navigation.FitBounds
 import com.maptiler.maptilersdk.commands.navigation.FitToIpBounds
@@ -278,6 +279,27 @@ internal class NavigableWorker(
         val returnTypeValue =
             bridge.execute(
                 GetRenderWorldCopies(),
+            )
+
+        return when (returnTypeValue) {
+            is BoolValue -> returnTypeValue.value
+            is DoubleValue -> returnTypeValue.value != 0.0
+            is StringValue -> {
+                val normalized = returnTypeValue.value.trim().lowercase()
+                when (normalized) {
+                    "true" -> true
+                    "false" -> false
+                    else -> normalized.toDoubleOrNull()?.let { it != 0.0 } ?: false
+                }
+            }
+            else -> false
+        }
+    }
+
+    override suspend fun areTilesLoaded(): Boolean {
+        val returnTypeValue =
+            bridge.execute(
+                AreTilesLoaded(),
             )
 
         return when (returnTypeValue) {
