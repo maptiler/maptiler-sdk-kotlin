@@ -8,7 +8,11 @@ package com.maptiler.maptilersdk
 
 import android.graphics.Bitmap
 import com.maptiler.maptilersdk.bridge.MTBridge
+import com.maptiler.maptilersdk.bridge.MTBridgeReturnType
+import com.maptiler.maptilersdk.bridge.MTCommand
+import com.maptiler.maptilersdk.bridge.MTCommandExecutable
 import com.maptiler.maptilersdk.commands.style.AddSource
+import com.maptiler.maptilersdk.commands.style.AddImage
 import com.maptiler.maptilersdk.commands.style.DisableTerrain
 import com.maptiler.maptilersdk.commands.style.EnableGlobeProjection
 import com.maptiler.maptilersdk.commands.style.EnableMercatorProjection
@@ -18,6 +22,9 @@ import com.maptiler.maptilersdk.commands.style.SetDataToSource
 import com.maptiler.maptilersdk.commands.style.SetTilesToSource
 import com.maptiler.maptilersdk.helpers.EncodedImage
 import com.maptiler.maptilersdk.helpers.ImageHelper
+import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
+import com.maptiler.maptilersdk.map.style.MTStyle
+import com.maptiler.maptilersdk.map.style.image.MTAddImageOptions
 import com.maptiler.maptilersdk.map.style.layer.symbol.MTSymbolLayer
 import com.maptiler.maptilersdk.map.style.source.MTGeoJSONSource
 import com.maptiler.maptilersdk.map.style.source.MTVectorTileSource
@@ -27,6 +34,8 @@ import io.mockk.mockkObject
 import junit.framework.TestCase.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import java.net.URL
 
 class StyleAndCommandsTests {
@@ -180,5 +189,46 @@ class StyleAndCommandsTests {
         assertTrue(js.contains("\"text-field\":\"{point_count_abbreviated}\""))
         assertTrue(js.contains("\"text-size\":12.0"))
         assertTrue(js.contains("\"filter\":[\"has\",\"point_count\"]"))
+    }
+
+    @Test fun addImageToJS_EncodesBitmapAndOptions() {
+        val bmp = mockk<Bitmap>()
+        every { bmp.hasAlpha() } returns true
+        every { bmp.compress(any(), any(), any()) } returns true
+
+        mockkObject(ImageHelper)
+        every { ImageHelper.encodeImageWithMime(any()) } returns EncodedImage("CCC", "image/png")
+        every { ImageHelper.getEncodedString(any()) } returns "data:image/png;base64,CCC"
+
+        val options = MTAddImageOptions(sdf = true, pixelRatio = 2.0)
+        val js =
+            AddImage("poi-icon", bmp, options).toJS()
+
+        assertTrue(js.contains("${MTBridge.MAP_OBJECT}.style.addImage('poi-icon'"))
+        assertTrue(js.contains("data:image/png;base64,CCC"))
+        assertTrue(js.contains("\"sdf\":true"))
+        assertTrue(js.contains("\"pixelRatio\":2.0"))
+    }
+
+    @Test fun mtStyleAddImage_DelegatesToBridge() {
+        val recordedCommands = mutableListOf<MTCommand>()
+        val bridge =
+            MTBridge(
+                object : MTCommandExecutable {
+                    override suspend fun execute(command: MTCommand): MTBridgeReturnType {
+                        recordedCommands.add(command)
+                        return MTBridgeReturnType.Null
+                    }
+                },
+            )
+        val style = MTStyle(MTMapReferenceStyle.STREETS)
+        style.initWorker(bridge, CoroutineScope(Dispatchers.Unconfined))
+
+        val bmp = mockk<Bitmap>(relaxed = true)
+
+        style.addImage("poi-icon", bmp)
+
+        assertEquals(1, recordedCommands.size)
+        assertTrue(recordedCommands.first() is AddImage)
     }
 }
