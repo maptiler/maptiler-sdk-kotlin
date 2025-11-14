@@ -14,4 +14,3 @@ internal class AreTilesLoaded : MTCommand {
 
     override fun toJS(): String = "${MTBridge.MAP_OBJECT}.areTilesLoaded();"
 }
-
