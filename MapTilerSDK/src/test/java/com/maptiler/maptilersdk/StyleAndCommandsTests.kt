@@ -13,6 +13,7 @@ import com.maptiler.maptilersdk.bridge.MTCommand
 import com.maptiler.maptilersdk.bridge.MTCommandExecutable
 import com.maptiler.maptilersdk.commands.style.AddImage
 import com.maptiler.maptilersdk.commands.style.AddSource
+import com.maptiler.maptilersdk.commands.style.AddSprite
 import com.maptiler.maptilersdk.commands.style.DisableTerrain
 import com.maptiler.maptilersdk.commands.style.EnableGlobeProjection
 import com.maptiler.maptilersdk.commands.style.EnableMercatorProjection
@@ -210,6 +211,17 @@ class StyleAndCommandsTests {
         assertTrue(js.contains("\"pixelRatio\":2.0"))
     }
 
+    @Test fun addSpriteToJS_ReturnsValidJSString() {
+        val url = URL("https://example.com/sprites/poi.png")
+
+        val js = AddSprite("poi-sprite", url).toJS()
+
+        assertEquals(
+            "${MTBridge.MAP_OBJECT}.addSprite('poi-sprite', 'https://example.com/sprites/poi.png');",
+            js,
+        )
+    }
+
     @Test fun mtStyleAddImage_DelegatesToBridge() {
         val recordedCommands = mutableListOf<MTCommand>()
         val bridge =
@@ -230,5 +242,25 @@ class StyleAndCommandsTests {
 
         assertEquals(1, recordedCommands.size)
         assertTrue(recordedCommands.first() is AddImage)
+    }
+
+    @Test fun mtStyleAddSprite_DelegatesToBridge() {
+        val recordedCommands = mutableListOf<MTCommand>()
+        val bridge =
+            MTBridge(
+                object : MTCommandExecutable {
+                    override suspend fun execute(command: MTCommand): MTBridgeReturnType {
+                        recordedCommands.add(command)
+                        return MTBridgeReturnType.Null
+                    }
+                },
+            )
+        val style = MTStyle(MTMapReferenceStyle.STREETS)
+        style.initWorker(bridge, CoroutineScope(Dispatchers.Unconfined))
+
+        style.addSprite("poi-sprite", URL("https://example.com/sprite.png"))
+
+        assertEquals(1, recordedCommands.size)
+        assertTrue(recordedCommands.first() is AddSprite)
     }
 }
