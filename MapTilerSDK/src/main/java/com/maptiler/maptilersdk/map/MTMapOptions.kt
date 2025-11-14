@@ -235,7 +235,7 @@ class MTMapOptions {
      * Overrides the device pixel ratio used for rendering.
      *
      * Set this to values greater than `1.0` to force high-DPI rendering on low-density devices,
-     * or lower values to favour performance over sharpness. If omitted, the WebView's pixel ratio is used.
+     * or lower values to favour performance over sharpness.
      */
     var pixelRatio: Double? = null
         private set
