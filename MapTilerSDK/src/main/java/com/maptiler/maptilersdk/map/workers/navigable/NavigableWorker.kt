@@ -51,6 +51,7 @@ import com.maptiler.maptilersdk.map.options.MTPaddingOptions
 import com.maptiler.maptilersdk.map.types.MTBounds
 import com.maptiler.maptilersdk.map.types.MTPoint
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 
@@ -133,7 +134,7 @@ internal class NavigableWorker(
     }
 
     override fun centerOnIpPoint() {
-        scope.launch {
+        scope.launch(start = CoroutineStart.UNDISPATCHED) {
             bridge.execute(
                 CenterOnIpPoint(),
             )
