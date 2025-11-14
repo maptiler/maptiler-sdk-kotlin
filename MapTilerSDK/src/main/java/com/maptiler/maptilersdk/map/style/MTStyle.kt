@@ -6,10 +6,12 @@
 
 package com.maptiler.maptilersdk.map.style
 
+import android.graphics.Bitmap
 import com.maptiler.maptilersdk.annotations.MTMarker
 import com.maptiler.maptilersdk.annotations.MTTextPopup
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTError
+import com.maptiler.maptilersdk.map.style.image.MTAddImageOptions
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
 import com.maptiler.maptilersdk.map.style.source.MTSource
 import com.maptiler.maptilersdk.map.types.MTLanguage
@@ -114,6 +116,19 @@ class MTStyle(
      * @param popup Popup to remove.
      */
     override fun removeTextPopup(popup: MTTextPopup) = stylableWorker.removeTextPopup(popup)
+
+    /**
+     * Registers an image asset that can be referenced from the style.
+     *
+     * @param identifier Unique name for the image in the style registry.
+     * @param image Bitmap containing the image data.
+     * @param options Optional image configuration such as pixel ratio or SDF toggle.
+     */
+    fun addImage(
+        identifier: String,
+        image: Bitmap,
+        options: MTAddImageOptions? = null,
+    ) = stylableWorker.addImage(identifier, image, options)
 
     /**
      * Adds a layer to the map.

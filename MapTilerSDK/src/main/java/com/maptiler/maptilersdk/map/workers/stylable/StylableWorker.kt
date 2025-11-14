@@ -6,6 +6,7 @@
 
 package com.maptiler.maptilersdk.map.workers.stylable
 
+import android.graphics.Bitmap
 import com.maptiler.maptilersdk.annotations.MTMarker
 import com.maptiler.maptilersdk.annotations.MTTextPopup
 import com.maptiler.maptilersdk.bridge.MTBridge
@@ -15,6 +16,7 @@ import com.maptiler.maptilersdk.commands.annotations.AddTextPopup
 import com.maptiler.maptilersdk.commands.annotations.RemoveMarker
 import com.maptiler.maptilersdk.commands.annotations.RemoveTextPopup
 import com.maptiler.maptilersdk.commands.misc.AddLogoControl
+import com.maptiler.maptilersdk.commands.style.AddImage
 import com.maptiler.maptilersdk.commands.style.AddLayer
 import com.maptiler.maptilersdk.commands.style.AddSource
 import com.maptiler.maptilersdk.commands.style.DisableHalo
@@ -47,6 +49,7 @@ import com.maptiler.maptilersdk.map.options.MTHalo
 import com.maptiler.maptilersdk.map.options.MTSpace
 import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
 import com.maptiler.maptilersdk.map.style.MTMapStyleVariant
+import com.maptiler.maptilersdk.map.style.image.MTAddImageOptions
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
 import com.maptiler.maptilersdk.map.style.source.MTSource
 import com.maptiler.maptilersdk.map.types.MTLanguage
@@ -196,6 +199,18 @@ internal class StylableWorker(
         scope.launch {
             bridge.execute(
                 AddLayer(layer),
+            )
+        }
+    }
+
+    fun addImage(
+        identifier: String,
+        image: Bitmap,
+        options: MTAddImageOptions? = null,
+    ) {
+        scope.launch {
+            bridge.execute(
+                AddImage(identifier, image, options),
             )
         }
     }
