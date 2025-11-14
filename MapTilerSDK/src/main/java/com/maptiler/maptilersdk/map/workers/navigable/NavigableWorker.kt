@@ -19,6 +19,7 @@ import com.maptiler.maptilersdk.commands.navigation.GetCenterElevation
 import com.maptiler.maptilersdk.commands.navigation.GetMaxPitch
 import com.maptiler.maptilersdk.commands.navigation.GetMinPitch
 import com.maptiler.maptilersdk.commands.navigation.GetPitch
+import com.maptiler.maptilersdk.commands.navigation.GetPixelRatio
 import com.maptiler.maptilersdk.commands.navigation.GetRenderWorldCopies
 import com.maptiler.maptilersdk.commands.navigation.GetRoll
 import com.maptiler.maptilersdk.commands.navigation.JumpTo
@@ -31,6 +32,7 @@ import com.maptiler.maptilersdk.commands.navigation.SetCenterClampedToGround
 import com.maptiler.maptilersdk.commands.navigation.SetCenterElevation
 import com.maptiler.maptilersdk.commands.navigation.SetPadding
 import com.maptiler.maptilersdk.commands.navigation.SetPitch
+import com.maptiler.maptilersdk.commands.navigation.SetPixelRatio
 import com.maptiler.maptilersdk.commands.navigation.SetRoll
 import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.map.LngLat
@@ -233,6 +235,19 @@ internal class NavigableWorker(
         }
     }
 
+    override suspend fun getPixelRatio(): Double {
+        val returnTypeValue =
+            bridge.execute(
+                GetPixelRatio(),
+            )
+
+        return when (returnTypeValue) {
+            is DoubleValue -> returnTypeValue.value
+            is StringValue -> returnTypeValue.value.toDoubleOrNull() ?: 0.0
+            else -> 0.0
+        }
+    }
+
     override suspend fun getCenterElevation(): Double {
         val returnTypeValue =
             bridge.execute(
@@ -270,6 +285,21 @@ internal class NavigableWorker(
         scope.launch {
             bridge.execute(
                 SetCenterClampedToGround(isCenterClampedToGround),
+            )
+        }
+    }
+
+    override fun setPixelRatio(pixelRatio: Double) {
+        val sanitized =
+            if (pixelRatio.isFinite()) {
+                pixelRatio.coerceAtLeast(0.0)
+            } else {
+                0.0
+            }
+
+        scope.launch {
+            bridge.execute(
+                SetPixelRatio(sanitized),
             )
         }
     }

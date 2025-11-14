@@ -13,6 +13,7 @@ import com.maptiler.maptilersdk.commands.navigation.GetMaxPitch
 import com.maptiler.maptilersdk.commands.navigation.GetMaxZoom
 import com.maptiler.maptilersdk.commands.navigation.GetMinPitch
 import com.maptiler.maptilersdk.commands.navigation.GetMinZoom
+import com.maptiler.maptilersdk.commands.navigation.GetPixelRatio
 import com.maptiler.maptilersdk.commands.navigation.GetRenderWorldCopies
 import com.maptiler.maptilersdk.commands.navigation.GetZoom
 import com.maptiler.maptilersdk.commands.navigation.PanBy
@@ -20,6 +21,7 @@ import com.maptiler.maptilersdk.commands.navigation.PanTo
 import com.maptiler.maptilersdk.commands.navigation.Project
 import com.maptiler.maptilersdk.commands.navigation.SetMaxZoom
 import com.maptiler.maptilersdk.commands.navigation.SetMinZoom
+import com.maptiler.maptilersdk.commands.navigation.SetPixelRatio
 import com.maptiler.maptilersdk.commands.navigation.SetZoom
 import com.maptiler.maptilersdk.commands.navigation.ZoomIn
 import com.maptiler.maptilersdk.commands.navigation.ZoomOut
@@ -37,6 +39,11 @@ class NavigationTests {
     @Test fun getRenderWorldCopiesToJS_ReturnsCorrectJSString() {
         val command = GetRenderWorldCopies()
         assertEquals("${MTBridge.MAP_OBJECT}.getRenderWorldCopies();", command.toJS())
+    }
+
+    @Test fun getPixelRatioToJS_ReturnsCorrectJSString() {
+        val command = GetPixelRatio()
+        assertEquals("${MTBridge.MAP_OBJECT}.getPixelRatio();", command.toJS())
     }
 
     @Test fun getCenterElevationToJS_ReturnsCorrectJSString() {
@@ -92,6 +99,11 @@ class NavigationTests {
     @Test fun setMinZoomToJS_ReturnsCorrectJSString() {
         val command = SetMinZoom(1.0)
         assertEquals("${MTBridge.MAP_OBJECT}.setMinZoom(1.0);", command.toJS())
+    }
+
+    @Test fun setPixelRatioToJS_ReturnsCorrectJSString() {
+        val command = SetPixelRatio(2.5)
+        assertEquals("${MTBridge.MAP_OBJECT}.setPixelRatio(2.5);", command.toJS())
     }
 
     @Test fun panByToJS_ReturnsCorrectJSString() {

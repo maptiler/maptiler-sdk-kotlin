@@ -117,6 +117,11 @@ interface MTNavigable {
     suspend fun getRenderWorldCopies(): Boolean
 
     /**
+     * Returns the pixel ratio currently used to render the map.
+     */
+    suspend fun getPixelRatio(): Double
+
+    /**
      * Returns the elevation of the map's center point in meters above sea level.
      */
     suspend fun getCenterElevation(): Double
@@ -146,6 +151,13 @@ interface MTNavigable {
      * @param isCenterClampedToGround Boolean indicating whether center is clamped to the ground.
      */
     fun setIsCenterClampedToGround(isCenterClampedToGround: Boolean)
+
+    /**
+     * Overrides the pixel ratio used to render the map.
+     *
+     * @param pixelRatio Desired pixel ratio. Values above `1.0` improve sharpness, values below trade detail for performance.
+     */
+    fun setPixelRatio(pixelRatio: Double)
 
     /**
      * Sets the elevation of the map's center point, in meters above sea level.

@@ -232,6 +232,15 @@ class MTMapOptions {
         private set
 
     /**
+     * Overrides the device pixel ratio used for rendering.
+     *
+     * Set this to values greater than `1.0` to force high-DPI rendering on low-density devices,
+     * or lower values to favour performance over sharpness. If omitted, the WebView's pixel ratio is used.
+     */
+    var pixelRatio: Double? = null
+        private set
+
+    /**
      * Boolean indicating whether the map's pitch control with drag to rotate interaction will be disabled.
      */
     @SerialName("pitchWithRotate")
@@ -493,6 +502,7 @@ class MTMapOptions {
         maptilerLogoIsVisible: Boolean? = null,
         maxTileCacheSize: Double? = null,
         maxTileCacheZoomLevels: Double? = null,
+        pixelRatio: Double? = null,
         shouldPitchWithRotate: Boolean? = null,
         shouldRefreshExpiredTiles: Boolean? = null,
         shouldRenderWorldCopies: Boolean? = null,
@@ -539,6 +549,7 @@ class MTMapOptions {
         this.maptilerLogoIsVisible = maptilerLogoIsVisible
         this.maxTileCacheSize = maxTileCacheSize
         this.maxTileCacheZoomLevels = maxTileCacheZoomLevels
+        this.pixelRatio = pixelRatio
         this.shouldPitchWithRotate = shouldPitchWithRotate
         this.shouldRefreshExpiredTiles = shouldRefreshExpiredTiles
         this.shouldRenderWorldCopies = shouldRenderWorldCopies

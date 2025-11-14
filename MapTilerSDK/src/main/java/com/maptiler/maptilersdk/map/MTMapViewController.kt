@@ -383,6 +383,11 @@ class MTMapViewController(
     override suspend fun getRenderWorldCopies(): Boolean = navigableWorker.getRenderWorldCopies()
 
     /**
+     * Returns the pixel ratio currently used to render the map.
+     */
+    override suspend fun getPixelRatio(): Double = navigableWorker.getPixelRatio()
+
+    /**
      * Returns the elevation of the map's center point in meters above sea level.
      */
     override suspend fun getCenterElevation(): Double = navigableWorker.getCenterElevation()
@@ -415,6 +420,13 @@ class MTMapViewController(
      */
     override fun setIsCenterClampedToGround(isCenterClampedToGround: Boolean) =
         navigableWorker.setIsCenterClampedToGround(isCenterClampedToGround)
+
+    /**
+     * Overrides the pixel ratio used to render the map.
+     *
+     * @param pixelRatio Desired pixel ratio. Values above `1.0` improve sharpness, values below trade detail for performance.
+     */
+    override fun setPixelRatio(pixelRatio: Double) = navigableWorker.setPixelRatio(pixelRatio)
 
     /**
      * Sets the elevation of the map's center point, in meters above sea level.
