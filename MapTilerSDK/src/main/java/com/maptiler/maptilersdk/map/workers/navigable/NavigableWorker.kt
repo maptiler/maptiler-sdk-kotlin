@@ -15,13 +15,13 @@ import com.maptiler.maptilersdk.commands.navigation.EaseTo
 import com.maptiler.maptilersdk.commands.navigation.FitBounds
 import com.maptiler.maptilersdk.commands.navigation.FitToIpBounds
 import com.maptiler.maptilersdk.commands.navigation.FlyTo
-import com.maptiler.maptilersdk.commands.navigation.GetBounds
 import com.maptiler.maptilersdk.commands.navigation.GetBearing
+import com.maptiler.maptilersdk.commands.navigation.GetBounds
 import com.maptiler.maptilersdk.commands.navigation.GetCenter
 import com.maptiler.maptilersdk.commands.navigation.GetCenterClampedToGround
 import com.maptiler.maptilersdk.commands.navigation.GetCenterElevation
-import com.maptiler.maptilersdk.commands.navigation.GetMaxPitch
 import com.maptiler.maptilersdk.commands.navigation.GetMaxBounds
+import com.maptiler.maptilersdk.commands.navigation.GetMaxPitch
 import com.maptiler.maptilersdk.commands.navigation.GetMinPitch
 import com.maptiler.maptilersdk.commands.navigation.GetPitch
 import com.maptiler.maptilersdk.commands.navigation.GetPixelRatio

@@ -22,14 +22,10 @@ import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.double
 import kotlinx.serialization.json.jsonArray
-import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 /**
  * Geographical bounding box represented by south-west and north-east corners.
- *
- * The bounds are serialized for the JavaScript bridge as `[[west, south], [east, north]]`,
- * which matches the `LngLatBoundsLike` structure accepted by the MapTiler SDK for JS.
  */
 @Serializable(with = MTBoundsSerializer::class)
 data class MTBounds(
@@ -62,8 +58,9 @@ internal object MTBoundsSerializer : KSerializer<MTBounds> {
         encoder: Encoder,
         value: MTBounds,
     ) {
-        val jsonEncoder = encoder as? JsonEncoder
-            ?: error("MTBoundsSerializer can be used only with JSON")
+        val jsonEncoder =
+            encoder as? JsonEncoder
+                ?: error("MTBoundsSerializer can be used only with JSON")
 
         val southwest = value.southwest
         val northeast = value.northeast
@@ -88,8 +85,9 @@ internal object MTBoundsSerializer : KSerializer<MTBounds> {
     }
 
     override fun deserialize(decoder: Decoder): MTBounds {
-        val jsonDecoder = decoder as? JsonDecoder
-            ?: error("MTBoundsSerializer can be used only with JSON")
+        val jsonDecoder =
+            decoder as? JsonDecoder
+                ?: error("MTBoundsSerializer can be used only with JSON")
         val element = jsonDecoder.decodeJsonElement()
 
         return when (element) {

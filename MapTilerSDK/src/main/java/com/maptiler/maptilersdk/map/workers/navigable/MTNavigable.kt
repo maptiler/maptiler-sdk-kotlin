@@ -75,9 +75,6 @@ interface MTNavigable {
 
     /**
      * Fits the camera to the coarse bounds inferred from the user's public IP address.
-     *
-     * This triggers a network lookup in the embedded JavaScript SDK and animates the map to the returned country bounds.
-     * The animation runs on the JS side; this call only initiates the process.
      */
     fun fitToIpBounds()
 

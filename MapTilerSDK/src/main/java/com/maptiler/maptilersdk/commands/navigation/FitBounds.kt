@@ -22,7 +22,7 @@ internal data class FitBounds(
         val boundsString = JsonConfig.json.encodeToString(bounds)
         val optionsString =
             options?.let {
-                ", ${JsonConfig.json.encodeToString(it)}"
+                ",${JsonConfig.json.encodeToString(it)}"
             } ?: ""
 
         return "${MTBridge.MAP_OBJECT}.fitBounds($boundsString$optionsString);"

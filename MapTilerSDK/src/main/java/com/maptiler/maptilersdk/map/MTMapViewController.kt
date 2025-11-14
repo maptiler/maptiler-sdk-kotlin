@@ -30,8 +30,8 @@ import com.maptiler.maptilersdk.map.options.MTFitBoundsOptions
 import com.maptiler.maptilersdk.map.options.MTFlyToOptions
 import com.maptiler.maptilersdk.map.options.MTPaddingOptions
 import com.maptiler.maptilersdk.map.style.MTStyle
-import com.maptiler.maptilersdk.map.types.MTData
 import com.maptiler.maptilersdk.map.types.MTBounds
+import com.maptiler.maptilersdk.map.types.MTData
 import com.maptiler.maptilersdk.map.types.MTPoint
 import com.maptiler.maptilersdk.map.types.MTProjectionType
 import com.maptiler.maptilersdk.map.workers.navigable.MTNavigable
@@ -346,8 +346,6 @@ class MTMapViewController(
 
     /**
      * Initiates an animated fit to the coarse bounds derived from the device's public IP address.
-     *
-     * The lookup and animation run inside the JavaScript bridge; this call triggers the process.
      */
     override fun fitToIpBounds() = navigableWorker.fitToIpBounds()
 
