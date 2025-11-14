@@ -351,6 +351,11 @@ class MTMapViewController(
     override fun fitToIpBounds() = navigableWorker.fitToIpBounds()
 
     /**
+     * Centers the map on the coarse location inferred from the device's public IP address.
+     */
+    override fun centerOnIpPoint() = navigableWorker.centerOnIpPoint()
+
+    /**
      * Returns the map's current bearing.
      */
     override suspend fun getBearing(): Double = navigableWorker.getBearing()

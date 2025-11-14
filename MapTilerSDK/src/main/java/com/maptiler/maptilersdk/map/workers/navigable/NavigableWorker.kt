@@ -12,6 +12,7 @@ import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.DoubleValue
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.Null
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.StringValue
 import com.maptiler.maptilersdk.commands.navigation.AreTilesLoaded
+import com.maptiler.maptilersdk.commands.navigation.CenterOnIpPoint
 import com.maptiler.maptilersdk.commands.navigation.EaseTo
 import com.maptiler.maptilersdk.commands.navigation.FitBounds
 import com.maptiler.maptilersdk.commands.navigation.FitToIpBounds
@@ -50,6 +51,7 @@ import com.maptiler.maptilersdk.map.options.MTPaddingOptions
 import com.maptiler.maptilersdk.map.types.MTBounds
 import com.maptiler.maptilersdk.map.types.MTPoint
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 
@@ -127,6 +129,14 @@ internal class NavigableWorker(
         scope.launch {
             bridge.execute(
                 FitToIpBounds(),
+            )
+        }
+    }
+
+    override fun centerOnIpPoint() {
+        scope.launch(start = CoroutineStart.UNDISPATCHED) {
+            bridge.execute(
+                CenterOnIpPoint(),
             )
         }
     }
