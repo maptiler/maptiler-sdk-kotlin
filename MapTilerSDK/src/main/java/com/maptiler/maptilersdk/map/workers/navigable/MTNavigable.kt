@@ -160,6 +160,11 @@ interface MTNavigable {
     suspend fun getCenterElevation(): Double
 
     /**
+     * Returns the elevation of the point currently targeted by the camera, in meters above sea level.
+     */
+    suspend fun getCameraTargetElevation(): Double
+
+    /**
      * Returns the geographical constraints currently applied to the map, if any.
      */
     suspend fun getMaxBounds(): MTBounds?

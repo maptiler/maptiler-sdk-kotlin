@@ -430,6 +430,11 @@ class MTMapViewController(
     override suspend fun getCenterElevation(): Double = navigableWorker.getCenterElevation()
 
     /**
+     * Returns the elevation of the location currently targeted by the camera, in meters above sea level.
+     */
+    override suspend fun getCameraTargetElevation(): Double = navigableWorker.getCameraTargetElevation()
+
+    /**
      * Returns the geographical constraints currently applied to the map, if any.
      */
     override suspend fun getMaxBounds(): MTBounds? = navigableWorker.getMaxBounds()

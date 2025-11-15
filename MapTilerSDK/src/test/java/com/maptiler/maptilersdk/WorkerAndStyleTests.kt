@@ -13,6 +13,7 @@ import com.maptiler.maptilersdk.bridge.MTCommandExecutable
 import com.maptiler.maptilersdk.commands.navigation.AreTilesLoaded
 import com.maptiler.maptilersdk.commands.navigation.CenterOnIpPoint
 import com.maptiler.maptilersdk.commands.navigation.GetBearing
+import com.maptiler.maptilersdk.commands.navigation.GetCameraTargetElevation
 import com.maptiler.maptilersdk.commands.navigation.GetCenterClampedToGround
 import com.maptiler.maptilersdk.commands.navigation.GetCenterElevation
 import com.maptiler.maptilersdk.commands.navigation.GetRenderWorldCopies
@@ -206,6 +207,26 @@ class WorkerAndStyleTests {
             val result = worker.getCenterElevation()
             assertEquals(42.5, result, 0.0)
             assertTrue(usedGetCenterElevation)
+        }
+
+    @Test fun navigableWorker_getCameraTargetElevation_ParsesStringReturnType() =
+        runBlocking {
+            var usedGetCameraTargetElevation = false
+            val exec =
+                object : MTCommandExecutable {
+                    override suspend fun execute(command: MTCommand): MTBridgeReturnType {
+                        if (command is GetCameraTargetElevation) {
+                            usedGetCameraTargetElevation = true
+                        }
+                        return MTBridgeReturnType.StringValue("1337.0")
+                    }
+                }
+            val bridge = MTBridge(exec)
+            val worker = NavigableWorker(bridge, this)
+
+            val result = worker.getCameraTargetElevation()
+            assertEquals(1337.0, result, 0.0)
+            assertTrue(usedGetCameraTargetElevation)
         }
 
     @Test fun stylableWorker_getProjection_UsesGetProjectionCommand() =
