@@ -12,8 +12,8 @@ import com.maptiler.maptilersdk.bridge.MTCommand
 import com.maptiler.maptilersdk.bridge.MTCommandExecutable
 import com.maptiler.maptilersdk.commands.navigation.AreTilesLoaded
 import com.maptiler.maptilersdk.commands.navigation.CenterOnIpPoint
-import com.maptiler.maptilersdk.commands.navigation.GetCameraTargetElevation
 import com.maptiler.maptilersdk.commands.navigation.GetBearing
+import com.maptiler.maptilersdk.commands.navigation.GetCameraTargetElevation
 import com.maptiler.maptilersdk.commands.navigation.GetCenterClampedToGround
 import com.maptiler.maptilersdk.commands.navigation.GetCenterElevation
 import com.maptiler.maptilersdk.commands.navigation.GetRenderWorldCopies
