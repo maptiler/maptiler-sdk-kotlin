@@ -8,6 +8,7 @@ package com.maptiler.maptilersdk
 
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.commands.navigation.AreTilesLoaded
+import com.maptiler.maptilersdk.commands.navigation.GetCameraTargetElevation
 import com.maptiler.maptilersdk.commands.navigation.GetCenterClampedToGround
 import com.maptiler.maptilersdk.commands.navigation.GetCenterElevation
 import com.maptiler.maptilersdk.commands.navigation.GetMaxPitch
@@ -55,6 +56,11 @@ class NavigationTests {
     @Test fun getCenterElevationToJS_ReturnsCorrectJSString() {
         val command = GetCenterElevation()
         assertEquals("${MTBridge.MAP_OBJECT}.getCenterElevation();", command.toJS())
+    }
+
+    @Test fun getCameraTargetElevationToJS_ReturnsCorrectJSString() {
+        val command = GetCameraTargetElevation()
+        assertEquals("${MTBridge.MAP_OBJECT}.getCameraTargetElevation();", command.toJS())
     }
 
     @Test fun getMaxZoomToJS_ReturnsCorrectJSString() {
