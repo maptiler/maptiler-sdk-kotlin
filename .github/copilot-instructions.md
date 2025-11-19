@@ -203,6 +203,7 @@ override fun onDestroy() {
 ## ktlint Compliance (MANDATORY)
 - ALWAYS follow the rules enforced by the `org.jlleitschuh.gradle.ktlint` plugin.
 - Key rules: spacing, imports order, trailing newline, indentation, annotation/kdoc formatting, no wildcard imports.
+- Imports must be ordered in lexicographic order without any empty lines in-between with "java", "javax", "kotlin" and aliases in the end.
 - Pre-commit: a Git hook runs `./gradlew ktlintCheck`. Ensure zero violations before committing by running ./gradlew ktlintFormat
 - CI/Local requirement: run `./gradlew ktlintCheck` and ensure zero warnings/errors. PRs must be lint-clean.
 
