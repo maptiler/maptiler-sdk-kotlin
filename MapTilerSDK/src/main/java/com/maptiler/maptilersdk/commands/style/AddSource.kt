@@ -12,6 +12,8 @@ import com.maptiler.maptilersdk.bridge.MTCommand
 import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.helpers.formatUrlForJs
 import com.maptiler.maptilersdk.map.style.source.MTGeoJSONSource
+import com.maptiler.maptilersdk.map.style.source.MTRasterDEMSource
+import com.maptiler.maptilersdk.map.style.source.MTRasterTileSource
 import com.maptiler.maptilersdk.map.style.source.MTSource
 import com.maptiler.maptilersdk.map.style.source.MTVectorTileSource
 import kotlinx.serialization.json.Json
@@ -28,8 +30,12 @@ internal data class AddSource(
     override fun toJS(): String =
         if (source is MTVectorTileSource) {
             handleMTVectorTileSource(source)
+        } else if (source is MTRasterTileSource) {
+            handleMTRasterTileSource(source)
         } else if (source is MTGeoJSONSource) {
             handleGeoJSONSource(source)
+        } else if (source is MTRasterDEMSource) {
+            handleMTRasterDEMSource(source)
         } else {
             ""
         }
@@ -96,4 +102,63 @@ internal data class AddSource(
     }
 
     // shared helper in helpers package
+
+    private fun handleMTRasterTileSource(source: MTRasterTileSource): JSString {
+        val props = mutableListOf<String>()
+
+        // Use serialized enum value (lowercase, per style spec)
+        props += "type: '${source.type}'"
+        props += "minzoom: ${source.minZoom}"
+        props += "maxzoom: ${source.maxZoom}"
+        props += "scheme: '${source.scheme}'"
+        props += "tileSize: ${source.tileSize}"
+        props += "bounds: ${source.bounds.contentToString()}"
+
+        if (source.url != null) {
+            props += "url: '${source.url!!}'"
+        } else if (source.tiles != null) {
+            val urls: List<String> = source.tiles!!.map { it.toString() }
+            val tilesString: JSString = JsonConfig.json.encodeToString(urls)
+            props += "tiles: $tilesString"
+        }
+
+        source.attribution?.let { props += "attribution: '$it'" }
+
+        val propsString = props.joinToString(",\n            ")
+
+        return """
+        ${MTBridge.MAP_OBJECT}.addSource('${source.identifier}', {
+            $propsString
+        });
+        """
+    }
+
+    private fun handleMTRasterDEMSource(source: MTRasterDEMSource): JSString {
+        val props = mutableListOf<String>()
+
+        props += "type: '${source.type}'"
+        props += "minzoom: ${source.minZoom}"
+        props += "maxzoom: ${source.maxZoom}"
+        props += "tileSize: ${source.tileSize}"
+        props += "bounds: ${source.bounds.contentToString()}"
+        props += "encoding: '${source.encoding}'"
+
+        if (source.url != null) {
+            props += "url: '${source.url!!}'"
+        } else if (source.tiles != null) {
+            val urls: List<String> = source.tiles!!.map { it.toString() }
+            val tilesString: JSString = JsonConfig.json.encodeToString(urls)
+            props += "tiles: $tilesString"
+        }
+
+        source.attribution?.let { props += "attribution: '$it'" }
+
+        val propsString = props.joinToString(",\n            ")
+
+        return """
+        ${MTBridge.MAP_OBJECT}.addSource('${source.identifier}', {
+            $propsString
+        });
+        """
+    }
 }
