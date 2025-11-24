@@ -75,6 +75,11 @@ fun LayerControl(
                     text = { Text("Line", color = Color.Black) },
                     onClick = { onSelect(MTLayerType.LINE) },
                 )
+
+                DropdownMenuItem(
+                    text = { Text("Raster", color = Color.Black) },
+                    onClick = { onSelect(MTLayerType.RASTER) },
+                )
             }
         }
     }

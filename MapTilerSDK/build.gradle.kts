@@ -16,9 +16,7 @@ plugins {
     signing
 }
 
-tasks.named("ktlintFormat") {
-    enabled = false
-}
+// Keep ktlintFormat enabled so it can be invoked explicitly by CI or developers.
 
 tasks.register<Copy>("copyPreCommitHook") {
     description = "Copy pre-commit git hook from the scripts to the .git/hooks folder."
