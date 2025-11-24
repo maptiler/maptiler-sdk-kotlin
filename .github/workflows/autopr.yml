@@ -87,10 +87,6 @@ jobs:
           prompt: |
             Implement ticket ${{ env.ISSUE_KEY }}: ${{ env.TITLE }}. ${{ env.DESC }}
 
-      # Auto-format Kotlin code to satisfy ktlint before committing
-      - name: Gradle ktlintFormat
-        run: ./gradlew -Dorg.gradle.daemon=false ktlintFormat
-
       # Run unit tests and capture output; don't fail the job yet
       - name: Run unit tests
         id: unit_tests
@@ -115,6 +111,10 @@ jobs:
             Unit tests failed (exit=${{ steps.unit_tests.outputs.exit_code }}).
             Read ./test.log from the workspace and fix the failures with minimal, focused changes.
             Follow AGENTS.md rules strictly.
+
+      # Auto-format Kotlin code to satisfy ktlint after possible fixes
+      - name: Gradle ktlintFormat
+        run: ./gradlew -Dorg.gradle.daemon=false ktlintFormat
 
       # Commit any changes produced by Codex
 
