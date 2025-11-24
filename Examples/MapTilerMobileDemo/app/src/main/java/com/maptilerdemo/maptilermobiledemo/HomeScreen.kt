@@ -51,7 +51,9 @@ import com.maptiler.maptilersdk.map.style.MTStyleError
 import com.maptiler.maptilersdk.map.style.layer.MTLayerType
 import com.maptiler.maptilersdk.map.style.layer.fill.MTFillLayer
 import com.maptiler.maptilersdk.map.style.layer.line.MTLineLayer
+import com.maptiler.maptilersdk.map.style.layer.raster.MTRasterLayer
 import com.maptiler.maptilersdk.map.style.layer.symbol.MTSymbolLayer
+import com.maptiler.maptilersdk.map.style.source.MTRasterTileSource
 import com.maptiler.maptilersdk.map.style.source.MTVectorTileSource
 import com.maptiler.maptilersdk.map.types.MTData
 import java.net.URL
@@ -181,6 +183,27 @@ fun HomeScreen(
                         mapController.controller.style?.addLayer(layer)
                     } catch (error: MTStyleError) {
                         Log.e("MTStyleError", "Line Layer already exists.")
+                    }
+                } else if (type == MTLayerType.RASTER) {
+                    val mapTilerAPIKey = MTConfig.apiKey
+                    val rasterUrl = URL("https://api.maptiler.com/tiles/satellite/tiles.json?key=$mapTilerAPIKey")
+                    val rasterSourceId = "satellitesource"
+
+                    // Add or reuse the raster source
+                    try {
+                        val rasterSource = MTRasterTileSource(rasterSourceId, rasterUrl)
+                        mapController.controller.style?.addSource(rasterSource)
+                    } catch (error: MTStyleError) {
+                        Log.e("MTStyleError", "Raster Source already exists.")
+                    }
+
+                    // Add the raster layer (set opacity 0.7)
+                    try {
+                        val rasterLayer = MTRasterLayer("rasterLayer", rasterSourceId)
+                        rasterLayer.opacity = 0.7
+                        mapController.controller.style?.addLayer(rasterLayer)
+                    } catch (error: MTStyleError) {
+                        Log.e("MTStyleError", "Raster Layer already exists.")
                     }
                 }
             },
