@@ -193,9 +193,14 @@ class MTSymbolLayer : MTLayer {
      * Text color (constant or expression), written under paint as text-color.
      */
     var textColor: StyleValue?
-        get() = _paint.textColor
+        get() = _paint?.textColor
         set(value) {
-            _paint.textColor = value
+            if (value != null) {
+                if (_paint == null) _paint = MTSymbolPaint()
+                _paint?.textColor = value
+            } else {
+                _paint = null
+            }
         }
 
     /**
@@ -222,7 +227,7 @@ class MTSymbolLayer : MTLayer {
 
     @Suppress("PropertyName")
     @SerialName("paint")
-    private var _paint: MTSymbolPaint = MTSymbolPaint()
+    private var _paint: MTSymbolPaint? = null
 
     constructor(
         identifier: String,
