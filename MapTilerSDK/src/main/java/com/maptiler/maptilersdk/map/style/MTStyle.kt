@@ -11,6 +11,7 @@ import com.maptiler.maptilersdk.annotations.MTMarker
 import com.maptiler.maptilersdk.annotations.MTTextPopup
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTError
+import com.maptiler.maptilersdk.map.style.dsl.PropertyValue
 import com.maptiler.maptilersdk.map.style.image.MTAddImageOptions
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
 import com.maptiler.maptilersdk.map.style.source.MTSource
@@ -378,6 +379,42 @@ class MTStyle(
         mapLayers.clear()
         queue.clear()
     }
+
+    // Property setters (sync)
+    fun setFilter(
+        layerId: String,
+        filter: PropertyValue,
+    ) = stylableWorker.setFilter(layerId, filter)
+
+    fun setLayoutProperty(
+        layerId: String,
+        name: String,
+        value: PropertyValue,
+    ) = stylableWorker.setLayoutProperty(layerId, name, value)
+
+    fun setPaintProperty(
+        layerId: String,
+        name: String,
+        value: PropertyValue,
+    ) = stylableWorker.setPaintProperty(layerId, name, value)
+
+    // Property setters (suspend)
+    suspend fun setFilterAwait(
+        layerId: String,
+        filter: PropertyValue,
+    ) = stylableWorker.setFilterAwait(layerId, filter)
+
+    suspend fun setLayoutPropertyAwait(
+        layerId: String,
+        name: String,
+        value: PropertyValue,
+    ) = stylableWorker.setLayoutPropertyAwait(layerId, name, value)
+
+    suspend fun setPaintPropertyAwait(
+        layerId: String,
+        name: String,
+        value: PropertyValue,
+    ) = stylableWorker.setPaintPropertyAwait(layerId, name, value)
 }
 
 internal class StyleTask(

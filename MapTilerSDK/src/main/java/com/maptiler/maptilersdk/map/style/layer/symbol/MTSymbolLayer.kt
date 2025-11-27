@@ -7,6 +7,11 @@
 package com.maptiler.maptilersdk.map.style.layer.symbol
 
 import android.graphics.Bitmap
+import com.maptiler.maptilersdk.map.style.dsl.MTTextToken
+import com.maptiler.maptilersdk.map.style.dsl.PropertyValue
+import com.maptiler.maptilersdk.map.style.dsl.StyleValue
+import com.maptiler.maptilersdk.map.style.dsl.StyleValueSerializer
+import com.maptiler.maptilersdk.map.style.dsl.toJsonElement
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
 import com.maptiler.maptilersdk.map.style.layer.MTLayerType
 import com.maptiler.maptilersdk.map.style.layer.MTLayerVisibility
@@ -175,6 +180,30 @@ class MTSymbolLayer : MTLayer {
         }
 
     /**
+     * Text fonts as style-spec family names.
+     */
+    var textFont: List<String>?
+        get() = _layout?.textFont
+        set(value) {
+            ensureLayout()
+            _layout?.textFont = value
+        }
+
+    /**
+     * Text color (constant or expression), written under paint as text-color.
+     */
+    var textColor: StyleValue?
+        get() = _paint?.textColor
+        set(value) {
+            if (value != null) {
+                if (_paint == null) _paint = MTSymbolPaint()
+                _paint?.textColor = value
+            } else {
+                _paint = null
+            }
+        }
+
+    /**
      * Enum controlling whether this layer is displayed.
      */
     var visibility: MTLayerVisibility
@@ -195,6 +224,10 @@ class MTSymbolLayer : MTLayer {
 
     @Transient
     private var _visibility: MTLayerVisibility = MTLayerVisibility.VISIBLE
+
+    @Suppress("PropertyName")
+    @SerialName("paint")
+    private var _paint: MTSymbolPaint? = null
 
     constructor(
         identifier: String,
@@ -281,6 +314,11 @@ class MTSymbolLayer : MTLayer {
                 )
             }
     }
+
+    // Inline filter DSL
+    fun withFilter(expr: PropertyValue) {
+        _filter = expr.toJsonElement()
+    }
 }
 
 @Serializable
@@ -295,6 +333,8 @@ internal data class MTSymbolLayout(
     var textAnchor: String? = null,
     @SerialName("text-offset")
     var textOffset: List<Double>? = null,
+    @SerialName("text-font")
+    var textFont: List<String>? = null,
     @SerialName("icon-allow-overlap")
     var iconAllowOverlap: Boolean? = null,
     @SerialName("text-allow-overlap")
@@ -305,3 +345,28 @@ internal data class MTSymbolLayout(
     var textIgnorePlacement: Boolean? = null,
     var visibility: MTLayerVisibility = MTLayerVisibility.VISIBLE,
 )
+
+@Serializable
+internal data class MTSymbolPaint(
+    @SerialName("text-color")
+    @Serializable(with = StyleValueSerializer::class)
+    var textColor: StyleValue? = null,
+)
+
+// DSL helpers
+
+fun MTSymbolLayer.textField(value: String) = apply { this.textField = value }
+
+fun MTSymbolLayer.textField(token: MTTextToken) = apply { this.textField = token.token }
+
+fun MTSymbolLayer.textSize(value: Double) = apply { this.textSize = value }
+
+fun MTSymbolLayer.textAllowOverlap(value: Boolean) = apply { this.textAllowOverlap = value }
+
+fun MTSymbolLayer.textAnchor(value: MTTextAnchor) = apply { this.textAnchor = value }
+
+fun MTSymbolLayer.textFont(value: List<String>) = apply { this.textFont = value }
+
+fun MTSymbolLayer.textColorConst(color: Int) = apply { this.textColor = StyleValue.Color(color) }
+
+fun MTSymbolLayer.textColorExpr(expr: PropertyValue) = apply { this.textColor = StyleValue.Expression(expr) }

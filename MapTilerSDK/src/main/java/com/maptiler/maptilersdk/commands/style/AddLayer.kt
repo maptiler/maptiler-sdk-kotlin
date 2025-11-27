@@ -12,6 +12,7 @@ import com.maptiler.maptilersdk.bridge.MTCommand
 import com.maptiler.maptilersdk.helpers.ImageHelper
 import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
+import com.maptiler.maptilersdk.map.style.layer.circle.MTCircleLayer
 import com.maptiler.maptilersdk.map.style.layer.fill.MTFillLayer
 import com.maptiler.maptilersdk.map.style.layer.line.MTLineLayer
 import com.maptiler.maptilersdk.map.style.layer.raster.MTRasterLayer
@@ -31,6 +32,8 @@ internal data class AddLayer(
             handleLineLayer(layer)
         } else if (layer is MTRasterLayer) {
             handleRasterLayer(layer)
+        } else if (layer is MTCircleLayer) {
+            handleCircleLayer(layer)
         } else {
             // Fallback to a generic addLayer for any future-supported layer types
             val layerString: JSString = JsonConfig.json.encodeToString(layer)
@@ -75,6 +78,12 @@ internal data class AddLayer(
     }
 
     private fun handleRasterLayer(layer: MTRasterLayer): JSString {
+        val layerString: JSString = JsonConfig.json.encodeToString(layer)
+
+        return "${MTBridge.MAP_OBJECT}.addLayer($layerString);"
+    }
+
+    private fun handleCircleLayer(layer: MTCircleLayer): JSString {
         val layerString: JSString = JsonConfig.json.encodeToString(layer)
 
         return "${MTBridge.MAP_OBJECT}.addLayer($layerString);"

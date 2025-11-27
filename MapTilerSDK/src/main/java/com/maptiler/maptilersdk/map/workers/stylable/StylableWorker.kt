@@ -37,10 +37,13 @@ import com.maptiler.maptilersdk.commands.style.IsSourceLoaded
 import com.maptiler.maptilersdk.commands.style.RemoveLayer
 import com.maptiler.maptilersdk.commands.style.RemoveSource
 import com.maptiler.maptilersdk.commands.style.SetDataToSource
+import com.maptiler.maptilersdk.commands.style.SetFilter
 import com.maptiler.maptilersdk.commands.style.SetGlyphs
 import com.maptiler.maptilersdk.commands.style.SetHalo
 import com.maptiler.maptilersdk.commands.style.SetLanguage
+import com.maptiler.maptilersdk.commands.style.SetLayoutProperty
 import com.maptiler.maptilersdk.commands.style.SetLight
+import com.maptiler.maptilersdk.commands.style.SetPaintProperty
 import com.maptiler.maptilersdk.commands.style.SetRenderWorldCopies
 import com.maptiler.maptilersdk.commands.style.SetSpace
 import com.maptiler.maptilersdk.commands.style.SetStyle
@@ -50,6 +53,7 @@ import com.maptiler.maptilersdk.map.options.MTHalo
 import com.maptiler.maptilersdk.map.options.MTSpace
 import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
 import com.maptiler.maptilersdk.map.style.MTMapStyleVariant
+import com.maptiler.maptilersdk.map.style.dsl.PropertyValue
 import com.maptiler.maptilersdk.map.style.image.MTAddImageOptions
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
 import com.maptiler.maptilersdk.map.style.source.MTSource
@@ -249,6 +253,53 @@ internal class StylableWorker(
                 RemoveSource(source),
             )
         }
+    }
+
+    // Style property setters
+    fun setFilter(
+        layerId: String,
+        filter: PropertyValue,
+    ) {
+        scope.launch { bridge.execute(SetFilter(layerId, filter)) }
+    }
+
+    suspend fun setFilterAwait(
+        layerId: String,
+        filter: PropertyValue,
+    ) {
+        bridge.execute(SetFilter(layerId, filter))
+    }
+
+    fun setLayoutProperty(
+        layerId: String,
+        name: String,
+        value: PropertyValue,
+    ) {
+        scope.launch { bridge.execute(SetLayoutProperty(layerId, name, value)) }
+    }
+
+    suspend fun setLayoutPropertyAwait(
+        layerId: String,
+        name: String,
+        value: PropertyValue,
+    ) {
+        bridge.execute(SetLayoutProperty(layerId, name, value))
+    }
+
+    fun setPaintProperty(
+        layerId: String,
+        name: String,
+        value: PropertyValue,
+    ) {
+        scope.launch { bridge.execute(SetPaintProperty(layerId, name, value)) }
+    }
+
+    suspend fun setPaintPropertyAwait(
+        layerId: String,
+        name: String,
+        value: PropertyValue,
+    ) {
+        bridge.execute(SetPaintProperty(layerId, name, value))
     }
 
     fun setUrlToSource(
