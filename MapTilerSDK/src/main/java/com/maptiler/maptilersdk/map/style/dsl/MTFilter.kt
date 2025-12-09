@@ -9,7 +9,7 @@ package com.maptiler.maptilersdk.map.style.dsl
 /**
  * Filter helpers that build GL-style filter arrays.
  */
-object Filter {
+object MTFilter {
     fun has(key: MTFeatureKey): PropertyValue = PropertyValue.Arr(listOf(PropertyValue.Str("has"), PropertyValue.Str(key.key)))
 
     fun not(filter: PropertyValue): PropertyValue = PropertyValue.Arr(listOf(PropertyValue.Str("!"), filter))
@@ -17,7 +17,7 @@ object Filter {
     fun eq(
         key: MTFeatureKey,
         value: PropertyValue,
-    ): PropertyValue = PropertyValue.Arr(listOf(PropertyValue.Str("=="), Expression.get(key), value))
+    ): PropertyValue = PropertyValue.Arr(listOf(PropertyValue.Str("=="), MTExpression.get(key), value))
 
     fun all(vararg filters: PropertyValue): PropertyValue = PropertyValue.Arr(listOf(PropertyValue.Str("all")) + filters)
 
