@@ -6,7 +6,7 @@
 
 package com.maptiler.maptilersdk.map.style
 
-import com.maptiler.maptilersdk.map.style.dsl.Expression
+import com.maptiler.maptilersdk.map.style.dsl.MTExpression
 import com.maptiler.maptilersdk.map.style.dsl.MTFeatureKey
 import com.maptiler.maptilersdk.map.style.dsl.MTTextToken
 import com.maptiler.maptilersdk.map.style.dsl.PropertyValue
@@ -21,8 +21,8 @@ fun MTStyle.setCircleRadiusStep(
     stops: List<Pair<Double, Double>>,
 ) {
     val expr =
-        Expression.step(
-            Expression.get(key),
+        MTExpression.step(
+            MTExpression.get(key),
             PropertyValue.Num(defaultRadius),
             stops.map { (stop, v) -> stop to PropertyValue.Num(v) },
         )
@@ -36,8 +36,8 @@ suspend fun MTStyle.setCircleRadiusStepAwait(
     stops: List<Pair<Double, Double>>,
 ) {
     val expr =
-        Expression.step(
-            Expression.get(key),
+        MTExpression.step(
+            MTExpression.get(key),
             PropertyValue.Num(defaultRadius),
             stops.map { (stop, v) -> stop to PropertyValue.Num(v) },
         )
@@ -52,8 +52,8 @@ fun MTStyle.setCircleColorStep(
     includeAlpha: Boolean = false,
 ) {
     val expr =
-        Expression.step(
-            Expression.get(key),
+        MTExpression.step(
+            MTExpression.get(key),
             PropertyValue.Color(defaultColor, includeAlpha),
             stops.map { (stop, v) -> stop to PropertyValue.Color(v, includeAlpha) },
         )
@@ -68,8 +68,8 @@ suspend fun MTStyle.setCircleColorStepAwait(
     includeAlpha: Boolean = false,
 ) {
     val expr =
-        Expression.step(
-            Expression.get(key),
+        MTExpression.step(
+            MTExpression.get(key),
             PropertyValue.Color(defaultColor, includeAlpha),
             stops.map { (stop, v) -> stop to PropertyValue.Color(v, includeAlpha) },
         )

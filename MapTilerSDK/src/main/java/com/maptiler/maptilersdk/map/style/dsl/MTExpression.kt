@@ -9,7 +9,7 @@ package com.maptiler.maptilersdk.map.style.dsl
 /**
  * Simple typed expression helpers that encode to JSON arrays.
  */
-object Expression {
+object MTExpression {
     fun get(key: MTFeatureKey): PropertyValue = PropertyValue.Arr(listOf(PropertyValue.Str("get"), PropertyValue.Str(key.key)))
 
     fun toString(value: PropertyValue): PropertyValue = PropertyValue.Arr(listOf(PropertyValue.Str("to-string"), value))

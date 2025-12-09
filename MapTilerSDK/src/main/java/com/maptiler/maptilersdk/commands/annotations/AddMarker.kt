@@ -11,6 +11,7 @@ import com.maptiler.maptilersdk.annotations.MTMarker
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTCommand
 import com.maptiler.maptilersdk.helpers.ImageHelper
+import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.helpers.toHexString
 
 internal data class AddMarker(
@@ -46,11 +47,13 @@ internal data class AddMarker(
                         0.0
                     }
 
+                val textJson = JsonConfig.json.encodeToString(popup.text)
+
                 """
                 const ${popup.identifier} = new maptilersdk.Popup({ offset: $offset });
 
                 ${popup.identifier}
-                .setText('${popup.text}')
+                .setText($textJson)
                 """
             } else {
                 ""

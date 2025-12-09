@@ -19,8 +19,8 @@ import com.maptiler.maptilersdk.map.MTMapViewDelegate
 import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
 import com.maptiler.maptilersdk.map.style.MTMapStyleVariant
 import com.maptiler.maptilersdk.map.style.MTStyle
-import com.maptiler.maptilersdk.map.style.dsl.Expression
-import com.maptiler.maptilersdk.map.style.dsl.Filter
+import com.maptiler.maptilersdk.map.style.dsl.MTExpression
+import com.maptiler.maptilersdk.map.style.dsl.MTFilter
 import com.maptiler.maptilersdk.map.style.dsl.MTFeatureKey
 import com.maptiler.maptilersdk.map.style.dsl.PropertyValue
 import com.maptiler.maptilersdk.map.style.layer.circle.MTCircleLayer
@@ -88,10 +88,10 @@ private fun setupClusters(style: MTStyle) {
     val clusters =
         MTCircleLayer(identifier = "clusters", sourceIdentifier = src.identifier)
             .apply {
-                withFilter(Filter.clusters())
+                withFilter(MTFilter.clusters())
                 colorExpr(
-                    Expression.step(
-                        input = Expression.get(MTFeatureKey.POINT_COUNT),
+                    MTExpression.step(
+                        input = MTExpression.get(MTFeatureKey.POINT_COUNT),
                         default = PropertyValue.Color(Color.parseColor("#51bbd6")),
                         stops = listOf(
                             100.0 to PropertyValue.Color(Color.parseColor("#f1f075")),
@@ -100,8 +100,8 @@ private fun setupClusters(style: MTStyle) {
                     ),
                 )
                 radiusExpr(
-                    Expression.step(
-                        input = Expression.get(MTFeatureKey.POINT_COUNT),
+                    MTExpression.step(
+                        input = MTExpression.get(MTFeatureKey.POINT_COUNT),
                         default = PropertyValue.Num(20.0),
                         stops = listOf(
                             100.0 to PropertyValue.Num(30.0),
@@ -116,7 +116,7 @@ private fun setupClusters(style: MTStyle) {
     val labels =
         MTSymbolLayer(identifier = "clusterCount", sourceIdentifier = src.identifier)
             .apply {
-                withFilter(Filter.clusters())
+                withFilter(MTFilter.clusters())
                 textField(MTTextToken.POINT_COUNT_ABBREVIATED)
                 textSize(12.0)
                 textAllowOverlap(true)
@@ -130,7 +130,7 @@ private fun setupClusters(style: MTStyle) {
     val unclustered =
         MTCircleLayer(identifier = "unclusteredPoint", sourceIdentifier = src.identifier)
             .apply {
-                withFilter(Filter.unclustered())
+                withFilter(MTFilter.unclustered())
                 colorConst(Color.parseColor("#11b4da"))
                 radiusConst(4.0)
             }
