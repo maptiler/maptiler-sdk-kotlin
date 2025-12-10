@@ -11,6 +11,7 @@ import com.maptiler.maptilersdk.annotations.MTMarker
 import com.maptiler.maptilersdk.annotations.MTTextPopup
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTError
+import com.maptiler.maptilersdk.helpers.MTPointLayerOptions
 import com.maptiler.maptilersdk.map.style.dsl.PropertyValue
 import com.maptiler.maptilersdk.map.style.image.MTAddImageOptions
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
@@ -275,6 +276,9 @@ class MTStyle(
      * Adds the MapTiler logo control to the map.
      */
     fun addLogoControl() = stylableWorker.addLogoControl()
+
+    // Adds a point visualization layer using the helper with the provided options.
+    internal fun addPointLayer(options: MTPointLayerOptions) = stylableWorker.addPointLayer(options)
 
     /**
      * Returns SDK style id for a given reference style.

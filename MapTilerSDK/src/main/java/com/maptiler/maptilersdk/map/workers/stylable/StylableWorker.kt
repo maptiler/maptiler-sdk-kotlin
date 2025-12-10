@@ -15,6 +15,7 @@ import com.maptiler.maptilersdk.commands.annotations.AddMarker
 import com.maptiler.maptilersdk.commands.annotations.AddTextPopup
 import com.maptiler.maptilersdk.commands.annotations.RemoveMarker
 import com.maptiler.maptilersdk.commands.annotations.RemoveTextPopup
+import com.maptiler.maptilersdk.commands.helpers.AddPointLayer
 import com.maptiler.maptilersdk.commands.misc.AddLogoControl
 import com.maptiler.maptilersdk.commands.style.AddImage
 import com.maptiler.maptilersdk.commands.style.AddLayer
@@ -49,6 +50,7 @@ import com.maptiler.maptilersdk.commands.style.SetSpace
 import com.maptiler.maptilersdk.commands.style.SetStyle
 import com.maptiler.maptilersdk.commands.style.SetTilesToSource
 import com.maptiler.maptilersdk.commands.style.SetUrlToSource
+import com.maptiler.maptilersdk.helpers.MTPointLayerOptions
 import com.maptiler.maptilersdk.map.options.MTHalo
 import com.maptiler.maptilersdk.map.options.MTSpace
 import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
@@ -216,6 +218,14 @@ internal class StylableWorker(
         scope.launch {
             bridge.execute(
                 AddImage(identifier, image, options),
+            )
+        }
+    }
+
+    fun addPointLayer(options: MTPointLayerOptions) {
+        scope.launch {
+            bridge.execute(
+                AddPointLayer(options),
             )
         }
     }
