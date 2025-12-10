@@ -34,6 +34,9 @@ internal data class AddMarker(
                 false
             }
 
+        val anchor = marker.anchor.value
+        val offset = marker.offset
+
         var iconInit = ""
         var iconData = ""
         val popupAttachment =
@@ -80,6 +83,8 @@ internal data class AddMarker(
             buildString {
                 append("color: '$color'")
                 append(",\n                draggable: $draggable")
+                append(",\n                anchor: '$anchor'")
+                append(",\n                offset: $offset")
                 if (iconData.isNotBlank()) {
                     append(",\n                $iconData")
                 }

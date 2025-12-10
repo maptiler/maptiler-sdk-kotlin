@@ -45,6 +45,16 @@ class MTMarker(
      */
     var icon: Bitmap? = null
 
+    /**
+     * Anchor used to align the marker relative to its coordinates.
+     */
+    var anchor: MTAnchor = MTAnchor.CENTER
+
+    /**
+     * Pixel offset to apply when positioning the marker relative to its anchor.
+     */
+    var offset: Double = 0.0
+
     private var tapThreshold: Double = 30.0
 
     constructor(
