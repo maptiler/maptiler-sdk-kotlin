@@ -31,6 +31,16 @@ class MTMarker(
     var color: Int? = Color.BLUE
 
     /**
+     * Opacity of the marker.
+     */
+    var opacity: Double = 1.0
+
+    /**
+     * Opacity of the marker when it is covered by another 3D object.
+     */
+    var opacityWhenCovered: Double = 1.0
+
+    /**
      * Boolean indicating whether marker is draggable.
      */
     var draggable: Boolean? = false

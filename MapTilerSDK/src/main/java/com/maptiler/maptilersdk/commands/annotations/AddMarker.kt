@@ -36,6 +36,8 @@ internal data class AddMarker(
 
         val anchor = marker.anchor.value
         val offset = marker.offset
+        val opacity = marker.opacity
+        val opacityWhenCovered = marker.opacityWhenCovered
 
         var iconInit = ""
         var iconData = ""
@@ -85,6 +87,8 @@ internal data class AddMarker(
                 append(",\n                draggable: $draggable")
                 append(",\n                anchor: '$anchor'")
                 append(",\n                offset: $offset")
+                append(",\n                opacity: $opacity")
+                append(",\n                opacityWhenCovered: $opacityWhenCovered")
                 if (iconData.isNotBlank()) {
                     append(",\n                $iconData")
                 }
