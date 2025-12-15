@@ -24,4 +24,15 @@ class AnnotationCommandsTests {
         assertTrue(js.contains("anchor: 'bottom-left'"))
         assertTrue(js.contains("offset: 12.5"))
     }
+
+    @Test fun addMarkerToJS_IncludesOpacityOptions() {
+        val marker = MTMarker(LngLat(10.0, 20.0))
+        marker.opacity = 0.5
+        marker.opacityWhenCovered = 0.25
+
+        val js = AddMarker(marker).toJS()
+
+        assertTrue(js.contains("opacity: 0.5"))
+        assertTrue(js.contains("opacityWhenCovered: 0.25"))
+    }
 }
