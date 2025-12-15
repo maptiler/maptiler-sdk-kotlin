@@ -35,6 +35,9 @@ internal data class AddMarker(
             }
 
         val anchor = marker.anchor.value
+        val pitchAlignment = marker.pitchAlignment.value
+        val rotation = marker.rotation
+        val rotationAlignment = marker.rotationAlignment.value
         val offset = marker.offset
         val opacity = marker.opacity
         val opacityWhenCovered = marker.opacityWhenCovered
@@ -86,6 +89,9 @@ internal data class AddMarker(
                 append("color: '$color'")
                 append(",\n                draggable: $draggable")
                 append(",\n                anchor: '$anchor'")
+                append(",\n                pitchAlignment: '$pitchAlignment'")
+                append(",\n                rotation: $rotation")
+                append(",\n                rotationAlignment: '$rotationAlignment'")
                 append(",\n                offset: $offset")
                 append(",\n                opacity: $opacity")
                 append(",\n                opacityWhenCovered: $opacityWhenCovered")
