@@ -61,6 +61,21 @@ class MTMarker(
     var anchor: MTAnchor = MTAnchor.CENTER
 
     /**
+     * Alignment for marker pitch relative to the map or viewport.
+     */
+    var pitchAlignment: MTPitchAlignment = MTPitchAlignment.AUTO
+
+    /**
+     * Rotation of the marker in degrees.
+     */
+    var rotation: Double = 0.0
+
+    /**
+     * Alignment for marker rotation relative to the map or viewport.
+     */
+    var rotationAlignment: MTRotationAlignment = MTRotationAlignment.AUTO
+
+    /**
      * Pixel offset to apply when positioning the marker relative to its anchor.
      */
     var offset: Double = 0.0
