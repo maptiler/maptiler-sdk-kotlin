@@ -70,6 +70,7 @@ internal class StylableWorker(
     private val scope: CoroutineScope,
 ) : MTStylable {
     override fun addMarker(marker: MTMarker) {
+        marker.bindBridge(bridge)
         scope.launch {
             bridge.execute(
                 AddMarker(marker),

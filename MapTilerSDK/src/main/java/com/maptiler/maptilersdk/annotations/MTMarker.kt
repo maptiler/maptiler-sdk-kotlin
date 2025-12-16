@@ -8,6 +8,15 @@ package com.maptiler.maptilersdk.annotations
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import com.maptiler.maptilersdk.bridge.MTBridge
+import com.maptiler.maptilersdk.bridge.MTBridgeReturnType
+import com.maptiler.maptilersdk.commands.annotations.GetMarkerLngLat
+import com.maptiler.maptilersdk.commands.annotations.GetMarkerOffset
+import com.maptiler.maptilersdk.commands.annotations.GetMarkerPitchAlignment
+import com.maptiler.maptilersdk.commands.annotations.GetMarkerRotation
+import com.maptiler.maptilersdk.commands.annotations.GetMarkerRotationAlignment
+import com.maptiler.maptilersdk.commands.annotations.IsMarkerDraggable
+import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.map.LngLat
 import com.maptiler.maptilersdk.map.MTMapViewController
 import java.util.UUID
@@ -92,6 +101,8 @@ class MTMarker(
 
     private var tapThreshold: Double = 30.0
 
+    private var boundBridge: MTBridge? = null
+
     constructor(
         coordinates: LngLat,
         color: Int? = Color.BLUE,
@@ -145,4 +156,143 @@ class MTMarker(
 
         mapViewController.setCoordinatesToMarker(this)
     }
+
+    internal fun bindBridge(bridge: MTBridge) {
+        boundBridge = bridge
+    }
+
+    /**
+     * Returns the current coordinates of the marker.
+     */
+    suspend fun getLngLat(): LngLat {
+        val bridge = boundBridge ?: return coordinates
+
+        val returnTypeValue = bridge.execute(GetMarkerLngLat(this))
+        val parsed =
+            when (returnTypeValue) {
+                is MTBridgeReturnType.StringValue ->
+                    runCatching { JsonConfig.json.decodeFromString<LngLat>(returnTypeValue.value) }.getOrNull()
+                is MTBridgeReturnType.StringDoubleDict ->
+                    returnTypeValue.value["lng"]?.let { lng ->
+                        returnTypeValue.value["lat"]?.let { lat -> LngLat(lng, lat) }
+                    }
+                else -> null
+            } ?: coordinates
+
+        _coordinates = parsed
+        return parsed
+    }
+
+    /**
+     * Returns the pitch alignment of the marker.
+     */
+    suspend fun getPitchAlignment(): MTPitchAlignment {
+        val bridge = boundBridge ?: return pitchAlignment
+
+        val returnTypeValue = bridge.execute(GetMarkerPitchAlignment(this))
+        val parsed = parsePitchAlignment(returnTypeValue) ?: pitchAlignment
+
+        pitchAlignment = parsed
+        return parsed
+    }
+
+    /**
+     * Returns the rotation of the marker in degrees.
+     */
+    suspend fun getRotation(): Double {
+        val bridge = boundBridge ?: return rotation
+
+        val returnTypeValue = bridge.execute(GetMarkerRotation(this))
+        val parsed = parseDoubleValue(returnTypeValue, rotation)
+
+        rotation = parsed
+        return parsed
+    }
+
+    /**
+     * Returns the rotation alignment of the marker.
+     */
+    suspend fun getRotationAlignment(): MTRotationAlignment {
+        val bridge = boundBridge ?: return rotationAlignment
+
+        val returnTypeValue = bridge.execute(GetMarkerRotationAlignment(this))
+        val parsed = parseRotationAlignment(returnTypeValue) ?: rotationAlignment
+
+        rotationAlignment = parsed
+        return parsed
+    }
+
+    /**
+     * Returns the offset applied to the marker.
+     */
+    suspend fun getOffset(): Double {
+        val bridge = boundBridge ?: return offset
+
+        val returnTypeValue = bridge.execute(GetMarkerOffset(this))
+        val parsed = parseDoubleValue(returnTypeValue, offset)
+
+        offset = parsed
+        return parsed
+    }
+
+    /**
+     * Returns boolean indicating whether the marker can be dragged.
+     */
+    suspend fun isDraggable(): Boolean {
+        val bridge = boundBridge ?: return draggable ?: false
+
+        val returnTypeValue = bridge.execute(IsMarkerDraggable(this))
+        val parsed = parseBooleanValue(returnTypeValue, draggable ?: false)
+
+        draggable = parsed
+        return parsed
+    }
+
+    private fun parsePitchAlignment(returnTypeValue: MTBridgeReturnType?): MTPitchAlignment? {
+        if (returnTypeValue !is MTBridgeReturnType.StringValue) {
+            return null
+        }
+
+        val normalized = returnTypeValue.value.trim('"').trim().lowercase()
+
+        return MTPitchAlignment.values().firstOrNull { it.value == normalized }
+    }
+
+    private fun parseRotationAlignment(returnTypeValue: MTBridgeReturnType?): MTRotationAlignment? {
+        if (returnTypeValue !is MTBridgeReturnType.StringValue) {
+            return null
+        }
+
+        val normalized = returnTypeValue.value.trim('"').trim().lowercase()
+
+        return MTRotationAlignment.values().firstOrNull { it.value == normalized }
+    }
+
+    private fun parseDoubleValue(
+        returnTypeValue: MTBridgeReturnType?,
+        defaultValue: Double,
+    ): Double =
+        when (returnTypeValue) {
+            is MTBridgeReturnType.DoubleValue -> returnTypeValue.value
+            is MTBridgeReturnType.StringValue -> returnTypeValue.value.trim('"').toDoubleOrNull() ?: defaultValue
+            else -> defaultValue
+        }
+
+    private fun parseBooleanValue(
+        returnTypeValue: MTBridgeReturnType?,
+        defaultValue: Boolean,
+    ): Boolean =
+        when (returnTypeValue) {
+            is MTBridgeReturnType.BoolValue -> returnTypeValue.value
+            is MTBridgeReturnType.DoubleValue -> returnTypeValue.value != 0.0
+            is MTBridgeReturnType.StringValue -> {
+                val normalized = returnTypeValue.value.trim('"').trim().lowercase()
+                when (normalized) {
+                    "true" -> true
+                    "false" -> false
+                    else -> normalized.toDoubleOrNull()?.let { it != 0.0 } ?: defaultValue
+                }
+            }
+            else -> defaultValue
+        }
 }

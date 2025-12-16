@@ -11,7 +11,14 @@ import com.maptiler.maptilersdk.annotations.MTMarker
 import com.maptiler.maptilersdk.annotations.MTPitchAlignment
 import com.maptiler.maptilersdk.annotations.MTRotationAlignment
 import com.maptiler.maptilersdk.commands.annotations.AddMarker
+import com.maptiler.maptilersdk.commands.annotations.GetMarkerLngLat
+import com.maptiler.maptilersdk.commands.annotations.GetMarkerOffset
+import com.maptiler.maptilersdk.commands.annotations.GetMarkerPitchAlignment
+import com.maptiler.maptilersdk.commands.annotations.GetMarkerRotation
+import com.maptiler.maptilersdk.commands.annotations.GetMarkerRotationAlignment
+import com.maptiler.maptilersdk.commands.annotations.IsMarkerDraggable
 import com.maptiler.maptilersdk.map.LngLat
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -60,5 +67,16 @@ class AnnotationCommandsTests {
 
         assertTrue(js.contains("scale: 2.0"))
         assertTrue(js.contains("subpixelPositioning: false"))
+    }
+
+    @Test fun markerGetterCommands_ToJS_UseMarkerIdentifier() {
+        val marker = MTMarker(LngLat(10.0, 20.0))
+
+        assertEquals("${marker.identifier}.getLngLat();", GetMarkerLngLat(marker).toJS())
+        assertEquals("${marker.identifier}.getPitchAlignment();", GetMarkerPitchAlignment(marker).toJS())
+        assertEquals("${marker.identifier}.getRotation();", GetMarkerRotation(marker).toJS())
+        assertEquals("${marker.identifier}.getRotationAlignment();", GetMarkerRotationAlignment(marker).toJS())
+        assertEquals("${marker.identifier}.getOffset();", GetMarkerOffset(marker).toJS())
+        assertEquals("${marker.identifier}.isDraggable();", IsMarkerDraggable(marker).toJS())
     }
 }
