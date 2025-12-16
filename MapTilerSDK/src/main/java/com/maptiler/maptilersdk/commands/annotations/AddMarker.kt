@@ -37,10 +37,12 @@ internal data class AddMarker(
         val anchor = marker.anchor.value
         val pitchAlignment = marker.pitchAlignment.value
         val rotation = marker.rotation
+        val scale = marker.scale
         val rotationAlignment = marker.rotationAlignment.value
         val offset = marker.offset
         val opacity = marker.opacity
         val opacityWhenCovered = marker.opacityWhenCovered
+        val subpixelPositioning = marker.subpixelPositioning
 
         var iconInit = ""
         var iconData = ""
@@ -87,6 +89,7 @@ internal data class AddMarker(
         val markerOptions =
             buildString {
                 append("color: '$color'")
+                append(",\n                scale: $scale")
                 append(",\n                draggable: $draggable")
                 append(",\n                anchor: '$anchor'")
                 append(",\n                pitchAlignment: '$pitchAlignment'")
@@ -95,6 +98,7 @@ internal data class AddMarker(
                 append(",\n                offset: $offset")
                 append(",\n                opacity: $opacity")
                 append(",\n                opacityWhenCovered: $opacityWhenCovered")
+                append(",\n                subpixelPositioning: $subpixelPositioning")
                 if (iconData.isNotBlank()) {
                     append(",\n                $iconData")
                 }

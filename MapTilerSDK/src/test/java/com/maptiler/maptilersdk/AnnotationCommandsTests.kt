@@ -50,4 +50,15 @@ class AnnotationCommandsTests {
         assertTrue(js.contains("rotation: 45.0"))
         assertTrue(js.contains("rotationAlignment: 'map'"))
     }
+
+    @Test fun addMarkerToJS_IncludesScaleAndSubpixelPositioningOptions() {
+        val marker = MTMarker(LngLat(10.0, 20.0))
+        marker.scale = 2.0
+        marker.subpixelPositioning = false
+
+        val js = AddMarker(marker).toJS()
+
+        assertTrue(js.contains("scale: 2.0"))
+        assertTrue(js.contains("subpixelPositioning: false"))
+    }
 }

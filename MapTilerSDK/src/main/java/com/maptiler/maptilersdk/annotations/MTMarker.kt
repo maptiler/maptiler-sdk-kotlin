@@ -71,6 +71,11 @@ class MTMarker(
     var rotation: Double = 0.0
 
     /**
+     * Scale of the marker icon.
+     */
+    var scale: Double = 1.0
+
+    /**
      * Alignment for marker rotation relative to the map or viewport.
      */
     var rotationAlignment: MTRotationAlignment = MTRotationAlignment.AUTO
@@ -79,6 +84,11 @@ class MTMarker(
      * Pixel offset to apply when positioning the marker relative to its anchor.
      */
     var offset: Double = 0.0
+
+    /**
+     * Enables subpixel positioning for smoother rendering.
+     */
+    var subpixelPositioning: Boolean = true
 
     private var tapThreshold: Double = 30.0
 
