@@ -118,6 +118,25 @@ internal data class AddMarker(
             ${marker.identifier}
             .setLngLat([${marker.coordinates.lng}, ${marker.coordinates.lat}])
             .addTo(${MTBridge.MAP_OBJECT});
+
+            const handle${marker.identifier}DragEvent = (eventName) => (event) => {
+                const lngLat = ${marker.identifier}.getLngLat();
+                const point = event && event.point ? { x: event.point.x, y: event.point.y } : null;
+                const data = {
+                    id: '${marker.identifier}',
+                    lngLat: {
+                        lng: lngLat.lng,
+                        lat: lngLat.lat
+                    },
+                    point
+                };
+
+                Android.onEvent(eventName, JSON.stringify(data));
+            };
+
+            ${marker.identifier}.on('drag', handle${marker.identifier}DragEvent('marker.drag'));
+            ${marker.identifier}.on('dragend', handle${marker.identifier}DragEvent('marker.dragend'));
+            ${marker.identifier}.on('dragstart', handle${marker.identifier}DragEvent('marker.dragstart'));
             """
     }
 }

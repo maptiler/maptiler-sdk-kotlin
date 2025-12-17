@@ -74,6 +74,22 @@ class AnnotationCommandsTests {
         assertTrue(js.contains("subpixelPositioning: false"))
     }
 
+    @Test fun addMarkerToJS_AddsDragEventHandlers() {
+        val marker = MTMarker(LngLat(10.0, 20.0))
+
+        val js = AddMarker(marker).toJS()
+
+        val dragHandler = "handle${marker.identifier}DragEvent('marker.drag')"
+        val dragEndHandler =
+            "${marker.identifier}.on('dragend', handle${marker.identifier}DragEvent('marker.dragend'))"
+        val dragStartHandler =
+            "${marker.identifier}.on('dragstart', handle${marker.identifier}DragEvent('marker.dragstart'))"
+
+        assertTrue(js.contains(dragHandler))
+        assertTrue(js.contains(dragEndHandler))
+        assertTrue(js.contains(dragStartHandler))
+    }
+
     @Test fun markerGetterCommands_ToJS_UseMarkerIdentifier() {
         val marker = MTMarker(LngLat(10.0, 20.0))
 
