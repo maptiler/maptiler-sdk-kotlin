@@ -10,6 +10,7 @@ import android.content.Context
 import android.webkit.WebView
 import com.maptiler.maptilersdk.MTConfig
 import com.maptiler.maptilersdk.annotations.MTMarker
+import com.maptiler.maptilersdk.annotations.MTRotationAlignment
 import com.maptiler.maptilersdk.annotations.MTTextPopup
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTJavaScriptInterface
@@ -19,6 +20,11 @@ import com.maptiler.maptilersdk.bridge.WebViewExecutorDelegate
 import com.maptiler.maptilersdk.commands.InitializeMap
 import com.maptiler.maptilersdk.commands.annotations.SetCoordinatesToMarker
 import com.maptiler.maptilersdk.commands.annotations.SetCoordinatesToTextPopup
+import com.maptiler.maptilersdk.commands.annotations.SetMarkerDraggable
+import com.maptiler.maptilersdk.commands.annotations.SetMarkerOffset
+import com.maptiler.maptilersdk.commands.annotations.SetMarkerRotation
+import com.maptiler.maptilersdk.commands.annotations.SetMarkerRotationAlignment
+import com.maptiler.maptilersdk.commands.annotations.ToggleMarkerPopup
 import com.maptiler.maptilersdk.events.EventProcessor
 import com.maptiler.maptilersdk.events.EventProcessorDelegate
 import com.maptiler.maptilersdk.events.MTEvent
@@ -213,6 +219,58 @@ class MTMapViewController(
         coroutineScope?.launch {
             bridge?.execute(
                 SetCoordinatesToTextPopup(popup),
+            )
+        }
+    }
+
+    internal fun setDraggableToMarker(
+        marker: MTMarker,
+        draggable: Boolean,
+    ) {
+        coroutineScope?.launch {
+            bridge?.execute(
+                SetMarkerDraggable(marker, draggable),
+            )
+        }
+    }
+
+    internal fun setOffsetToMarker(
+        marker: MTMarker,
+        offset: Double,
+    ) {
+        coroutineScope?.launch {
+            bridge?.execute(
+                SetMarkerOffset(marker, offset),
+            )
+        }
+    }
+
+    internal fun setRotationToMarker(
+        marker: MTMarker,
+        rotation: Double,
+    ) {
+        coroutineScope?.launch {
+            bridge?.execute(
+                SetMarkerRotation(marker, rotation),
+            )
+        }
+    }
+
+    internal fun setRotationAlignmentToMarker(
+        marker: MTMarker,
+        rotationAlignment: MTRotationAlignment,
+    ) {
+        coroutineScope?.launch {
+            bridge?.execute(
+                SetMarkerRotationAlignment(marker, rotationAlignment),
+            )
+        }
+    }
+
+    internal fun toggleMarkerPopup(marker: MTMarker) {
+        coroutineScope?.launch {
+            bridge?.execute(
+                ToggleMarkerPopup(marker),
             )
         }
     }
