@@ -17,6 +17,11 @@ import com.maptiler.maptilersdk.commands.annotations.GetMarkerPitchAlignment
 import com.maptiler.maptilersdk.commands.annotations.GetMarkerRotation
 import com.maptiler.maptilersdk.commands.annotations.GetMarkerRotationAlignment
 import com.maptiler.maptilersdk.commands.annotations.IsMarkerDraggable
+import com.maptiler.maptilersdk.commands.annotations.SetMarkerDraggable
+import com.maptiler.maptilersdk.commands.annotations.SetMarkerOffset
+import com.maptiler.maptilersdk.commands.annotations.SetMarkerRotation
+import com.maptiler.maptilersdk.commands.annotations.SetMarkerRotationAlignment
+import com.maptiler.maptilersdk.commands.annotations.ToggleMarkerPopup
 import com.maptiler.maptilersdk.map.LngLat
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -78,5 +83,18 @@ class AnnotationCommandsTests {
         assertEquals("${marker.identifier}.getRotationAlignment();", GetMarkerRotationAlignment(marker).toJS())
         assertEquals("${marker.identifier}.getOffset();", GetMarkerOffset(marker).toJS())
         assertEquals("${marker.identifier}.isDraggable();", IsMarkerDraggable(marker).toJS())
+    }
+
+    @Test fun markerSetterCommands_ToJS_UseMarkerIdentifier() {
+        val marker = MTMarker(LngLat(10.0, 20.0))
+
+        assertEquals("${marker.identifier}.setDraggable(true);", SetMarkerDraggable(marker, true).toJS())
+        assertEquals("${marker.identifier}.setOffset(4.5);", SetMarkerOffset(marker, 4.5).toJS())
+        assertEquals("${marker.identifier}.setRotation(15.0);", SetMarkerRotation(marker, 15.0).toJS())
+        assertEquals(
+            "${marker.identifier}.setRotationAlignment('viewport');",
+            SetMarkerRotationAlignment(marker, MTRotationAlignment.VIEWPORT).toJS(),
+        )
+        assertEquals("${marker.identifier}.togglePopup();", ToggleMarkerPopup(marker).toJS())
     }
 }

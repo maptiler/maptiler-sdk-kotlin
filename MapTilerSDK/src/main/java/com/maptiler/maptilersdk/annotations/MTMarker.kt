@@ -157,6 +157,69 @@ class MTMarker(
         mapViewController.setCoordinatesToMarker(this)
     }
 
+    /**
+     * Sets draggable flag for the marker.
+     *
+     * @param draggable Boolean value of draggable property.
+     */
+    fun setDraggable(
+        draggable: Boolean,
+        mapViewController: MTMapViewController,
+    ) {
+        this.draggable = draggable
+
+        mapViewController.setDraggableToMarker(this, draggable)
+    }
+
+    /**
+     * Sets pixel offset of the marker.
+     *
+     * @param offset Offset in pixels.
+     */
+    fun setOffset(
+        offset: Double,
+        mapViewController: MTMapViewController,
+    ) {
+        this.offset = offset
+
+        mapViewController.setOffsetToMarker(this, offset)
+    }
+
+    /**
+     * Sets rotation of the marker.
+     *
+     * @param rotation Rotation in degrees.
+     */
+    fun setRotation(
+        rotation: Double,
+        mapViewController: MTMapViewController,
+    ) {
+        this.rotation = rotation
+
+        mapViewController.setRotationToMarker(this, rotation)
+    }
+
+    /**
+     * Sets rotation alignment of the marker.
+     *
+     * @param rotationAlignment Rotation alignment value.
+     */
+    fun setRotationAlignment(
+        rotationAlignment: MTRotationAlignment,
+        mapViewController: MTMapViewController,
+    ) {
+        this.rotationAlignment = rotationAlignment
+
+        mapViewController.setRotationAlignmentToMarker(this, rotationAlignment)
+    }
+
+    /**
+     * Toggles popup for marker.
+     */
+    fun togglePopup(mapViewController: MTMapViewController) {
+        mapViewController.toggleMarkerPopup(this)
+    }
+
     internal fun bindBridge(bridge: MTBridge) {
         boundBridge = bridge
     }
