@@ -8,11 +8,17 @@ package com.maptiler.maptilersdk.commands.annotations
 
 import com.maptiler.maptilersdk.annotations.MTPopup
 import com.maptiler.maptilersdk.bridge.MTCommand
+import com.maptiler.maptilersdk.helpers.JsonConfig
 
-internal data class RemoveTextPopup(
+internal data class SetMaxWidthToTextPopup(
     val popup: MTPopup,
 ) : MTCommand {
     override val isPrimitiveReturnType: Boolean = false
 
-    override fun toJS(): String = "${popup.identifier}.remove();"
+    override fun toJS(): String {
+        val maxWidth = popup.maxWidth ?: ""
+        val maxWidthJson = JsonConfig.json.encodeToString(maxWidth)
+
+        return "${popup.identifier}.setMaxWidth($maxWidthJson);"
+    }
 }

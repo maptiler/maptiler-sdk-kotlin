@@ -9,10 +9,10 @@ package com.maptiler.maptilersdk.commands.annotations
 import com.maptiler.maptilersdk.annotations.MTPopup
 import com.maptiler.maptilersdk.bridge.MTCommand
 
-internal data class RemoveTextPopup(
+internal data class IsTextPopupOpen(
     val popup: MTPopup,
 ) : MTCommand {
-    override val isPrimitiveReturnType: Boolean = false
+    override val isPrimitiveReturnType: Boolean = true
 
-    override fun toJS(): String = "${popup.identifier}.remove();"
+    override fun toJS(): String = "${popup.identifier}.isOpen();"
 }

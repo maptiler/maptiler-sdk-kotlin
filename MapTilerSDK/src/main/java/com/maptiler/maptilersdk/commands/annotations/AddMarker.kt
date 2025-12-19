@@ -58,12 +58,19 @@ internal data class AddMarker(
                     }
 
                 val textJson = JsonConfig.json.encodeToString(popup.text)
+                val maxWidth = popup.maxWidth?.let { JsonConfig.json.encodeToString(it) }
+                val setMaxWidth =
+                    if (maxWidth != null) {
+                        ".setMaxWidth($maxWidth)\n                "
+                    } else {
+                        ""
+                    }
 
                 """
                 const ${popup.identifier} = new maptilersdk.Popup({ offset: $offset });
 
                 ${popup.identifier}
-                .setText($textJson)
+                $setMaxWidth.setText($textJson)
                 """
             } else {
                 ""

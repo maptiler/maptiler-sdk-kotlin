@@ -8,7 +8,7 @@ package com.maptiler.maptilersdk.map.style
 
 import android.graphics.Bitmap
 import com.maptiler.maptilersdk.annotations.MTMarker
-import com.maptiler.maptilersdk.annotations.MTTextPopup
+import com.maptiler.maptilersdk.annotations.MTPopup
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTError
 import com.maptiler.maptilersdk.helpers.MTPointLayerOptions
@@ -110,14 +110,14 @@ class MTStyle(
      *
      * @param popup Popup to add.
      */
-    override fun addTextPopup(popup: MTTextPopup) = stylableWorker.addTextPopup(popup)
+    override fun addTextPopup(popup: MTPopup) = stylableWorker.addTextPopup(popup)
 
     /**
      * Removes a text popup from the map.
      *
      * @param popup Popup to remove.
      */
-    override fun removeTextPopup(popup: MTTextPopup) = stylableWorker.removeTextPopup(popup)
+    override fun removeTextPopup(popup: MTPopup) = stylableWorker.removeTextPopup(popup)
 
     /**
      * Registers an image asset that can be referenced from the style.

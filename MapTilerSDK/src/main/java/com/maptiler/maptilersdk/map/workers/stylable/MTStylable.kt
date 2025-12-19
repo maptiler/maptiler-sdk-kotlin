@@ -7,7 +7,7 @@
 package com.maptiler.maptilersdk.map.workers.stylable
 
 import com.maptiler.maptilersdk.annotations.MTMarker
-import com.maptiler.maptilersdk.annotations.MTTextPopup
+import com.maptiler.maptilersdk.annotations.MTPopup
 
 /**
  * Defines methods for map styling methods.
@@ -32,12 +32,12 @@ interface MTStylable {
      *
      * @param popup Popup to add.
      */
-    fun addTextPopup(popup: MTTextPopup)
+    fun addTextPopup(popup: MTPopup)
 
     /**
      * Removes a text popup from the map.
      *
      * @param popup Popup to remove.
      */
-    fun removeTextPopup(popup: MTTextPopup)
+    fun removeTextPopup(popup: MTPopup)
 }

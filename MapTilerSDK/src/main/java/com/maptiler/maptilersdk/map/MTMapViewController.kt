@@ -10,8 +10,8 @@ import android.content.Context
 import android.webkit.WebView
 import com.maptiler.maptilersdk.MTConfig
 import com.maptiler.maptilersdk.annotations.MTMarker
+import com.maptiler.maptilersdk.annotations.MTPopup
 import com.maptiler.maptilersdk.annotations.MTRotationAlignment
-import com.maptiler.maptilersdk.annotations.MTTextPopup
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTJavaScriptInterface
 import com.maptiler.maptilersdk.bridge.MTJavascriptDelegate
@@ -24,6 +24,7 @@ import com.maptiler.maptilersdk.commands.annotations.SetMarkerDraggable
 import com.maptiler.maptilersdk.commands.annotations.SetMarkerOffset
 import com.maptiler.maptilersdk.commands.annotations.SetMarkerRotation
 import com.maptiler.maptilersdk.commands.annotations.SetMarkerRotationAlignment
+import com.maptiler.maptilersdk.commands.annotations.SetMaxWidthToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.ToggleMarkerPopup
 import com.maptiler.maptilersdk.events.EventProcessor
 import com.maptiler.maptilersdk.events.EventProcessorDelegate
@@ -215,10 +216,18 @@ class MTMapViewController(
         }
     }
 
-    internal fun setCoordinatesToTextPopup(popup: MTTextPopup) {
+    internal fun setCoordinatesToTextPopup(popup: MTPopup) {
         coroutineScope?.launch {
             bridge?.execute(
                 SetCoordinatesToTextPopup(popup),
+            )
+        }
+    }
+
+    internal fun setMaxWidthToTextPopup(popup: MTPopup) {
+        coroutineScope?.launch {
+            bridge?.execute(
+                SetMaxWidthToTextPopup(popup),
             )
         }
     }
@@ -272,6 +281,7 @@ class MTMapViewController(
             bridge?.execute(
                 ToggleMarkerPopup(marker),
             )
+            marker.popup?.refreshIsOpen()
         }
     }
 

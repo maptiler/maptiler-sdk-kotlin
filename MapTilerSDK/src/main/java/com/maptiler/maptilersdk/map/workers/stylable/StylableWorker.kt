@@ -8,7 +8,7 @@ package com.maptiler.maptilersdk.map.workers.stylable
 
 import android.graphics.Bitmap
 import com.maptiler.maptilersdk.annotations.MTMarker
-import com.maptiler.maptilersdk.annotations.MTTextPopup
+import com.maptiler.maptilersdk.annotations.MTPopup
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType
 import com.maptiler.maptilersdk.commands.annotations.AddMarker
@@ -71,6 +71,8 @@ internal class StylableWorker(
 ) : MTStylable {
     override fun addMarker(marker: MTMarker) {
         marker.bindBridge(bridge)
+        marker.popup?.bindBridge(bridge)
+        marker.popup?.setOpenState(false)
         scope.launch {
             bridge.execute(
                 AddMarker(marker),
@@ -187,7 +189,9 @@ internal class StylableWorker(
         }
     }
 
-    override fun addTextPopup(popup: MTTextPopup) {
+    override fun addTextPopup(popup: MTPopup) {
+        popup.bindBridge(bridge)
+        popup.setOpenState(true)
         scope.launch {
             bridge.execute(
                 AddTextPopup(popup),
@@ -195,12 +199,13 @@ internal class StylableWorker(
         }
     }
 
-    override fun removeTextPopup(popup: MTTextPopup) {
+    override fun removeTextPopup(popup: MTPopup) {
         scope.launch {
             bridge.execute(
                 RemoveTextPopup(popup),
             )
         }
+        popup.setOpenState(false)
     }
 
     fun addLayer(layer: MTLayer) {
