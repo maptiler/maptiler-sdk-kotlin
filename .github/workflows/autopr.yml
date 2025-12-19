@@ -73,6 +73,11 @@ jobs:
           DESC_CLEANED=$(echo "${{ github.event.inputs.issue_description }}" | tr '\n' ' ' | sed 's/"/'\''/g')
           echo "DESC=$DESC_CLEANED"                                    >> $GITHUB_ENV
           echo "BRANCH=${{ github.event.inputs.issue_key }}"           >> $GITHUB_ENV
+          {
+            echo 'DESC_MD<<EOF'
+            printf '%s\n' "${{ github.event.inputs.issue_description }}"
+            echo EOF
+          } >> "$GITHUB_ENV"
 
       # Run the LLM Agent and then commit the output
 
@@ -112,10 +117,10 @@ jobs:
             **${{ env.ISSUE_KEY }}**
 
             ## Objective
-            **${{ env.TITLE }}**.
+            ${{ env.DESC_MD }}
 
             ## Description
-            ${{ env.DESC }}
+            **${{ env.TITLE }}**.
 
             ## Acceptance
             Compiles and checks pass.
