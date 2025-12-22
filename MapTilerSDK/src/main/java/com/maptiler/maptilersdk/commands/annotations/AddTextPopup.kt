@@ -24,7 +24,7 @@ internal data class AddTextPopup(
                 0.0
             }
 
-        val maxWidth = popup.maxWidth?.let { JsonConfig.json.encodeToString(it) }
+        val maxWidth = popup.maxWidth?.let { JsonConfig.json.encodeToString("${it}px") }
         val textJson = JsonConfig.json.encodeToString(popup.text)
 
         val setMaxWidth =

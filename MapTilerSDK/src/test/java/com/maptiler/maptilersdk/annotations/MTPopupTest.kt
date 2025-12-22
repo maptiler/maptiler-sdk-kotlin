@@ -63,7 +63,7 @@ class MTPopupTest {
         val popup = MTTextPopup(identifier = "popup3", _coordinates = LngLat(5.0, 6.0))
         popup.text = "Hello"
         popup.offset = 5.0
-        popup.maxWidth = "300px"
+        popup.maxWidth = 300
 
         val js = AddTextPopup(popup).toJS().trimIndent()
 
@@ -75,7 +75,7 @@ class MTPopupTest {
     @Test
     fun setMaxWidthCommandToJSMatchesSignature() {
         val popup = MTTextPopup(identifier = "popup4", _coordinates = LngLat(0.0, 0.0))
-        popup.maxWidth = "250px"
+        popup.maxWidth = 250
 
         val js = SetMaxWidthToTextPopup(popup).toJS()
 

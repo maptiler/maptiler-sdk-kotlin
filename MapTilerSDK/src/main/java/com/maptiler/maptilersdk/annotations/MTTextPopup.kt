@@ -36,9 +36,10 @@ class MTTextPopup(
     var offset: Double? = 0.0
 
     /**
-     * CSS max width of the popup container (for example, "240px").
+     * Max width of the popup container in pixels.
+     * Use an integer number of pixels; it will be encoded to a CSS value (e.g., "240px") for the JS bridge.
      */
-    var maxWidth: String? = null
+    var maxWidth: Int? = null
 
     /**
      * Boolean indicating whether the popup is currently displayed on the map.
@@ -68,7 +69,7 @@ class MTTextPopup(
         coordinates: LngLat,
         text: String,
         offset: Double,
-        maxWidth: String?,
+        maxWidth: Int?,
     ) : this(identifier = "mark${UUID.randomUUID().toString().replace("-", "")}", _coordinates = coordinates) {
         this.text = text
         this.offset = offset
@@ -92,10 +93,10 @@ class MTTextPopup(
     /**
      * Sets the max width for the popup and updates it on the map.
      *
-     * @param maxWidth CSS width value (e.g. "240px").
+     * @param maxWidth Width in pixels (e.g., 240). Encoded as "240px" for JS interop.
      */
     fun setMaxWidth(
-        maxWidth: String,
+        maxWidth: Int,
         mapViewController: MTMapViewController,
     ) {
         this.maxWidth = maxWidth

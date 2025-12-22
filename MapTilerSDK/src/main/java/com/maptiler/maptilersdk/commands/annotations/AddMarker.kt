@@ -58,7 +58,7 @@ internal data class AddMarker(
                     }
 
                 val textJson = JsonConfig.json.encodeToString(popup.text)
-                val maxWidth = popup.maxWidth?.let { JsonConfig.json.encodeToString(it) }
+                val maxWidth = popup.maxWidth?.let { JsonConfig.json.encodeToString("${it}px") }
                 val setMaxWidth =
                     if (maxWidth != null) {
                         ".setMaxWidth($maxWidth)\n                "

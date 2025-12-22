@@ -16,8 +16,8 @@ internal data class SetMaxWidthToTextPopup(
     override val isPrimitiveReturnType: Boolean = false
 
     override fun toJS(): String {
-        val maxWidth = popup.maxWidth ?: ""
-        val maxWidthJson = JsonConfig.json.encodeToString(maxWidth)
+        val maxWidthPx = popup.maxWidth?.let { "${it}px" } ?: ""
+        val maxWidthJson = JsonConfig.json.encodeToString(maxWidthPx)
 
         return "${popup.identifier}.setMaxWidth($maxWidthJson);"
     }
