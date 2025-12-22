@@ -41,6 +41,11 @@ class MTTextPopup(
     var maxWidth: Int? = null
 
     /**
+     * Enables subpixel positioning for the popup.
+     */
+    var subpixelPositioning: Boolean? = null
+
+    /**
      * Boolean indicating whether the popup is currently displayed on the map.
      */
     var isOpen: Boolean = false
@@ -85,9 +90,20 @@ class MTTextPopup(
         mapViewController: MTMapViewController,
     ) {
         this._coordinates = coordinates
+        subpixelPositioning = null
 
         mapViewController.setCoordinatesToTextPopup(this)
     }
+
+    /**
+     * Sets the geographical location of the popup.
+     *
+     * @param lngLat Position of the popup.
+     */
+    fun setLngLat(
+        lngLat: LngLat,
+        mapViewController: MTMapViewController,
+    ) = setCoordinates(lngLat, mapViewController)
 
     /**
      * Sets the max width for the popup and updates it on the map.
@@ -99,6 +115,49 @@ class MTTextPopup(
         this.maxWidth = maxWidth
 
         mapViewController.setMaxWidthToTextPopup(this)
+    }
+
+    /**
+     * Sets the popup's pixel offset from its anchor.
+     */
+    fun setOffset(
+        offset: Double?,
+        mapViewController: MTMapViewController,
+    ) {
+        this.offset = offset
+
+        mapViewController.setOffsetToTextPopup(this, offset)
+    }
+
+    /**
+     * Sets the popup text content and updates it on the map.
+     */
+    fun setText(
+        text: String,
+        mapViewController: MTMapViewController,
+    ) {
+        this.text = text
+
+        mapViewController.setTextToTextPopup(this, text)
+    }
+
+    /**
+     * Enables or disables subpixel positioning on the popup.
+     */
+    fun setSubpixelPositioning(
+        subpixelPositioning: Boolean,
+        mapViewController: MTMapViewController,
+    ) {
+        this.subpixelPositioning = subpixelPositioning
+
+        mapViewController.setSubpixelPositioningToTextPopup(this, subpixelPositioning)
+    }
+
+    /**
+     * Tracks the popup anchor to the pointer position.
+     */
+    fun trackPointer(mapViewController: MTMapViewController) {
+        mapViewController.trackTextPopupPointer(this)
     }
 
     /**

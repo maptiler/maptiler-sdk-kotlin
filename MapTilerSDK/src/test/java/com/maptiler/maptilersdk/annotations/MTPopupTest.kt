@@ -13,6 +13,10 @@ import com.maptiler.maptilersdk.commands.annotations.AddTextPopup
 import com.maptiler.maptilersdk.commands.annotations.GetTextPopupLngLat
 import com.maptiler.maptilersdk.commands.annotations.IsTextPopupOpen
 import com.maptiler.maptilersdk.commands.annotations.SetMaxWidthToTextPopup
+import com.maptiler.maptilersdk.commands.annotations.SetOffsetToTextPopup
+import com.maptiler.maptilersdk.commands.annotations.SetSubpixelPositioningToTextPopup
+import com.maptiler.maptilersdk.commands.annotations.SetTextToTextPopup
+import com.maptiler.maptilersdk.commands.annotations.TrackTextPopupPointer
 import com.maptiler.maptilersdk.map.LngLat
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -73,6 +77,16 @@ class MTPopupTest {
     }
 
     @Test
+    fun addTextPopupIncludesSubpixelPositioningWhenProvided() {
+        val popup = MTTextPopup(identifier = "popupSubpixel", _coordinates = LngLat(1.0, 1.0))
+        popup.subpixelPositioning = true
+
+        val js = AddTextPopup(popup).toJS()
+
+        assertTrue(js.contains("subpixelPositioning: true"))
+    }
+
+    @Test
     fun setMaxWidthCommandToJSMatchesSignature() {
         val popup = MTTextPopup(identifier = "popup4", _coordinates = LngLat(0.0, 0.0))
         popup.maxWidth = 250
@@ -80,5 +94,41 @@ class MTPopupTest {
         val js = SetMaxWidthToTextPopup(popup).toJS()
 
         assertEquals("popup4.setMaxWidth(\"250px\");", js)
+    }
+
+    @Test
+    fun setOffsetCommandToJSMatchesSignature() {
+        val popup = MTTextPopup(identifier = "popup5", _coordinates = LngLat(0.0, 0.0))
+
+        val js = SetOffsetToTextPopup(popup, 12.5).toJS()
+
+        assertEquals("popup5.setOffset(12.5);", js)
+    }
+
+    @Test
+    fun setTextCommandToJSMatchesSignature() {
+        val popup = MTTextPopup(identifier = "popup6", _coordinates = LngLat(0.0, 0.0))
+
+        val js = SetTextToTextPopup(popup, "Updated").toJS()
+
+        assertEquals("popup6.setText(\"Updated\");", js)
+    }
+
+    @Test
+    fun setSubpixelPositioningCommandToJSMatchesSignature() {
+        val popup = MTTextPopup(identifier = "popup7", _coordinates = LngLat(0.0, 0.0))
+
+        val js = SetSubpixelPositioningToTextPopup(popup, false).toJS()
+
+        assertEquals("popup7.setSubpixelPositioning(false);", js)
+    }
+
+    @Test
+    fun trackPointerCommandToJSMatchesSignature() {
+        val popup = MTTextPopup(identifier = "popup8", _coordinates = LngLat(0.0, 0.0))
+
+        val js = TrackTextPopupPointer(popup).toJS()
+
+        assertEquals("popup8.trackPointer();", js)
     }
 }

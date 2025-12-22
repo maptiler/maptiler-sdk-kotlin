@@ -25,7 +25,11 @@ import com.maptiler.maptilersdk.commands.annotations.SetMarkerOffset
 import com.maptiler.maptilersdk.commands.annotations.SetMarkerRotation
 import com.maptiler.maptilersdk.commands.annotations.SetMarkerRotationAlignment
 import com.maptiler.maptilersdk.commands.annotations.SetMaxWidthToTextPopup
+import com.maptiler.maptilersdk.commands.annotations.SetOffsetToTextPopup
+import com.maptiler.maptilersdk.commands.annotations.SetSubpixelPositioningToTextPopup
+import com.maptiler.maptilersdk.commands.annotations.SetTextToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.ToggleMarkerPopup
+import com.maptiler.maptilersdk.commands.annotations.TrackTextPopupPointer
 import com.maptiler.maptilersdk.events.EventProcessor
 import com.maptiler.maptilersdk.events.EventProcessorDelegate
 import com.maptiler.maptilersdk.events.MTEvent
@@ -224,10 +228,51 @@ class MTMapViewController(
         }
     }
 
+    internal fun setOffsetToTextPopup(
+        popup: MTTextPopup,
+        offset: Double?,
+    ) {
+        coroutineScope?.launch {
+            bridge?.execute(
+                SetOffsetToTextPopup(popup, offset),
+            )
+        }
+    }
+
     internal fun setMaxWidthToTextPopup(popup: MTTextPopup) {
         coroutineScope?.launch {
             bridge?.execute(
                 SetMaxWidthToTextPopup(popup),
+            )
+        }
+    }
+
+    internal fun setSubpixelPositioningToTextPopup(
+        popup: MTTextPopup,
+        subpixelPositioning: Boolean,
+    ) {
+        coroutineScope?.launch {
+            bridge?.execute(
+                SetSubpixelPositioningToTextPopup(popup, subpixelPositioning),
+            )
+        }
+    }
+
+    internal fun setTextToTextPopup(
+        popup: MTTextPopup,
+        text: String,
+    ) {
+        coroutineScope?.launch {
+            bridge?.execute(
+                SetTextToTextPopup(popup, text),
+            )
+        }
+    }
+
+    internal fun trackTextPopupPointer(popup: MTTextPopup) {
+        coroutineScope?.launch {
+            bridge?.execute(
+                TrackTextPopupPointer(popup),
             )
         }
     }
