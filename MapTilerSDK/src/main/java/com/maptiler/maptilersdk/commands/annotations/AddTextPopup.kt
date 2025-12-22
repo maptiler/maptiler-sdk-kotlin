@@ -9,6 +9,7 @@ package com.maptiler.maptilersdk.commands.annotations
 import com.maptiler.maptilersdk.annotations.MTTextPopup
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTCommand
+import com.maptiler.maptilersdk.helpers.JsonConfig
 
 internal data class AddTextPopup(
     val popup: MTTextPopup,
@@ -23,12 +24,22 @@ internal data class AddTextPopup(
                 0.0
             }
 
+        val maxWidth = popup.maxWidth?.let { JsonConfig.json.encodeToString("${it}px") }
+        val textJson = JsonConfig.json.encodeToString(popup.text)
+
+        val setMaxWidth =
+            if (maxWidth != null) {
+                ".setMaxWidth($maxWidth)\n            "
+            } else {
+                ""
+            }
+
         return """
             const ${popup.identifier} = new maptilersdk.Popup({ offset: $offset });
 
             ${popup.identifier}
-            .setLngLat([${popup.coordinates.lng}, ${popup.coordinates.lat}])
-            .setText('${popup.text}')
+            $setMaxWidth.setLngLat([${popup.coordinates.lng}, ${popup.coordinates.lat}])
+            .setText($textJson)
             .addTo(${MTBridge.MAP_OBJECT});
             """
     }

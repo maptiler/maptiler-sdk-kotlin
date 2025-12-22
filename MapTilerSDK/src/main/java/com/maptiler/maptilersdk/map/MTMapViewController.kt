@@ -24,6 +24,7 @@ import com.maptiler.maptilersdk.commands.annotations.SetMarkerDraggable
 import com.maptiler.maptilersdk.commands.annotations.SetMarkerOffset
 import com.maptiler.maptilersdk.commands.annotations.SetMarkerRotation
 import com.maptiler.maptilersdk.commands.annotations.SetMarkerRotationAlignment
+import com.maptiler.maptilersdk.commands.annotations.SetMaxWidthToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.ToggleMarkerPopup
 import com.maptiler.maptilersdk.events.EventProcessor
 import com.maptiler.maptilersdk.events.EventProcessorDelegate
@@ -223,6 +224,14 @@ class MTMapViewController(
         }
     }
 
+    internal fun setMaxWidthToTextPopup(popup: MTTextPopup) {
+        coroutineScope?.launch {
+            bridge?.execute(
+                SetMaxWidthToTextPopup(popup),
+            )
+        }
+    }
+
     internal fun setDraggableToMarker(
         marker: MTMarker,
         draggable: Boolean,
@@ -272,6 +281,7 @@ class MTMapViewController(
             bridge?.execute(
                 ToggleMarkerPopup(marker),
             )
+            marker.popup?.refreshIsOpen()
         }
     }
 
