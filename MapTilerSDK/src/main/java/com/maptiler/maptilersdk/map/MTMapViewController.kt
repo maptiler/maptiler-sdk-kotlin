@@ -10,8 +10,8 @@ import android.content.Context
 import android.webkit.WebView
 import com.maptiler.maptilersdk.MTConfig
 import com.maptiler.maptilersdk.annotations.MTMarker
-import com.maptiler.maptilersdk.annotations.MTPopup
 import com.maptiler.maptilersdk.annotations.MTRotationAlignment
+import com.maptiler.maptilersdk.annotations.MTTextPopup
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTJavaScriptInterface
 import com.maptiler.maptilersdk.bridge.MTJavascriptDelegate
@@ -216,7 +216,7 @@ class MTMapViewController(
         }
     }
 
-    internal fun setCoordinatesToTextPopup(popup: MTPopup) {
+    internal fun setCoordinatesToTextPopup(popup: MTTextPopup) {
         coroutineScope?.launch {
             bridge?.execute(
                 SetCoordinatesToTextPopup(popup),
@@ -224,7 +224,7 @@ class MTMapViewController(
         }
     }
 
-    internal fun setMaxWidthToTextPopup(popup: MTPopup) {
+    internal fun setMaxWidthToTextPopup(popup: MTTextPopup) {
         coroutineScope?.launch {
             bridge?.execute(
                 SetMaxWidthToTextPopup(popup),

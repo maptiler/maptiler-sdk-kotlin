@@ -57,7 +57,7 @@ class MTMarker(
     /**
      * Optional attached popup.
      */
-    var popup: MTPopup? = null
+    var popup: MTTextPopup? = null
 
     /**
      * Custom icon to use for marker.
@@ -130,7 +130,7 @@ class MTMarker(
     constructor(
         coordinates: LngLat,
         icon: Bitmap,
-        popup: MTPopup,
+        popup: MTTextPopup,
     ) : this(identifier = "mark${UUID.randomUUID().toString().replace("-", "")}", _coordinates = coordinates) {
         this.icon = icon
         this.popup = popup
@@ -138,7 +138,7 @@ class MTMarker(
 
     constructor(
         coordinates: LngLat,
-        popup: MTPopup,
+        popup: MTTextPopup,
     ) : this(identifier = "mark${UUID.randomUUID().toString().replace("-", "")}", _coordinates = coordinates) {
         this.popup = popup
     }

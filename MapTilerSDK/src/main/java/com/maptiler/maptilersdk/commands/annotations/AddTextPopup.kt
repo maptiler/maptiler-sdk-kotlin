@@ -6,13 +6,13 @@
 
 package com.maptiler.maptilersdk.commands.annotations
 
-import com.maptiler.maptilersdk.annotations.MTPopup
+import com.maptiler.maptilersdk.annotations.MTTextPopup
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTCommand
 import com.maptiler.maptilersdk.helpers.JsonConfig
 
 internal data class AddTextPopup(
-    val popup: MTPopup,
+    val popup: MTTextPopup,
 ) : MTCommand {
     override val isPrimitiveReturnType: Boolean = false
 

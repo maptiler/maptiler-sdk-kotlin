@@ -26,7 +26,7 @@ class MTPopupTest {
     @Test
     fun getLngLatReturnsBridgeValue() =
         runBlocking {
-            val popup = MTPopup(identifier = "popup1", _coordinates = LngLat(1.0, 2.0))
+            val popup = MTTextPopup(identifier = "popup1", _coordinates = LngLat(1.0, 2.0))
             val executor = mockk<MTCommandExecutable>()
             coEvery { executor.execute(any()) } returns
                 MTBridgeReturnType.StringDoubleDict(mapOf("lng" to 3.0, "lat" to 4.0))
@@ -44,7 +44,7 @@ class MTPopupTest {
     @Test
     fun refreshIsOpenUpdatesState() =
         runBlocking {
-            val popup = MTPopup(identifier = "popup2", _coordinates = LngLat(0.0, 0.0))
+            val popup = MTTextPopup(identifier = "popup2", _coordinates = LngLat(0.0, 0.0))
             val executor = mockk<MTCommandExecutable>()
             coEvery { executor.execute(any()) } returns MTBridgeReturnType.BoolValue(true)
 
@@ -60,7 +60,7 @@ class MTPopupTest {
 
     @Test
     fun addTextPopupToJSIncludesMaxWidth() {
-        val popup = MTPopup(identifier = "popup3", _coordinates = LngLat(5.0, 6.0))
+        val popup = MTTextPopup(identifier = "popup3", _coordinates = LngLat(5.0, 6.0))
         popup.text = "Hello"
         popup.offset = 5.0
         popup.maxWidth = "300px"
@@ -74,7 +74,7 @@ class MTPopupTest {
 
     @Test
     fun setMaxWidthCommandToJSMatchesSignature() {
-        val popup = MTPopup(identifier = "popup4", _coordinates = LngLat(0.0, 0.0))
+        val popup = MTTextPopup(identifier = "popup4", _coordinates = LngLat(0.0, 0.0))
         popup.maxWidth = "250px"
 
         val js = SetMaxWidthToTextPopup(popup).toJS()

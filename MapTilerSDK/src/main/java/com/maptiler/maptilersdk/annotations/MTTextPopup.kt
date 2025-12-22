@@ -15,7 +15,7 @@ import com.maptiler.maptilersdk.map.LngLat
 import com.maptiler.maptilersdk.map.MTMapViewController
 import java.util.UUID
 
-class MTPopup(
+class MTTextPopup(
     override val identifier: String = "mark${UUID.randomUUID().toString().replace("-", "")}",
     private var _coordinates: LngLat,
 ) : MTAnnotation {
@@ -164,5 +164,3 @@ class MTPopup(
             else -> defaultValue
         }
 }
-
-typealias MTTextPopup = MTPopup
