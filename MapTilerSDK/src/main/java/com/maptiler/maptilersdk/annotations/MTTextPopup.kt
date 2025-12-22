@@ -37,7 +37,6 @@ class MTTextPopup(
 
     /**
      * Max width of the popup container in pixels.
-     * Use an integer number of pixels; it will be encoded to a CSS value (e.g., "240px") for the JS bridge.
      */
     var maxWidth: Int? = null
 
@@ -92,8 +91,6 @@ class MTTextPopup(
 
     /**
      * Sets the max width for the popup and updates it on the map.
-     *
-     * @param maxWidth Width in pixels (e.g., 240). Encoded as "240px" for JS interop.
      */
     fun setMaxWidth(
         maxWidth: Int,
