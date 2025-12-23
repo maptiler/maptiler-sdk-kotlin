@@ -10,8 +10,10 @@ import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType
 import com.maptiler.maptilersdk.bridge.MTCommandExecutable
 import com.maptiler.maptilersdk.commands.annotations.AddTextPopup
+import com.maptiler.maptilersdk.commands.annotations.CloseTextPopup
 import com.maptiler.maptilersdk.commands.annotations.GetTextPopupLngLat
 import com.maptiler.maptilersdk.commands.annotations.IsTextPopupOpen
+import com.maptiler.maptilersdk.commands.annotations.OpenTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetMaxWidthToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetOffsetToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetSubpixelPositioningToTextPopup
@@ -87,6 +89,17 @@ class MTPopupTest {
     }
 
     @Test
+    fun addTextPopupAttachesOpenCloseEventHandlers() {
+        val popup = MTTextPopup(identifier = "popupEvents", _coordinates = LngLat(2.0, 3.0))
+        val js = AddTextPopup(popup).toJS()
+
+        assertTrue(js.contains("popupEvents.on('open'"))
+        assertTrue(js.contains("popupEvents.on('close'"))
+        assertTrue(js.contains("Android.onEvent(\"popup.open\""))
+        assertTrue(js.contains("Android.onEvent(\"popup.close\""))
+    }
+
+    @Test
     fun setMaxWidthCommandToJSMatchesSignature() {
         val popup = MTTextPopup(identifier = "popup4", _coordinates = LngLat(0.0, 0.0))
         popup.maxWidth = 250
@@ -130,5 +143,23 @@ class MTPopupTest {
         val js = TrackTextPopupPointer(popup).toJS()
 
         assertEquals("popup8.trackPointer();", js)
+    }
+
+    @Test
+    fun openCommandToJSMatchesSignature() {
+        val popup = MTTextPopup(identifier = "popupOpen", _coordinates = LngLat(0.0, 0.0))
+
+        val js = OpenTextPopup(popup).toJS()
+
+        assertEquals("popupOpen.addTo(map);", js)
+    }
+
+    @Test
+    fun closeCommandToJSMatchesSignature() {
+        val popup = MTTextPopup(identifier = "popupClose", _coordinates = LngLat(0.0, 0.0))
+
+        val js = CloseTextPopup(popup).toJS()
+
+        assertEquals("popupClose.remove();", js)
     }
 }

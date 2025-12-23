@@ -37,13 +37,39 @@ internal data class AddTextPopup(
 
         val popupOptions = "{ offset: $offset$subpixelPositioning }"
 
-        return """
+        val js = """
             const ${popup.identifier} = new maptilersdk.Popup($popupOptions);
+
+            // Attach open/close event forwarding to Android bridge
+            ${popup.identifier}.on('open', () => {
+                const lngLat = ${popup.identifier}.getLngLat();
+                const data = {
+                    id: '${popup.identifier}',
+                    lngLat: {
+                        lng: lngLat.lng,
+                        lat: lngLat.lat
+                    }
+                };
+                Android.onEvent("popup.open", JSON.stringify(data));
+            });
+
+            ${popup.identifier}.on('close', () => {
+                const lngLat = ${popup.identifier}.getLngLat();
+                const data = {
+                    id: '${popup.identifier}',
+                    lngLat: {
+                        lng: lngLat.lng,
+                        lat: lngLat.lat
+                    }
+                };
+                Android.onEvent("popup.close", JSON.stringify(data));
+            });
 
             ${popup.identifier}
             $setMaxWidth.setLngLat([${popup.coordinates.lng}, ${popup.coordinates.lat}])
             .setText($textJson)
             .addTo(${MTBridge.MAP_OBJECT});
             """
+        return js
     }
 }

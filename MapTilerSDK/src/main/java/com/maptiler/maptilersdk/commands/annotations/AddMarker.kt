@@ -69,6 +69,22 @@ internal data class AddMarker(
                 """
                 const ${popup.identifier} = new maptilersdk.Popup({ offset: $offset });
 
+                // Attach open/close event forwarding for marker's popup
+                const handle${popup.identifier}Event = (eventName) => () => {
+                    const lngLat = ${popup.identifier}.getLngLat();
+                    const data = {
+                        id: '${popup.identifier}',
+                        lngLat: {
+                            lng: lngLat.lng,
+                            lat: lngLat.lat
+                        }
+                    };
+                    Android.onEvent(eventName, JSON.stringify(data));
+                };
+
+                ${popup.identifier}.on('open', handle${popup.identifier}Event('popup.open'));
+                ${popup.identifier}.on('close', handle${popup.identifier}Event('popup.close'));
+
                 ${popup.identifier}
                 $setMaxWidth.setText($textJson)
                 """
