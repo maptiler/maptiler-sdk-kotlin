@@ -18,6 +18,8 @@ import com.maptiler.maptilersdk.bridge.MTJavascriptDelegate
 import com.maptiler.maptilersdk.bridge.WebViewExecutor
 import com.maptiler.maptilersdk.bridge.WebViewExecutorDelegate
 import com.maptiler.maptilersdk.commands.InitializeMap
+import com.maptiler.maptilersdk.commands.annotations.CloseTextPopup
+import com.maptiler.maptilersdk.commands.annotations.OpenTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetCoordinatesToMarker
 import com.maptiler.maptilersdk.commands.annotations.SetCoordinatesToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetMarkerDraggable
@@ -275,6 +277,26 @@ class MTMapViewController(
                 TrackTextPopupPointer(popup),
             )
         }
+    }
+
+    internal fun openTextPopup(popup: MTTextPopup) {
+        popup.setOpenState(true)
+
+        coroutineScope?.launch {
+            bridge?.execute(
+                OpenTextPopup(popup),
+            )
+        }
+    }
+
+    internal fun closeTextPopup(popup: MTTextPopup) {
+        coroutineScope?.launch {
+            bridge?.execute(
+                CloseTextPopup(popup),
+            )
+        }
+
+        popup.setOpenState(false)
     }
 
     internal fun setDraggableToMarker(

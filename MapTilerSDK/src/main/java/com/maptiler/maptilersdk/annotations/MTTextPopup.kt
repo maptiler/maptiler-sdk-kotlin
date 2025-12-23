@@ -161,6 +161,20 @@ class MTTextPopup(
     }
 
     /**
+     * Opens the popup on the map.
+     */
+    fun open(mapViewController: MTMapViewController) {
+        mapViewController.openTextPopup(this)
+    }
+
+    /**
+     * Closes the popup on the map.
+     */
+    fun close(mapViewController: MTMapViewController) {
+        mapViewController.closeTextPopup(this)
+    }
+
+    /**
      * Returns the current coordinates of the popup.
      */
     suspend fun getLngLat(): LngLat {
