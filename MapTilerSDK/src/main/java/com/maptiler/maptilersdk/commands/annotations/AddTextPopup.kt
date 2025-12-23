@@ -40,6 +40,22 @@ internal data class AddTextPopup(
         return """
             const ${popup.identifier} = new maptilersdk.Popup($popupOptions);
 
+            // Attach open/close event forwarding to Android bridge
+            const handle${popup.identifier}Event = (eventName) => () => {
+                const lngLat = ${popup.identifier}.getLngLat();
+                const data = {
+                    id: '${popup.identifier}',
+                    lngLat: {
+                        lng: lngLat.lng,
+                        lat: lngLat.lat
+                    }
+                };
+                Android.onEvent(eventName, JSON.stringify(data));
+            };
+
+            ${popup.identifier}.on('open', handle${popup.identifier}Event('popup.open'));
+            ${popup.identifier}.on('close', handle${popup.identifier}Event('popup.close'));
+
             ${popup.identifier}
             $setMaxWidth.setLngLat([${popup.coordinates.lng}, ${popup.coordinates.lat}])
             .setText($textJson)

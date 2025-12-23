@@ -78,6 +78,18 @@ enum class MTEvent {
     ON_DRAG,
 
     /**
+     * Triggered when a popup is opened (added to the map).
+     */
+    @SerialName("popup.open")
+    ON_POPUP_OPEN,
+
+    /**
+     * Triggered when a popup is closed (removed from the map).
+     */
+    @SerialName("popup.close")
+    ON_POPUP_CLOSE,
+
+    /**
      * Triggered when a "drag to pan" interaction ends.
      */
     @SerialName("dragend")

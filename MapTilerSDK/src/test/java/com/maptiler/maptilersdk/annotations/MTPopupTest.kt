@@ -89,6 +89,17 @@ class MTPopupTest {
     }
 
     @Test
+    fun addTextPopupAttachesOpenCloseEventHandlers() {
+        val popup = MTTextPopup(identifier = "popupEvents", _coordinates = LngLat(2.0, 3.0))
+        val js = AddTextPopup(popup).toJS()
+
+        assertTrue(js.contains("popupEvents.on('open'"))
+        assertTrue(js.contains("popupEvents.on('close'"))
+        assertTrue(js.contains("Android.onEvent(\"popup.open\""))
+        assertTrue(js.contains("Android.onEvent(\"popup.close\""))
+    }
+
+    @Test
     fun setMaxWidthCommandToJSMatchesSignature() {
         val popup = MTTextPopup(identifier = "popup4", _coordinates = LngLat(0.0, 0.0))
         popup.maxWidth = 250
