@@ -11,6 +11,12 @@ import com.maptiler.maptilersdk.annotations.MTMarker
 import com.maptiler.maptilersdk.annotations.MTTextPopup
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTError
+import com.maptiler.maptilersdk.colorramp.MTArrayColorRampStop
+import com.maptiler.maptilersdk.colorramp.MTColorRamp
+import com.maptiler.maptilersdk.colorramp.MTColorRampCollection
+import com.maptiler.maptilersdk.colorramp.MTColorRampOptions
+import com.maptiler.maptilersdk.helpers.MTHeatmapHelper
+import com.maptiler.maptilersdk.helpers.MTHeatmapLayerOptions
 import com.maptiler.maptilersdk.helpers.MTPointLayerOptions
 import com.maptiler.maptilersdk.map.style.dsl.PropertyValue
 import com.maptiler.maptilersdk.map.style.image.MTAddImageOptions
@@ -279,6 +285,30 @@ class MTStyle(
 
     // Adds a point visualization layer using the helper with the provided options.
     internal fun addPointLayer(options: MTPointLayerOptions) = stylableWorker.addPointLayer(options)
+
+    // Adds a heatmap visualization layer using the helper with the provided options.
+    internal fun addHeatmapLayer(options: MTHeatmapLayerOptions) = stylableWorker.addHeatmapLayer(options)
+
+    /**
+     * Returns a helper instance for adding heatmap layers.
+     */
+    fun heatmapHelper(): MTHeatmapHelper = MTHeatmapHelper(this)
+
+    /**
+     * Creates a custom color ramp.
+     */
+    suspend fun createColorRamp(options: MTColorRampOptions = MTColorRampOptions()): MTColorRamp = stylableWorker.createColorRamp(options)
+
+    /**
+     * Creates a color ramp from an array definition.
+     */
+    suspend fun colorRampFromArrayDefinition(stops: List<MTArrayColorRampStop>): MTColorRamp =
+        stylableWorker.createColorRampFromArrayDefinition(stops)
+
+    /**
+     * Access to the collection of built-in color ramps.
+     */
+    fun colorRampCollection(): MTColorRampCollection = MTColorRampCollection(stylableWorker)
 
     /**
      * Returns SDK style id for a given reference style.

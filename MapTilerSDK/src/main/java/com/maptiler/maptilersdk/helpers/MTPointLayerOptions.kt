@@ -6,6 +6,7 @@
 
 package com.maptiler.maptilersdk.helpers
 
+import com.maptiler.maptilersdk.colorramp.MTColorRamp
 import kotlinx.serialization.Serializable
 
 /**
@@ -28,6 +29,7 @@ data class MTPointLayerOptions(
     val outlineOpacity: Double? = null,
     // PointLayerOptions
     val pointColor: String? = null,
+    val pointColorRamp: MTColorRamp? = null,
     val pointRadius: Double? = null,
     val minPointRadius: Double? = null,
     val maxPointRadius: Double? = null,
