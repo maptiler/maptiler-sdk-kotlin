@@ -46,12 +46,14 @@ import com.maptiler.maptilersdk.commands.style.SetLayoutProperty
 import com.maptiler.maptilersdk.commands.style.SetLight
 import com.maptiler.maptilersdk.commands.style.SetPaintProperty
 import com.maptiler.maptilersdk.commands.style.SetRenderWorldCopies
+import com.maptiler.maptilersdk.commands.style.SetSky
 import com.maptiler.maptilersdk.commands.style.SetSpace
 import com.maptiler.maptilersdk.commands.style.SetStyle
 import com.maptiler.maptilersdk.commands.style.SetTilesToSource
 import com.maptiler.maptilersdk.commands.style.SetUrlToSource
 import com.maptiler.maptilersdk.helpers.MTPointLayerOptions
 import com.maptiler.maptilersdk.map.options.MTHalo
+import com.maptiler.maptilersdk.map.options.MTSky
 import com.maptiler.maptilersdk.map.options.MTSpace
 import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
 import com.maptiler.maptilersdk.map.style.MTMapStyleVariant
@@ -143,6 +145,12 @@ internal class StylableWorker(
     fun setRenderWorldCopies(shouldRenderWorldCopies: Boolean) {
         scope.launch {
             bridge.execute(SetRenderWorldCopies(shouldRenderWorldCopies))
+        }
+    }
+
+    fun setSky(sky: MTSky) {
+        scope.launch {
+            bridge.execute(SetSky(sky))
         }
     }
 
