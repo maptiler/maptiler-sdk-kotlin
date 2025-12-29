@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
 /**
  * Sky configuration for customizing atmospheric appearance.
  *
- * All properties are optional; unspecified fields keep their previous values. Colors accept CSS strings or hex int
+ * All properties are optional; unspecified fields keep their previous values. Colors accept strings or hex int
  * values. Blend values are clamped to [0, 1] when provided as plain numbers.
  */
 @Serializable
@@ -38,7 +38,7 @@ data class MTSky(
         /** Helper for supplying a hex color int. */
         fun color(value: Int): StyleValue = StyleValue.Color(value)
 
-        /** Helper for supplying a CSS-compatible color string (e.g., "#RRGGBB" or "rgba(...)"). */
+        /** Helper for supplying color string (e.g., "#RRGGBB" or "rgba(...)"). */
         fun color(value: String): StyleValue = StyleValue.Str(value)
 
         /** Helper for supplying a numeric blend value. */
