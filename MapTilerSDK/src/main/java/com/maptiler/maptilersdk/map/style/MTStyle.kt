@@ -332,6 +332,12 @@ class MTStyle(
     fun setLight(lightOptionsJson: String) = stylableWorker.setLight(lightOptionsJson)
 
     /**
+     * Sets the sky appearance (colors, blends, or expressions).
+     * Any field not explicitly provided keeps its previous value.
+     */
+    fun setSky(sky: com.maptiler.maptilersdk.map.options.MTSky) = stylableWorker.setSky(sky)
+
+    /**
      * Sets the globe space background (deep space/skybox).
      * Any field not explicitly provided keeps its previous value.
      */
