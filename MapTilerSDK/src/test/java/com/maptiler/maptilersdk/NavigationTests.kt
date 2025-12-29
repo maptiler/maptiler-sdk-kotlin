@@ -24,6 +24,7 @@ import com.maptiler.maptilersdk.commands.navigation.Project
 import com.maptiler.maptilersdk.commands.navigation.SetMaxZoom
 import com.maptiler.maptilersdk.commands.navigation.SetMinZoom
 import com.maptiler.maptilersdk.commands.navigation.SetPixelRatio
+import com.maptiler.maptilersdk.commands.navigation.SetVerticalFieldOfView
 import com.maptiler.maptilersdk.commands.navigation.SetZoom
 import com.maptiler.maptilersdk.commands.navigation.ZoomIn
 import com.maptiler.maptilersdk.commands.navigation.ZoomOut
@@ -116,6 +117,11 @@ class NavigationTests {
     @Test fun setPixelRatioToJS_ReturnsCorrectJSString() {
         val command = SetPixelRatio(2.5)
         assertEquals("${MTBridge.MAP_OBJECT}.setPixelRatio(2.5);", command.toJS())
+    }
+
+    @Test fun setVerticalFieldOfViewToJS_ReturnsCorrectJSString() {
+        val command = SetVerticalFieldOfView(36.87)
+        assertEquals("${MTBridge.MAP_OBJECT}.setVerticalFieldOfView(36.87);", command.toJS())
     }
 
     @Test fun panByToJS_ReturnsCorrectJSString() {

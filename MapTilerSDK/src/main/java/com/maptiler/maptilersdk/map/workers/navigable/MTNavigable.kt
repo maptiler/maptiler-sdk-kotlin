@@ -130,6 +130,13 @@ interface MTNavigable {
     fun setPitch(pitch: Double)
 
     /**
+     * Sets the map's vertical field of view in degrees (defaults to 36.87 degrees).
+     *
+     * @param verticalFieldOfView Desired vertical field of view.
+     */
+    fun setVerticalFieldOfView(verticalFieldOfView: Double)
+
+    /**
      * Returns the map's current center.
      */
     suspend fun getCenter(): LngLat
