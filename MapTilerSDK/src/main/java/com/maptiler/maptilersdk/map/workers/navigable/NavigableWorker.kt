@@ -43,6 +43,7 @@ import com.maptiler.maptilersdk.commands.navigation.SetPadding
 import com.maptiler.maptilersdk.commands.navigation.SetPitch
 import com.maptiler.maptilersdk.commands.navigation.SetPixelRatio
 import com.maptiler.maptilersdk.commands.navigation.SetRoll
+import com.maptiler.maptilersdk.commands.navigation.SetVerticalFieldOfView
 import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.map.LngLat
 import com.maptiler.maptilersdk.map.options.MTCameraOptions
@@ -55,6 +56,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
+
+private const val DEFAULT_VERTICAL_FIELD_OF_VIEW = 36.87
 
 internal class NavigableWorker(
     private val bridge: MTBridge,
@@ -249,6 +252,19 @@ internal class NavigableWorker(
         scope.launch {
             bridge.execute(
                 SetPitch(clamped),
+            )
+        }
+    }
+
+    override fun setVerticalFieldOfView(verticalFieldOfView: Double) {
+        val sanitized =
+            verticalFieldOfView.takeIf { it.isFinite() }
+                ?.coerceIn(0.0, 50.0)
+                ?: DEFAULT_VERTICAL_FIELD_OF_VIEW
+
+        scope.launch {
+            bridge.execute(
+                SetVerticalFieldOfView(sanitized),
             )
         }
     }

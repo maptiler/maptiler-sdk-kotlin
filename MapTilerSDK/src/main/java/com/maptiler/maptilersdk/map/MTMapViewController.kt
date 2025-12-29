@@ -535,6 +535,11 @@ class MTMapViewController(
     override fun setPitch(pitch: Double) = navigableWorker.setPitch(pitch)
 
     /**
+     * Sets the map's vertical field of view in degrees (defaults to 36.87 degrees).
+     */
+    override fun setVerticalFieldOfView(verticalFieldOfView: Double) = navigableWorker.setVerticalFieldOfView(verticalFieldOfView)
+
+    /**
      * Returns the map's current center.
      */
     override suspend fun getCenter(): LngLat = navigableWorker.getCenter()
