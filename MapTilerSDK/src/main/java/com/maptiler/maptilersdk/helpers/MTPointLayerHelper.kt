@@ -6,6 +6,7 @@
 
 package com.maptiler.maptilersdk.helpers
 
+import com.maptiler.maptilersdk.colorramp.MTColorRamp
 import com.maptiler.maptilersdk.map.style.MTStyle
 
 /**
@@ -20,4 +21,12 @@ class MTPointLayerHelper(
      * Adds a point layer based on the provided options.
      */
     fun addPoint(options: MTPointLayerOptions) = style.addPointLayer(options)
+
+    /**
+     * Adds a point layer using a color ramp for pointColor.
+     */
+    fun addPoint(
+        options: MTPointLayerOptions,
+        colorRamp: MTColorRamp,
+    ) = style.addPointLayer(options.copy(pointColorRamp = colorRamp))
 }

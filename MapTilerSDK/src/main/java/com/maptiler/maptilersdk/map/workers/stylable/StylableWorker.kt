@@ -11,10 +11,18 @@ import com.maptiler.maptilersdk.annotations.MTMarker
 import com.maptiler.maptilersdk.annotations.MTTextPopup
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType
+import com.maptiler.maptilersdk.colorramp.MTArrayColorRampStop
+import com.maptiler.maptilersdk.colorramp.MTBuiltinColorRamp
+import com.maptiler.maptilersdk.colorramp.MTColorRamp
+import com.maptiler.maptilersdk.colorramp.MTColorRampOptions
 import com.maptiler.maptilersdk.commands.annotations.AddMarker
 import com.maptiler.maptilersdk.commands.annotations.AddTextPopup
 import com.maptiler.maptilersdk.commands.annotations.RemoveMarker
 import com.maptiler.maptilersdk.commands.annotations.RemoveTextPopup
+import com.maptiler.maptilersdk.commands.colorramp.CreateColorRamp
+import com.maptiler.maptilersdk.commands.colorramp.CreateColorRampFromArrayDefinition
+import com.maptiler.maptilersdk.commands.colorramp.CreateColorRampFromCollection
+import com.maptiler.maptilersdk.commands.helpers.AddHeatmapLayer
 import com.maptiler.maptilersdk.commands.helpers.AddPointLayer
 import com.maptiler.maptilersdk.commands.misc.AddLogoControl
 import com.maptiler.maptilersdk.commands.style.AddImage
@@ -36,7 +44,9 @@ import com.maptiler.maptilersdk.commands.style.GetNameForStyleVariant
 import com.maptiler.maptilersdk.commands.style.GetProjection
 import com.maptiler.maptilersdk.commands.style.IsSourceLoaded
 import com.maptiler.maptilersdk.commands.style.RemoveLayer
+import com.maptiler.maptilersdk.commands.style.RemoveLayerById
 import com.maptiler.maptilersdk.commands.style.RemoveSource
+import com.maptiler.maptilersdk.commands.style.RemoveSourceById
 import com.maptiler.maptilersdk.commands.style.SetDataToSource
 import com.maptiler.maptilersdk.commands.style.SetFilter
 import com.maptiler.maptilersdk.commands.style.SetGlyphs
@@ -51,6 +61,7 @@ import com.maptiler.maptilersdk.commands.style.SetSpace
 import com.maptiler.maptilersdk.commands.style.SetStyle
 import com.maptiler.maptilersdk.commands.style.SetTilesToSource
 import com.maptiler.maptilersdk.commands.style.SetUrlToSource
+import com.maptiler.maptilersdk.helpers.MTHeatmapLayerOptions
 import com.maptiler.maptilersdk.helpers.MTPointLayerOptions
 import com.maptiler.maptilersdk.map.options.MTHalo
 import com.maptiler.maptilersdk.map.options.MTSky
@@ -244,6 +255,14 @@ internal class StylableWorker(
         }
     }
 
+    fun addHeatmapLayer(options: MTHeatmapLayerOptions) {
+        scope.launch {
+            bridge.execute(
+                AddHeatmapLayer(options),
+            )
+        }
+    }
+
     fun addSprite(
         identifier: String,
         spriteUrl: URL,
@@ -263,6 +282,12 @@ internal class StylableWorker(
         }
     }
 
+    fun removeLayerById(layerId: String) {
+        scope.launch {
+            bridge.execute(RemoveLayerById(layerId))
+        }
+    }
+
     fun addSource(source: MTSource) {
         scope.launch {
             bridge.execute(
@@ -276,6 +301,12 @@ internal class StylableWorker(
             bridge.execute(
                 RemoveSource(source),
             )
+        }
+    }
+
+    fun removeSourceById(sourceId: String) {
+        scope.launch {
+            bridge.execute(RemoveSourceById(sourceId))
         }
     }
 
@@ -418,5 +449,23 @@ internal class StylableWorker(
             is MTBridgeReturnType.StringValue -> if (returnTypeValue.value == "true") true else false
             else -> false
         }
+    }
+
+    suspend fun createColorRamp(options: MTColorRampOptions = MTColorRampOptions()): MTColorRamp {
+        val identifier = MTColorRamp.newIdentifier()
+        bridge.execute(CreateColorRamp(identifier, options))
+        return MTColorRamp(identifier, bridge)
+    }
+
+    suspend fun createColorRampFromArrayDefinition(stops: List<MTArrayColorRampStop>): MTColorRamp {
+        val identifier = MTColorRamp.newIdentifier()
+        bridge.execute(CreateColorRampFromArrayDefinition(identifier, stops))
+        return MTColorRamp(identifier, bridge)
+    }
+
+    suspend fun colorRampFromCollection(type: MTBuiltinColorRamp): MTColorRamp {
+        val identifier = MTColorRamp.newIdentifier()
+        bridge.execute(CreateColorRampFromCollection(identifier, type.jsName))
+        return MTColorRamp(identifier, bridge)
     }
 }
