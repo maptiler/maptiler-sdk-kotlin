@@ -162,7 +162,7 @@ enum class MTColorRampResamplingMethod(
 }
 
 /**
- * Reference to a JS-side ColorRamp instance.
+ * Reference to a color ramp instance.
  */
 @Serializable(with = MTColorRampSerializer::class)
 class MTColorRamp internal constructor(
@@ -201,7 +201,16 @@ class MTColorRamp internal constructor(
      * Returns a data URL of the rendered strip of this color ramp.
      */
     suspend fun getCanvasStrip(options: MTColorRampCanvasOptions? = null): String? {
-        val returnTypeValue = bridge.execute(GetColorRampCanvasStrip(identifier, options))
+        val sanitized =
+            options?.let {
+                val clampedSize = it.size?.coerceIn(1, 2048)
+                MTColorRampCanvasOptions(
+                    horizontal = it.horizontal,
+                    size = clampedSize,
+                    smooth = it.smooth,
+                )
+            }
+        val returnTypeValue = bridge.execute(GetColorRampCanvasStrip(identifier, sanitized))
         return (returnTypeValue as? MTBridgeReturnType.StringValue)?.value?.trim('"')
     }
 
@@ -270,12 +279,13 @@ class MTColorRamp internal constructor(
         max: Double,
         options: MTColorRampCloneOptions? = null,
     ): MTColorRamp {
+        val clampedMax = if (max == min) min + 1.0 else max
         if (options?.clone == false) {
-            bridge.execute(ScaleColorRampInPlace(identifier, min, max, options))
+            bridge.execute(ScaleColorRampInPlace(identifier, min, clampedMax, options))
             return this
         }
         val newId = newIdentifier()
-        bridge.execute(ScaleColorRamp(identifier, newId, min, max, options))
+        bridge.execute(ScaleColorRamp(identifier, newId, min, clampedMax, options))
         return MTColorRamp(newId, bridge)
     }
 
@@ -303,8 +313,9 @@ class MTColorRamp internal constructor(
         method: MTColorRampResamplingMethod,
         samples: Int = 15,
     ): MTColorRamp {
+        val safeSamples = maxOf(2, samples)
         val newId = newIdentifier()
-        bridge.execute(ResampleColorRamp(identifier, newId, method, samples))
+        bridge.execute(ResampleColorRamp(identifier, newId, method, safeSamples))
         return MTColorRamp(newId, bridge)
     }
 

@@ -44,7 +44,9 @@ import com.maptiler.maptilersdk.commands.style.GetNameForStyleVariant
 import com.maptiler.maptilersdk.commands.style.GetProjection
 import com.maptiler.maptilersdk.commands.style.IsSourceLoaded
 import com.maptiler.maptilersdk.commands.style.RemoveLayer
+import com.maptiler.maptilersdk.commands.style.RemoveLayerById
 import com.maptiler.maptilersdk.commands.style.RemoveSource
+import com.maptiler.maptilersdk.commands.style.RemoveSourceById
 import com.maptiler.maptilersdk.commands.style.SetDataToSource
 import com.maptiler.maptilersdk.commands.style.SetFilter
 import com.maptiler.maptilersdk.commands.style.SetGlyphs
@@ -280,6 +282,12 @@ internal class StylableWorker(
         }
     }
 
+    fun removeLayerById(layerId: String) {
+        scope.launch {
+            bridge.execute(RemoveLayerById(layerId))
+        }
+    }
+
     fun addSource(source: MTSource) {
         scope.launch {
             bridge.execute(
@@ -293,6 +301,12 @@ internal class StylableWorker(
             bridge.execute(
                 RemoveSource(source),
             )
+        }
+    }
+
+    fun removeSourceById(sourceId: String) {
+        scope.launch {
+            bridge.execute(RemoveSourceById(sourceId))
         }
     }
 
