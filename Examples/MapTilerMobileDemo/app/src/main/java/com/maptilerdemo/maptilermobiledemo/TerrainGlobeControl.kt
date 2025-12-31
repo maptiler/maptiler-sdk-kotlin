@@ -7,10 +7,9 @@
 package com.maptilerdemo.maptilermobiledemo
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -19,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -32,64 +30,43 @@ fun TerrainGlobeControl(
     onGlobe: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val shadowElevation = 4.dp
-    val shadowShape = RoundedCornerShape(30.dp)
+    val shadowShape = RoundedCornerShape(8.dp)
     val containerColor = Color(0xFFF6F7FD)
-    val width = 60.dp
-    val height = 60.dp
-    val fontSize = 34.sp
+    val fontSize = 14.sp
 
-    Column(
+    Row(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Button(
             onClick = onTerrain,
             modifier =
                 Modifier
-                    .width(width)
-                    .height(height)
-                    .shadow(elevation = shadowElevation, shape = shadowShape)
                     .clip(shadowShape),
             colors =
                 ButtonDefaults.buttonColors(
                     containerColor = containerColor,
                     contentColor = Color.Black,
                 ),
+            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
         ) {
-            Text(
-                "#",
-                fontSize = fontSize,
-                textAlign = TextAlign.Right,
-                modifier =
-                    Modifier
-                        .padding(start = 15.dp),
-            )
+            Text("Terrain", fontSize = fontSize, textAlign = TextAlign.Center)
         }
 
         Button(
             onClick = onGlobe,
             modifier =
                 Modifier
-                    .width(width)
-                    .height(height)
-                    .shadow(elevation = shadowElevation, shape = shadowShape)
                     .clip(shadowShape),
             colors =
                 ButtonDefaults.buttonColors(
                     containerColor = containerColor,
                     contentColor = Color.Black,
                 ),
+            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
         ) {
-            Text(
-                "@",
-                fontSize = fontSize,
-                textAlign = TextAlign.Right,
-                modifier =
-                    Modifier
-                        .padding(start = 20.dp),
-            )
+            Text("Projection", fontSize = fontSize, textAlign = TextAlign.Center)
         }
     }
 }

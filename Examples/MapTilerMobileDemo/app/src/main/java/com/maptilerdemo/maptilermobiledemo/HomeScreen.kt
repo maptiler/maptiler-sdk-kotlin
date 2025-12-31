@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -26,6 +27,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,6 +58,9 @@ import com.maptiler.maptilersdk.map.style.layer.symbol.MTSymbolLayer
 import com.maptiler.maptilersdk.map.style.source.MTRasterTileSource
 import com.maptiler.maptilersdk.map.style.source.MTVectorTileSource
 import com.maptiler.maptilersdk.map.types.MTData
+import com.maptiler.maptilersdk.map.options.MTSpace
+import com.maptiler.maptilersdk.map.options.MTSpacePreset
+import com.maptiler.maptilersdk.map.options.MTSpaceOption
 import java.net.URL
 
 @Suppress("FunctionName")
@@ -67,6 +72,21 @@ fun HomeScreen(
     val mapController = MapController(context)
     val locationManager = remember(context) { MTLocationManager(context) }
     val userMarker: MutableState<MTMarker?> = remember { mutableStateOf(null) }
+    val isTerrainEnabled = remember { mutableStateOf(false) }
+    val isGlobeEnabled = remember { mutableStateOf(false) }
+
+    // Initialize projection toggle state
+    LaunchedEffect(Unit) {
+        try {
+            val proj = mapController.controller.getProjection()
+            isGlobeEnabled.value = (proj == com.maptiler.maptilersdk.map.types.MTProjectionType.GLOBE)
+            if (isGlobeEnabled.value) {
+                mapController.controller.style?.setSpace(MTSpace(preset = MTSpacePreset.MILKYWAY))
+            }
+        } catch (_: Throwable) {
+            isGlobeEnabled.value = false
+        }
+    }
 
     val permissionLauncher =
         rememberLauncherForActivityResult(
@@ -114,8 +134,8 @@ fun HomeScreen(
         }
     }
 
-    val options = MTMapOptions()
-    options.setMapTilerLogoIsVisible(true)
+    val options = MTMapOptions(space = MTSpaceOption.Enabled)
+    options.setMapTilerLogoIsVisible(false)
 
     CompositionLocalProvider(LocalContentColor provides Color.Black) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -150,67 +170,95 @@ fun HomeScreen(
             }
         }
 
-        LayerControl(
-            onSelect = { type: MTLayerType ->
-                if (type == MTLayerType.SYMBOL) {
-                    try {
-                        val mapTilerIcon =
-                            BitmapFactory.decodeResource(
-                                context.resources,
-                                R.drawable.maptiler_marker_icon,
-                            )
-                        val layer = MTSymbolLayer("symbolLayer", "openmapsource", mapTilerIcon)
-                        layer.sourceLayer = "place"
-                        mapController.controller.style?.addLayer(layer)
-                    } catch (error: MTStyleError) {
-                        Log.e("MTStyleError", "Symbol Layer already exists.")
-                    }
-                } else if (type == MTLayerType.FILL) {
-                    try {
-                        val layer = MTFillLayer("fillLayer", "openmapsource")
-                        layer.color = Color.Blue.toArgb()
-                        layer.outlineColor = Color.Cyan.toArgb()
-                        layer.sourceLayer = "aeroway"
-                        mapController.controller.style?.addLayer(layer)
-                    } catch (error: MTStyleError) {
-                        Log.e("MTStyleError", "Fill Layer already exists.")
-                    }
-                } else if (type == MTLayerType.LINE) {
-                    try {
-                        val layer = MTLineLayer("lineLayer", "openmapsource")
-                        layer.color = Color.Blue.toArgb()
-                        layer.sourceLayer = "water"
-                        mapController.controller.style?.addLayer(layer)
-                    } catch (error: MTStyleError) {
-                        Log.e("MTStyleError", "Line Layer already exists.")
-                    }
-                } else if (type == MTLayerType.RASTER) {
-                    val mapTilerAPIKey = MTConfig.apiKey
-                    val rasterUrl = URL("https://api.maptiler.com/tiles/satellite/tiles.json?key=$mapTilerAPIKey")
-                    val rasterSourceId = "satellitesource"
-
-                    // Add or reuse the raster source
-                    try {
-                        val rasterSource = MTRasterTileSource(rasterSourceId, rasterUrl)
-                        mapController.controller.style?.addSource(rasterSource)
-                    } catch (error: MTStyleError) {
-                        Log.e("MTStyleError", "Raster Source already exists.")
-                    }
-
-                    // Add the raster layer (set opacity 0.7)
-                    try {
-                        val rasterLayer = MTRasterLayer("rasterLayer", rasterSourceId)
-                        rasterLayer.opacity = 0.7
-                        mapController.controller.style?.addLayer(rasterLayer)
-                    } catch (error: MTStyleError) {
-                        Log.e("MTStyleError", "Raster Layer already exists.")
-                    }
-                }
-            },
+        // Top-left: Menu + Terrain/Projection in a row
+        Row(
             modifier =
                 Modifier
+                    .align(Alignment.TopStart)
                     .padding(5.dp),
-        )
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            LayerControl(
+                onSelect = { type: MTLayerType ->
+                    if (type == MTLayerType.SYMBOL) {
+                        try {
+                            val mapTilerIcon =
+                                BitmapFactory.decodeResource(
+                                    context.resources,
+                                    R.drawable.maptiler_marker_icon,
+                                )
+                            val layer = MTSymbolLayer("symbolLayer", "openmapsource", mapTilerIcon)
+                            layer.sourceLayer = "place"
+                            mapController.controller.style?.addLayer(layer)
+                        } catch (error: MTStyleError) {
+                            Log.e("MTStyleError", "Symbol Layer already exists.")
+                        }
+                    } else if (type == MTLayerType.FILL) {
+                        try {
+                            val layer = MTFillLayer("fillLayer", "openmapsource")
+                            layer.color = Color.Blue.toArgb()
+                            layer.outlineColor = Color.Cyan.toArgb()
+                            layer.sourceLayer = "aeroway"
+                            mapController.controller.style?.addLayer(layer)
+                        } catch (error: MTStyleError) {
+                            Log.e("MTStyleError", "Fill Layer already exists.")
+                        }
+                    } else if (type == MTLayerType.LINE) {
+                        try {
+                            val layer = MTLineLayer("lineLayer", "openmapsource")
+                            layer.color = Color.Blue.toArgb()
+                            layer.sourceLayer = "water"
+                            mapController.controller.style?.addLayer(layer)
+                        } catch (error: MTStyleError) {
+                            Log.e("MTStyleError", "Line Layer already exists.")
+                        }
+                    } else if (type == MTLayerType.RASTER) {
+                        val mapTilerAPIKey = MTConfig.apiKey
+                        val rasterUrl = URL("https://api.maptiler.com/tiles/satellite/tiles.json?key=$mapTilerAPIKey")
+                        val rasterSourceId = "satellitesource"
+
+                        // Add or reuse the raster source
+                        try {
+                            val rasterSource = MTRasterTileSource(rasterSourceId, rasterUrl)
+                            mapController.controller.style?.addSource(rasterSource)
+                        } catch (error: MTStyleError) {
+                            Log.e("MTStyleError", "Raster Source already exists.")
+                        }
+
+                        // Add the raster layer (set opacity 0.7)
+                        try {
+                            val rasterLayer = MTRasterLayer("rasterLayer", rasterSourceId)
+                            rasterLayer.opacity = 0.7
+                            mapController.controller.style?.addLayer(rasterLayer)
+                        } catch (error: MTStyleError) {
+                            Log.e("MTStyleError", "Raster Layer already exists.")
+                        }
+                    }
+                },
+            )
+
+            TerrainGlobeControl(
+                onTerrain = {
+                    if (isTerrainEnabled.value) {
+                        mapController.controller.style?.disableTerrain()
+                    } else {
+                        mapController.controller.style?.enableTerrain()
+                    }
+                    isTerrainEnabled.value = !isTerrainEnabled.value
+                },
+                onGlobe = {
+                    if (isGlobeEnabled.value) {
+                        mapController.controller.style?.enableMercatorProjection()
+                    } else {
+                        mapController.controller.style?.enableGlobeProjection()
+                        // Show Milky Way spacebox when globe is active
+                        mapController.controller.style?.setSpace(MTSpace(preset = MTSpacePreset.MILKYWAY))
+                    }
+                    isGlobeEnabled.value = !isGlobeEnabled.value
+                },
+            )
+        }
 
         Column(
             modifier =
@@ -256,17 +304,7 @@ fun HomeScreen(
                         .padding(10.dp),
             )
 
-            TerrainGlobeControl(
-                onTerrain = {
-                    mapController.controller.style?.enableTerrain()
-                },
-                onGlobe = {
-                    mapController.controller.style?.enableGlobeProjection()
-                },
-                modifier =
-                    Modifier
-                        .padding(10.dp),
-            )
+            // Terrain/Projection moved to top-left below menu
         }
 
         NavigationControl(

@@ -6,19 +6,21 @@
 
 package com.maptilerdemo.maptilermobiledemo
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
@@ -28,19 +30,28 @@ fun LocationControl(
     onLocate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val width = 60.dp
-    val height = 60.dp
+    val width = 50.dp
+    val height = 50.dp
+    val shadowElevation = 4.dp
+    val shadowShape = RoundedCornerShape(30.dp)
 
-    Row(
+    Button(
+        onClick = onLocate,
         modifier =
             modifier
-                .background(Color(0xFFF6F7FD), RoundedCornerShape(30.dp))
-                .height(height)
-                .width(width),
-        verticalAlignment = Alignment.CenterVertically,
+                .shadow(elevation = shadowElevation, shape = shadowShape)
+                .clip(shadowShape)
+                .width(width)
+                .height(height),
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = Color(0xFFF6F7FD),
+                contentColor = Color.Black,
+            ),
+        contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp),
     ) {
-        IconButton(onClick = onLocate) {
-            Icon(Icons.Default.LocationOn, contentDescription = "Locate Me", modifier = Modifier.padding(start = 10.dp))
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Icon(Icons.Default.LocationOn, contentDescription = "Locate Me")
         }
     }
 }

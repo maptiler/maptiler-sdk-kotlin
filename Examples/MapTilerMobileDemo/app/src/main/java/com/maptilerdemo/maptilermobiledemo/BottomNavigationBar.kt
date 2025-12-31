@@ -11,8 +11,10 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -31,7 +33,10 @@ fun BottomNavigationBar(navController: NavController) {
             BottomNavItem("Demo", "home", Icons.Default.Home),
         )
 
-    NavigationBar {
+    NavigationBar(
+        containerColor = Color(0xFF00A1C2),
+        contentColor = Color.White,
+    ) {
         val navBackStackEntry = navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry.value?.destination?.route
 
@@ -41,6 +46,14 @@ fun BottomNavigationBar(navController: NavController) {
                 onClick = { navController.navigate(item.route) },
                 icon = { Icon(item.icon, contentDescription = item.label) },
                 label = { Text(item.label) },
+                colors =
+                    NavigationBarItemDefaults.colors(
+                        selectedIconColor = Color.White,
+                        selectedTextColor = Color.White,
+                        unselectedIconColor = Color.White,
+                        unselectedTextColor = Color.White,
+                        indicatorColor = Color(0xFF00A1C2),
+                    ),
             )
         }
     }

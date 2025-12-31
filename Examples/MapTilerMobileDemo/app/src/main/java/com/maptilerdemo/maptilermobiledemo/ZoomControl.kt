@@ -7,7 +7,10 @@
 package com.maptilerdemo.maptilermobiledemo
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,9 +36,9 @@ fun ZoomControl(
     val shadowElevation = 4.dp
     val shadowShape = RoundedCornerShape(30.dp)
     val containerColor = Color(0xFFF6F7FD)
-    val width = 60.dp
-    val height = 60.dp
-    val fontSize = 34.sp
+    val width = 50.dp
+    val height = 50.dp
+    val fontSize = 24.sp
 
     Column(
         modifier = modifier,
@@ -55,8 +58,11 @@ fun ZoomControl(
                     containerColor = containerColor,
                     contentColor = Color.Black,
                 ),
+            contentPadding = PaddingValues(0.dp),
         ) {
-            Text("+", fontSize = fontSize)
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("+", fontSize = fontSize)
+            }
         }
 
         Button(
@@ -72,8 +78,11 @@ fun ZoomControl(
                     containerColor = containerColor,
                     contentColor = Color.Black,
                 ),
+            contentPadding = PaddingValues(0.dp),
         ) {
-            Text("-", fontSize = fontSize)
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("-", fontSize = fontSize)
+            }
         }
     }
 }
