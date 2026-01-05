@@ -187,13 +187,22 @@ class MTColorRamp internal constructor(
      */
     suspend fun getBounds(): MTColorRampBounds {
         val returnTypeValue = bridge.execute(GetColorRampBounds(identifier))
-        return if (returnTypeValue is MTBridgeReturnType.StringDoubleDict) {
-            MTColorRampBounds(
-                min = returnTypeValue.value["min"] ?: 0.0,
-                max = returnTypeValue.value["max"] ?: 1.0,
-            )
-        } else {
-            MTColorRampBounds(min = 0.0, max = 1.0)
+        return when (returnTypeValue) {
+            is MTBridgeReturnType.StringDoubleDict ->
+                MTColorRampBounds(
+                    min = returnTypeValue.value["min"] ?: 0.0,
+                    max = returnTypeValue.value["max"] ?: 1.0,
+                )
+            is MTBridgeReturnType.StringValue -> {
+                val decoded =
+                    runCatching { JsonConfig.json.decodeFromString<Map<String, Double>>(returnTypeValue.value) }
+                        .getOrDefault(emptyMap())
+                MTColorRampBounds(
+                    min = decoded["min"] ?: 0.0,
+                    max = decoded["max"] ?: 1.0,
+                )
+            }
+            else -> MTColorRampBounds(min = 0.0, max = 1.0)
         }
     }
 
@@ -333,7 +342,11 @@ class MTColorRamp internal constructor(
      */
     suspend fun hasTransparentStart(): Boolean {
         val returnTypeValue = bridge.execute(HasTransparentStart(identifier))
-        return (returnTypeValue as? MTBridgeReturnType.BoolValue)?.value ?: false
+        return when (returnTypeValue) {
+            is MTBridgeReturnType.BoolValue -> returnTypeValue.value
+            is MTBridgeReturnType.StringValue -> returnTypeValue.value.trim('"').equals("true", ignoreCase = true)
+            else -> false
+        }
     }
 }
 

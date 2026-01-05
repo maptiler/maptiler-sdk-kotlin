@@ -203,7 +203,7 @@ internal data class GetColorRampBounds(
 ) : MTCommand {
     override val isPrimitiveReturnType: Boolean = true
 
-    override fun toJS(): String = "$identifier.getBounds();"
+    override fun toJS(): String = "JSON.stringify($identifier.getBounds());"
 }
 
 internal data class GetColorRampColor(
