@@ -1,21 +1,69 @@
-# MapTiler SDK Kotlin
-<p align="center">
-<img src="Examples/maptiler-logo.png" alt="MapTiler" title="MapTiler"/>
-</p>
+<img src="Examples/maptiler-logo.png" alt="Company Logo" height="32"/>
 
+# MapTiler SDK Kotlin
 
 The MapTiler SDK Kotlin is a native SDK written in Kotlin, designed to work with the well-established MapTiler Cloud service, which provides all the data required to fuel a complete mobile mapping experience: vector tiles, GeoJSON, map interaction, custom styles, data visualization and more.
 
-## Features
-- [x] Map interaction
-- [x] Pre-made map styles
-- [x] VectorTile and GeoJSON sources
-- [x] Fill, Line and Symbol layers
-- [x] Custom Annotation Views
-- [x] Location tracking
-- [x] Globe and 3D Terrain
+[![](https://img.shields.io/badge/Kotlin-2.0.0-f2f6ff?style=for-the-badge&labelColor=D3DBEC&logo=kotlin&logoColor=333359)](./settings.gradle.kts) [![](https://img.shields.io/badge/Platforms-Android-f2f6ff?style=for-the-badge&labelColor=D3DBEC&logo=android&logoColor=333359)](https://developer.android.com)
 
-## Basic Usage
+---
+
+📖 [Documentation](https://docs.maptiler.com/mobile-sdk/android/) &nbsp; 🌐 [Website](https://docs.maptiler.com/guides/getting-started/mobile/) &nbsp; 🔑 [Get API Key](https://cloud.maptiler.com/account/keys/)
+
+---
+
+<br>
+
+<details> <summary><b>Table of Contents</b></summary>
+<ul>
+<li><a href="#-installation">Installation</a></li>
+<li><a href="#-basic-usage">Basic Usage</a></li>
+<li><a href="#-related-examples">Examples</a></li>
+<li><a href="#-api-reference">API Reference</a></li>
+<li><a href="#migration-guide">Migration Guide</a></li>
+<li><a href="#-support">Support</a></li>
+<li><a href="#-contributing">Contributing</a></li>
+<li><a href="#-license">License</a></li>
+<li><a href="#-acknowledgements">Acknowledgements</a></li>
+</ul>
+</details>
+
+<p align="center">
+<img src="Examples/streets.png" alt="MapTiler" title="MapTiler"/>
+<img src="Examples/satellite.png" alt="MapTiler" title="MapTiler"/>
+</p>
+<br>
+
+## 📦 Installation
+
+MapTiler Kotlin SDK is a Kotlin library and can be added as a dependency in your Gradle file (**Maven Central**):
+
+- Make sure you have mavenCentral() added to your repositores inside your build.gradle
+- Add the library as dependency in your module build.gradle file.
+
+```kotlin
+dependencies {
+  implementation("com.maptiler:maptiler-sdk-kotlin:1.1.1")
+}
+```
+
+Or, use Version Catalog instead, add following to the libs.versions.toml:
+
+```kotlin
+maptilerSdkKotlin = "1.1.1"
+
+maptiler-sdk-kotlin = { module = "com.maptiler:maptiler-sdk-kotlin", version.ref = "maptilerSdkKotlin" }
+```
+
+Then add following implementation in your build.gradle:
+
+```kotlin
+implementation(libs.maptiler.sdk.kotlin)
+```
+
+<br>
+
+## 🚀 Basic Usage
 
 Make sure to set your MapTiler Cloud API key first:
 
@@ -87,7 +135,25 @@ private lateinit var mapView: MTMapViewClassic
 
 For a detailed functionality overview, refer to the API reference documentation.
 
-## Sources and Layers
+<br>
+
+## 💡 Related Examples
+
+- [Getting Started](https://docs.maptiler.com/mobile-sdk/android/examples/get-started/)
+- [Globe with milkyway and halo](https://docs.maptiler.com/mobile-sdk/android/examples/globe/)
+- [Point Helper Clusters](https://docs.maptiler.com/mobile-sdk/android/examples/point-helper-cluster/)
+
+Check out the full list of [MapTiler SDK Kotlin Examples](https://docs.maptiler.com/mobile-sdk/android/examples/) or browse ready-to-use code examples at the [Examples](https://github.com/maptiler/maptiler-sdk-kotlin/tree/main/Examples) directory in this repo.
+
+<br>
+
+## 📘 API Reference
+
+For detailed guides, API reference, and advanced examples, visit our comprehensive documentation:
+
+[API documentation](https://docs.maptiler.com/mobile-sdk/android/api/)
+
+### Sources and Layers
 
 Sources and layers can be added to the map view style object as soon as the map is initialized. Setting the style after adding layers resets them to default, so make sure the style has finished loading first.
 
@@ -109,8 +175,7 @@ try {
 }
 ```
 
-
-## Markers and Popups
+### Markers and Popups
 
 ```kotlin
 val lngLat = LngLat(43.2352, 19.4567)
@@ -124,7 +189,7 @@ val popup = MTTextPopup(lngLat, "My Text")
 controller.style?.addTextPopup(popup)
 ```
 
-## Events
+### Events
 
 Optionally wrap the map controller in a class to observe the map events and use the wrapper class controller for map manipulation.
 
@@ -150,7 +215,7 @@ class MapController(
 }
 ```
 
-## Custom Annotations
+### Custom Annotations
 
 Render your own UI as map annotations.
 
@@ -191,7 +256,7 @@ customView.setCoordinates(LngLat(16.7, 49.25), controller)
 customView.remove()
 ```
 
-## Space
+### Space
 
 The space option customizes the globe’s background, simulating deep space or skybox effects.
 
@@ -281,7 +346,7 @@ controller.style?.setSpace(
 
 Note: When calling `setSpace`, any field not explicitly provided (e.g., color, faces, path, or preset) keeps its previous value.
 
-## Halo
+### Halo
 
 The halo option adds a gradient-based atmospheric glow around the globe, simulating the visual effect of Earth's atmosphere when viewed from space.
 
@@ -343,38 +408,67 @@ controller.style?.disableHaloAnimations()
 controller.style?.disableSpaceAnimations()
 ```
 
-### Developer Docs
-For more information and API Reference visit: https://docs.maptiler.com/mobile-sdk/android/ or browse ready-to-use code examples at the [Examples](https://github.com/maptiler/maptiler-sdk-kotlin/tree/main/Examples) directory in this repo.
+<br>
 
-# Installation
-MapTiler Kotlin SDK is a Kotlin library and can be added as a dependency in your Gradle file (**Maven Central**):
+## Migration Guide
 
-- Make sure you have mavenCentral() added to your repositores inside your build.gradle
-- Add the library as dependency in your module build.gradle file.
+- [How To Migrate/Switch From Mapbox Android To MapTiler SDK Kotlin](https://docs.maptiler.com/mobile-sdk/android/examples/switch-from-mapbox/)
+- [How To Migrate/Switch From MapLibre Native Android to MapTiler SDK Kotlin](https://docs.maptiler.com/mobile-sdk/android/examples/switch-from-maplibre/)
 
-```kotlin
-dependencies {
-    implementation("com.maptiler:maptiler-sdk-kotlin:1.1.1")
-}
-```
+<br>
 
-Or, use Version Catalog instead, add following to the libs.versions.toml:
+## 💬 Support
 
-```kotlin
-maptilerSdkKotlin = "1.1.1"
+- 📚 [Documentation](https://docs.maptiler.com/mobile-sdk/android/) - Comprehensive guides and API reference
+- ✉️ [Contact us](https://maptiler.com/contact) - Get in touch or submit a request
+- 🐦 [Twitter/X](https://twitter.com/maptiler) - Follow us for updates
 
-maptiler-sdk-kotlin = { module = "com.maptiler:maptiler-sdk-kotlin", version.ref = "maptilerSdkKotlin" }
-```
-Then add following implementation in your build.gradle:
+<br>
 
-```kotlin
-implementation(libs.maptiler.sdk.kotlin)
-```
+---
 
+<br>
+
+## 🤝 Contributing
+
+We love contributions from the community! Whether it's bug reports, feature requests, or pull requests, all contributions are welcome:
+
+- Fork the repository and create your branch from `main`
+- If you've added code, add tests that cover your changes
+- Ensure your code follows our style guidelines
+- Give your pull request a clear, descriptive summary
+- Open a Pull Request with a comprehensive description
+- Read the [CONTRIBUTING](./CONTRIBUTING.md) file
+
+<br>
+
+## 📄 License
+
+MapTiler SDK Kotlin is released under the BSD 3-Clause license – see the [LICENSE](./LICENSE) file for details.
+
+<br>
+
+## 🙏 Acknowledgements
+
+### Features
+
+- [x] Map interaction
+- [x] Pre-made map styles
+- [x] VectorTile and GeoJSON sources
+- [x] Fill, Line and Symbol layers
+- [x] Custom Annotation Views
+- [x] Location tracking
+- [x] Globe and 3D Terrain
+
+<br>
+
+<p align="center" style="margin-top:20px;margin-bottom:20px;"> <a href="https://cloud.maptiler.com/account/keys/" style="display:inline-block;padding:12px 32px;background:#F2F6FF;color:#000;font-weight:bold;border-radius:6px;text-decoration:none;"> Get Your API Key <sup style="background-color:#0000ff;color:#fff;padding:2px 6px;font-size:12px;border-radius:3px;">FREE</sup><br /> <span style="font-size:90%;font-weight:400;">Start building with 100,000 free map loads per month ・ No credit card required.</span> </a> </p>
+
+<br>
+
+<p align="center"> 💜 Made with love by the <a href="https://www.maptiler.com/">MapTiler</a> team <br />
 <p align="center">
-<img src="Examples/streets.png" alt="MapTiler" title="MapTiler"/>
-<img src="Examples/satellite.png" alt="MapTiler" title="MapTiler"/>
+  <a href="https://www.maptiler.com/">Website</a> •
+  <a href="https://docs.maptiler.com/mobile-sdk/android/">Documentation</a> •
+  <a href="https://github.com/maptiler/maptiler-sdk-kotlin">GitHub</a>
 </p>
-
-# License
-MapTiler SDK Kotlin is released under the BSD 3-Clause license. See LICENSE for details.
