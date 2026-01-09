@@ -143,7 +143,7 @@ For a detailed functionality overview, refer to the API reference documentation.
 - [Globe with milkyway and halo](https://docs.maptiler.com/mobile-sdk/android/examples/globe/)
 - [Point Helper Clusters](https://docs.maptiler.com/mobile-sdk/android/examples/point-helper-cluster/)
 
-Check out the full list of [MapTiler SDK Kotlin Examples](https://docs.maptiler.com/mobile-sdk/android/examples/) or browse ready-to-use code examples at the [Examples](https://github.com/maptiler/maptiler-sdk-kotlin/tree/main/Examples) directory in this repo.
+Check out the full list of [MapTiler SDK Kotlin examples](https://docs.maptiler.com/mobile-sdk/android/examples/) or browse ready-to-use code examples at the [Examples](https://github.com/maptiler/maptiler-sdk-kotlin/tree/main/Examples) directory in this repo.
 
 <br>
 
