@@ -11,10 +11,9 @@ import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTCommand
 import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.helpers.MTHeatmapLayerOptions
-import com.maptiler.maptilersdk.helpers.MTHeatmapValue
-import com.maptiler.maptilersdk.helpers.MTPropertyValueStop
-import com.maptiler.maptilersdk.helpers.MTZoomNumberValue
-import kotlinx.serialization.builtins.ListSerializer
+import com.maptiler.maptilersdk.helpers.MTNumberOrPropertyValuesSerializer
+import com.maptiler.maptilersdk.helpers.MTNumberOrZoomNumberValuesSerializer
+import com.maptiler.maptilersdk.helpers.MTRadiusOptionSerializer
 import kotlinx.serialization.builtins.serializer
 
 internal data class AddHeatmapLayer(
@@ -40,33 +39,11 @@ private fun MTHeatmapLayerOptions.toJsObject(): JSString {
     maxzoom?.let { properties.add("maxzoom: ${json.encodeToString(Double.serializer(), it)}") }
     colorRamp?.let { properties.add("colorRamp: ${it.identifier}") }
     property?.let { properties.add("property: ${json.encodeToString(String.serializer(), it)}") }
-    weight?.let { encodeHeatmapValue("weight", it)?.let(properties::add) }
-    radius?.let { encodeHeatmapValue("radius", it)?.let(properties::add) }
-    opacity?.let { encodeHeatmapValue("opacity", it)?.let(properties::add) }
-    intensity?.let { encodeHeatmapValue("intensity", it)?.let(properties::add) }
+    weight?.let { properties.add("weight: ${json.encodeToString(MTNumberOrPropertyValuesSerializer, it)}") }
+    radius?.let { properties.add("radius: ${json.encodeToString(MTRadiusOptionSerializer, it)}") }
+    opacity?.let { properties.add("opacity: ${json.encodeToString(MTNumberOrZoomNumberValuesSerializer, it)}") }
+    intensity?.let { properties.add("intensity: ${json.encodeToString(MTNumberOrZoomNumberValuesSerializer, it)}") }
     zoomCompensation?.let { properties.add("zoomCompensation: ${json.encodeToString(Boolean.serializer(), it)}") }
 
     return "{${properties.joinToString(separator = ",")}}"
-}
-
-private fun encodeHeatmapValue(
-    name: String,
-    value: MTHeatmapValue,
-): String? {
-    val json = JsonConfig.json
-    val encoded =
-        when (value) {
-            is MTHeatmapValue.Constant -> json.encodeToString(Double.serializer(), value.value)
-            is MTHeatmapValue.ZoomValues ->
-                json.encodeToString(
-                    ListSerializer(MTZoomNumberValue.serializer()),
-                    value.values,
-                )
-            is MTHeatmapValue.PropertyValues ->
-                json.encodeToString(
-                    ListSerializer(MTPropertyValueStop.serializer()),
-                    value.values,
-                )
-        }
-    return "$name: $encoded"
 }

@@ -10,7 +10,10 @@ import com.maptiler.maptilersdk.bridge.JSString
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTCommand
 import com.maptiler.maptilersdk.helpers.JsonConfig
+import com.maptiler.maptilersdk.helpers.MTColorValue
+import com.maptiler.maptilersdk.helpers.MTNumberOrZoomNumberValuesSerializer
 import com.maptiler.maptilersdk.helpers.MTPointLayerOptions
+import com.maptiler.maptilersdk.helpers.MTStringOrZoomStringValuesSerializer
 import kotlinx.serialization.builtins.serializer
 
 internal data class AddPointLayer(
@@ -35,23 +38,29 @@ private fun MTPointLayerOptions.toJsObject(): JSString {
     minzoom?.let { properties.add("minzoom: ${json.encodeToString(Double.serializer(), it)}") }
     maxzoom?.let { properties.add("maxzoom: ${json.encodeToString(Double.serializer(), it)}") }
     outline?.let { properties.add("outline: ${json.encodeToString(Boolean.serializer(), it)}") }
-    outlineColor?.let { properties.add("outlineColor: ${json.encodeToString(String.serializer(), it)}") }
-    outlineWidth?.let { properties.add("outlineWidth: ${json.encodeToString(Double.serializer(), it)}") }
-    outlineOpacity?.let { properties.add("outlineOpacity: ${json.encodeToString(Double.serializer(), it)}") }
+    outlineColor?.let {
+        properties.add("outlineColor: ${json.encodeToString(MTStringOrZoomStringValuesSerializer, it)}")
+    }
+    outlineWidth?.let {
+        properties.add("outlineWidth: ${json.encodeToString(MTNumberOrZoomNumberValuesSerializer, it)}")
+    }
+    outlineOpacity?.let {
+        properties.add("outlineOpacity: ${json.encodeToString(MTNumberOrZoomNumberValuesSerializer, it)}")
+    }
     if (pointColorRamp != null) {
         properties.add("pointColor: ${pointColorRamp.identifier}")
     } else {
-        pointColor?.let { properties.add("pointColor: ${json.encodeToString(String.serializer(), it)}") }
+        pointColor?.let { properties.add("pointColor: ${json.encodeToString(MTColorValue.serializer(), it)}") }
     }
-    pointRadius?.let { properties.add("pointRadius: ${json.encodeToString(Double.serializer(), it)}") }
+    pointRadius?.let { properties.add("pointRadius: ${json.encodeToString(MTNumberOrZoomNumberValuesSerializer, it)}") }
     minPointRadius?.let { properties.add("minPointRadius: ${json.encodeToString(Double.serializer(), it)}") }
     maxPointRadius?.let { properties.add("maxPointRadius: ${json.encodeToString(Double.serializer(), it)}") }
     property?.let { properties.add("property: ${json.encodeToString(String.serializer(), it)}") }
-    pointOpacity?.let { properties.add("pointOpacity: ${json.encodeToString(Double.serializer(), it)}") }
+    pointOpacity?.let { properties.add("pointOpacity: ${json.encodeToString(MTNumberOrZoomNumberValuesSerializer, it)}") }
     alignOnViewport?.let { properties.add("alignOnViewport: ${json.encodeToString(Boolean.serializer(), it)}") }
     cluster?.let { properties.add("cluster: ${json.encodeToString(Boolean.serializer(), it)}") }
     showLabel?.let { properties.add("showLabel: ${json.encodeToString(Boolean.serializer(), it)}") }
-    labelColor?.let { properties.add("labelColor: ${json.encodeToString(String.serializer(), it)}") }
+    labelColor?.let { properties.add("labelColor: ${json.encodeToString(MTColorValue.serializer(), it)}") }
     labelSize?.let { properties.add("labelSize: ${json.encodeToString(Double.serializer(), it)}") }
     zoomCompensation?.let { properties.add("zoomCompensation: ${json.encodeToString(Boolean.serializer(), it)}") }
 
