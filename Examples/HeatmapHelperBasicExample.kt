@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.maptiler.maptilersdk.MTConfig
-import com.maptiler.maptilersdk.colorramp.MTColorRamp
 import com.maptiler.maptilersdk.helpers.MTHeatmapLayerHelper
 import com.maptiler.maptilersdk.helpers.MTHeatmapLayerOptions
 import com.maptiler.maptilersdk.map.MTMapOptions
@@ -24,10 +23,11 @@ import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
 import kotlinx.coroutines.launch
 
 /**
- * Minimal example showing how to load a built-in ColorRamp and add a heatmap layer using MTHeatmapLayerHelper.
+ * Simple Compose example: add a heatmap layer from a GeoJSON URL
+ * using MTHeatmapLayerHelper with default ramp and basic options.
  */
 @Composable
-fun HeatmapColorRampExample() {
+fun HeatmapHelperBasicExample() {
     val context = LocalContext.current
     val controller = remember { MTMapViewController(context) }
     val scope = rememberCoroutineScope()
@@ -45,32 +45,29 @@ fun HeatmapColorRampExample() {
             onClick = {
                 val style = controller.style ?: return@Button
                 scope.launch {
-                    // Load a built-in ramp (TURBO) and add a heatmap layer with it
-                    val collection = style.colorRampCollection()
-                    val ramp: MTColorRamp = collection.turbo()
-
                     val dataUrl = "https://docs.maptiler.com/sdk-js/assets/earthquakes.geojson"
                     val helper: MTHeatmapLayerHelper = style.heatmapHelper()
                     val opts = MTHeatmapLayerOptions(
                         data = dataUrl,
-                        layerId = "example-heatmap",
-                        sourceId = "example-heatmap-source",
+                        layerId = "basic-heatmap",
+                        sourceId = "basic-heatmap-source",
+                        // Weight by magnitude property
                         property = "mag",
                         // Disambiguate constructor overload without changing defaults
                         intensity = null as com.maptiler.maptilersdk.helpers.MTNumberOrZoomNumberValues?,
                     )
-                    helper.addHeatmap(opts, ramp)
+                    helper.addHeatmap(opts)
                 }
             },
-        ) { Text("Add Heatmap with ColorRamp") }
+        ) { Text("Add Heatmap") }
     }
 }
 
-class HeatmapColorRampExampleActivity : ComponentActivity() {
+class HeatmapHelperBasicExampleActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Configure your MapTiler API key
         MTConfig.apiKey = "YOUR_API_KEY"
-        setContent { HeatmapColorRampExample() }
+        setContent { HeatmapHelperBasicExample() }
     }
 }
