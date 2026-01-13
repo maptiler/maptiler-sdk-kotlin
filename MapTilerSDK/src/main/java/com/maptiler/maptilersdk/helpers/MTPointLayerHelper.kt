@@ -16,11 +16,11 @@ import com.maptiler.maptilersdk.map.style.MTStyle
  */
 class MTPointLayerHelper(
     private val style: MTStyle,
-) {
+) : MTVectorLayerHelper {
     /**
      * Adds a point layer based on the provided options.
      */
-    fun addPoint(options: MTPointLayerOptions) = style.addPointLayer(options)
+    fun addPoint(options: MTPointLayerOptions) = style.addPointLayer(withCommonDefaults(options))
 
     /**
      * Adds a point layer using a color ramp for pointColor.
@@ -28,5 +28,5 @@ class MTPointLayerHelper(
     fun addPoint(
         options: MTPointLayerOptions,
         colorRamp: MTColorRamp,
-    ) = style.addPointLayer(options.copy(pointColorRamp = colorRamp))
+    ) = style.addPointLayer(withCommonDefaults(options.copy(pointColorRamp = colorRamp)))
 }

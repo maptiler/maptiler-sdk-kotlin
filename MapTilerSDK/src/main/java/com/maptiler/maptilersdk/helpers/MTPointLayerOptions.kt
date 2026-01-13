@@ -16,7 +16,6 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class MTPointLayerOptions(
-    // CommonShapeLayerOptions
     val data: String,
     val layerId: String? = null,
     val sourceId: String? = null,

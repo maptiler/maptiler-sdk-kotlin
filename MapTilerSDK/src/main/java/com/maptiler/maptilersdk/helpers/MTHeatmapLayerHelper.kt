@@ -14,11 +14,11 @@ import com.maptiler.maptilersdk.map.style.MTStyle
  */
 class MTHeatmapLayerHelper(
     private val style: MTStyle,
-) {
+) : MTVectorLayerHelper {
     /**
      * Adds a heatmap layer based on the provided options.
      */
-    fun addHeatmap(options: MTHeatmapLayerOptions) = style.addHeatmapLayer(options)
+    fun addHeatmap(options: MTHeatmapLayerOptions) = style.addHeatmapLayer(withCommonDefaults(options))
 
     /**
      * Adds a heatmap layer using a color ramp.
@@ -26,5 +26,5 @@ class MTHeatmapLayerHelper(
     fun addHeatmap(
         options: MTHeatmapLayerOptions,
         colorRamp: MTColorRamp?,
-    ) = style.addHeatmapLayer(options.copy(colorRamp = colorRamp))
+    ) = style.addHeatmapLayer(withCommonDefaults(options.copy(colorRamp = colorRamp)))
 }
