@@ -41,7 +41,8 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun ColorRampHelpers() {
-    val controller = remember { MTMapViewController(baseContext) }
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val controller = remember { MTMapViewController(context) }
 
     Box(Modifier.fillMaxSize()) {
         MTMapView(
@@ -164,4 +165,3 @@ class ColorRampHelpersActivity : ComponentActivity() {
         setContent { ColorRampHelpers() }
     }
 }
-

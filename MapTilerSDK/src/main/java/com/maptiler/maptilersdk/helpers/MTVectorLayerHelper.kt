@@ -16,7 +16,7 @@ internal interface MTVectorLayerHelper {
         get() = 0.0
 
     val defaultMaxZoom: Double
-        get() = 22.0
+        get() = 23.0
 
     val defaultOutline: Boolean
         get() = false
