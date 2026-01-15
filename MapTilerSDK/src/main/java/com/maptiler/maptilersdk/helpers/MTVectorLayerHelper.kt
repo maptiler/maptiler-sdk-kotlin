@@ -51,4 +51,17 @@ internal interface MTVectorLayerHelper {
             minzoom = options.minzoom ?: defaultMinZoom,
             maxzoom = options.maxzoom ?: defaultMaxZoom,
         )
+
+    /**
+     * Apply common defaults to polyline helper options when not provided.
+     */
+    fun withCommonDefaults(options: MTPolylineLayerOptions): MTPolylineLayerOptions =
+        options.copy(
+            minzoom = options.minzoom ?: defaultMinZoom,
+            maxzoom = options.maxzoom ?: defaultMaxZoom,
+            outline = options.outline ?: defaultOutline,
+            outlineColor = options.outlineColor ?: defaultOutlineColor,
+            outlineWidth = options.outlineWidth ?: defaultOutlineWidth,
+            outlineOpacity = options.outlineOpacity ?: defaultOutlineOpacity,
+        )
 }
