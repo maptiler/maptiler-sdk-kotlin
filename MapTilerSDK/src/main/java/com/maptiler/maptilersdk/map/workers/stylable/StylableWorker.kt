@@ -24,6 +24,7 @@ import com.maptiler.maptilersdk.commands.colorramp.CreateColorRampFromArrayDefin
 import com.maptiler.maptilersdk.commands.colorramp.CreateColorRampFromCollection
 import com.maptiler.maptilersdk.commands.helpers.AddHeatmapLayer
 import com.maptiler.maptilersdk.commands.helpers.AddPointLayer
+import com.maptiler.maptilersdk.commands.helpers.AddPolylineLayer
 import com.maptiler.maptilersdk.commands.misc.AddLogoControl
 import com.maptiler.maptilersdk.commands.style.AddImage
 import com.maptiler.maptilersdk.commands.style.AddLayer
@@ -63,6 +64,7 @@ import com.maptiler.maptilersdk.commands.style.SetTilesToSource
 import com.maptiler.maptilersdk.commands.style.SetUrlToSource
 import com.maptiler.maptilersdk.helpers.MTHeatmapLayerOptions
 import com.maptiler.maptilersdk.helpers.MTPointLayerOptions
+import com.maptiler.maptilersdk.helpers.MTPolylineLayerOptions
 import com.maptiler.maptilersdk.map.options.MTHalo
 import com.maptiler.maptilersdk.map.options.MTSky
 import com.maptiler.maptilersdk.map.options.MTSpace
@@ -259,6 +261,14 @@ internal class StylableWorker(
         scope.launch {
             bridge.execute(
                 AddHeatmapLayer(options),
+            )
+        }
+    }
+
+    fun addPolylineLayer(options: MTPolylineLayerOptions) {
+        scope.launch {
+            bridge.execute(
+                AddPolylineLayer(options),
             )
         }
     }
