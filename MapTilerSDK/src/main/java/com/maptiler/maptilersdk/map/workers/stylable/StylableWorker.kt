@@ -64,6 +64,7 @@ import com.maptiler.maptilersdk.commands.style.SetTilesToSource
 import com.maptiler.maptilersdk.commands.style.SetUrlToSource
 import com.maptiler.maptilersdk.helpers.MTHeatmapLayerOptions
 import com.maptiler.maptilersdk.helpers.MTPointLayerOptions
+import com.maptiler.maptilersdk.helpers.MTPolygonLayerOptions
 import com.maptiler.maptilersdk.helpers.MTPolylineLayerOptions
 import com.maptiler.maptilersdk.map.options.MTHalo
 import com.maptiler.maptilersdk.map.options.MTSky
@@ -269,6 +270,14 @@ internal class StylableWorker(
         scope.launch {
             bridge.execute(
                 AddPolylineLayer(options),
+            )
+        }
+    }
+
+    fun addPolygonLayer(options: MTPolygonLayerOptions) {
+        scope.launch {
+            bridge.execute(
+                com.maptiler.maptilersdk.commands.helpers.AddPolygonLayer(options),
             )
         }
     }
