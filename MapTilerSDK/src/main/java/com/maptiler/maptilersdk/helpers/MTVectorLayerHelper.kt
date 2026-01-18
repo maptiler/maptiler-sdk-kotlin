@@ -64,4 +64,17 @@ internal interface MTVectorLayerHelper {
             outlineWidth = options.outlineWidth ?: defaultOutlineWidth,
             outlineOpacity = options.outlineOpacity ?: defaultOutlineOpacity,
         )
+
+    /**
+     * Apply common defaults to polygon helper options when not provided.
+     */
+    fun withCommonDefaults(options: MTPolygonLayerOptions): MTPolygonLayerOptions =
+        options.copy(
+            minzoom = options.minzoom ?: defaultMinZoom,
+            maxzoom = options.maxzoom ?: defaultMaxZoom,
+            outline = options.outline ?: defaultOutline,
+            outlineColor = options.outlineColor ?: defaultOutlineColor,
+            outlineWidth = options.outlineWidth ?: defaultOutlineWidth,
+            outlineOpacity = options.outlineOpacity ?: defaultOutlineOpacity,
+        )
 }
