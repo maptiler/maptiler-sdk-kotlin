@@ -19,6 +19,8 @@ import com.maptiler.maptilersdk.helpers.MTHeatmapLayerHelper
 import com.maptiler.maptilersdk.helpers.MTHeatmapLayerOptions
 import com.maptiler.maptilersdk.helpers.MTPointLayerHelper
 import com.maptiler.maptilersdk.helpers.MTPointLayerOptions
+import com.maptiler.maptilersdk.helpers.MTPolygonLayerHelper
+import com.maptiler.maptilersdk.helpers.MTPolygonLayerOptions
 import com.maptiler.maptilersdk.helpers.MTPolylineLayerHelper
 import com.maptiler.maptilersdk.helpers.MTPolylineLayerOptions
 import com.maptiler.maptilersdk.map.style.dsl.PropertyValue
@@ -305,6 +307,9 @@ class MTStyle(
     // Adds a polyline visualization layer using the helper with the provided options.
     internal fun addPolylineLayer(options: MTPolylineLayerOptions) = stylableWorker.addPolylineLayer(options)
 
+    // Adds a polygon visualization layer using the helper with the provided options.
+    internal fun addPolygonLayer(options: MTPolygonLayerOptions) = stylableWorker.addPolygonLayer(options)
+
     /**
      * Returns a helper instance for adding heatmap layers.
      */
@@ -319,6 +324,11 @@ class MTStyle(
      * Returns a helper instance for adding polyline layers.
      */
     fun polylineHelper(): MTPolylineLayerHelper = MTPolylineLayerHelper(this)
+
+    /**
+     * Returns a helper instance for adding polygon layers.
+     */
+    fun polygonHelper(): MTPolygonLayerHelper = MTPolygonLayerHelper(this)
 
     /**
      * Creates a custom color ramp.
