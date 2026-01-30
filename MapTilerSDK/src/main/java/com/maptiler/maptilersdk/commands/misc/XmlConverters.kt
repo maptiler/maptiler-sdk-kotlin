@@ -10,6 +10,7 @@ import com.maptiler.maptilersdk.bridge.JSString
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTCommand
 import com.maptiler.maptilersdk.helpers.JsonConfig
+import kotlinx.serialization.builtins.serializer
 
 internal data class GpxToGeoJSON(
     private val xml: String,
