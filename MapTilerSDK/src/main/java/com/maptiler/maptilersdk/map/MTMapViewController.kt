@@ -13,6 +13,7 @@ import com.maptiler.maptilersdk.annotations.MTMarker
 import com.maptiler.maptilersdk.annotations.MTRotationAlignment
 import com.maptiler.maptilersdk.annotations.MTTextPopup
 import com.maptiler.maptilersdk.bridge.MTBridge
+import com.maptiler.maptilersdk.bridge.MTBridgeReturnType
 import com.maptiler.maptilersdk.bridge.MTJavaScriptInterface
 import com.maptiler.maptilersdk.bridge.MTJavascriptDelegate
 import com.maptiler.maptilersdk.bridge.WebViewExecutor
@@ -32,6 +33,8 @@ import com.maptiler.maptilersdk.commands.annotations.SetSubpixelPositioningToTex
 import com.maptiler.maptilersdk.commands.annotations.SetTextToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.ToggleMarkerPopup
 import com.maptiler.maptilersdk.commands.annotations.TrackTextPopupPointer
+import com.maptiler.maptilersdk.commands.misc.GpxToGeoJSON
+import com.maptiler.maptilersdk.commands.misc.KmlToGeoJSON
 import com.maptiler.maptilersdk.events.EventProcessor
 import com.maptiler.maptilersdk.events.EventProcessorDelegate
 import com.maptiler.maptilersdk.events.MTEvent
@@ -210,6 +213,40 @@ class MTMapViewController(
 
     fun reload() {
         webViewExecutor?.reload()
+    }
+
+    /**
+     * Converts a GPX XML payload to a GeoJSON FeatureCollection string using the SDK converter.
+     *
+     * This does not mutate the map and can be used to prepare data for a `GeoJSON` source.
+     *
+     * @param gpxXml The GPX file contents as a string.
+     * @return The GeoJSON FeatureCollection as a compact JSON string, or null on failure.
+     */
+    suspend fun gpxToGeoJSON(gpxXml: String): String? {
+        val br = bridge ?: return null
+        val result = br.execute(GpxToGeoJSON(gpxXml))
+        return when (result) {
+            is MTBridgeReturnType.StringValue -> result.value.trim('"')
+            else -> null
+        }
+    }
+
+    /**
+     * Converts a KML XML payload to a GeoJSON FeatureCollection string using the SDK converter.
+     *
+     * This does not mutate the map and can be used to prepare data for a `GeoJSON` source.
+     *
+     * @param kmlXml The KML file contents as a string.
+     * @return The GeoJSON FeatureCollection as a compact JSON string, or null on failure.
+     */
+    suspend fun kmlToGeoJSON(kmlXml: String): String? {
+        val br = bridge ?: return null
+        val result = br.execute(KmlToGeoJSON(kmlXml))
+        return when (result) {
+            is MTBridgeReturnType.StringValue -> result.value.trim('"')
+            else -> null
+        }
     }
 
     // ANNOTATIONS
