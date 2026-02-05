@@ -7,6 +7,7 @@
 package com.maptiler.maptilersdk.bridge
 
 import android.content.Context
+import android.os.Build
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebChromeClient
@@ -55,6 +56,7 @@ internal class WebViewExecutor(
     private var _webView: WebView? = null
     private var hasLoadedContent: Boolean = false
     private var jsInterfaceAdded: Boolean = false
+    private var assetLoader: Any? = null
     internal val webView: WebView
         get() {
             if (_webView == null) {
@@ -70,6 +72,12 @@ internal class WebViewExecutor(
         if (_webView == null) {
             _webView =
                 WebView(context).apply {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        setRendererPriorityPolicy(WebView.RENDERER_PRIORITY_IMPORTANT, true)
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        settings.setOffscreenPreRaster(true)
+                    }
                     settings.javaScriptEnabled = true
                     settings.allowFileAccess = true
                     settings.allowFileAccessFromFileURLs = true
@@ -120,6 +128,12 @@ internal class WebViewExecutor(
 
     internal fun setWebView(webView: WebView) {
         this._webView = webView
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            webView.setRendererPriorityPolicy(WebView.RENDERER_PRIORITY_IMPORTANT, true)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            webView.settings.setOffscreenPreRaster(true)
+        }
         // Ensure our clients are attached so navigation callbacks work consistently.
         webView.webChromeClient = WebChromeClient()
         webView.webViewClient =

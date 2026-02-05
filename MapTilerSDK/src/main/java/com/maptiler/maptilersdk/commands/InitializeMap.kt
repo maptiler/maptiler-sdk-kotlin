@@ -54,6 +54,8 @@ internal data class InitializeMap(
                 )
         }
 
-        return "initializeMap('$apiKey', $styleString, $optionsString, $isSessionLogicEnabled);"
+        val eventLevel = options?.eventLevel?.toString() ?: "ESSENTIAL"
+        val throttleMs = options?.highFrequencyEventThrottleMs ?: 0
+        return "initializeMap('$apiKey', $styleString, $optionsString, $isSessionLogicEnabled, '$eventLevel', $throttleMs);"
     }
 }

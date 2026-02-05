@@ -693,6 +693,11 @@ class MTMapViewController(
     ) {
         MTLogger.log("MTEvent triggered: $event", MTLogType.EVENT)
 
+        // Skip dispatch work when there are no observers and the event isn't required for internal processing.
+        val hasObservers = (delegate != null) || contentDelegates.isNotEmpty()
+        val needsInternal = (event == MTEvent.ON_READY) || (event == MTEvent.ON_IDLE)
+        if (!hasObservers && !needsInternal) return
+
         // Ensure all UI callbacks happen on the main thread.
         coroutineScope?.launch(Dispatchers.Main) {
             delegate?.onEventTriggered(event, data)
