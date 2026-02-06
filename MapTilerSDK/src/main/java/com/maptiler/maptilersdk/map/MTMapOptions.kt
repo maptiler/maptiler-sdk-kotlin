@@ -255,16 +255,17 @@ class MTMapOptions {
         private set
 
     /**
-     * Controls which map events are sent from the map object
+     * Controls which map events are sent from the map object.
      *
-     * Defaults to [MTEventLevel.ESSENTIAL] for better performance on mid/low-tier devices.
+     * Defaults to [MTEventLevel.CAMERA_ONLY] so camera-tracking overlays work out-of-the-box
+     * without wiring all high-frequency touch/render events.
      */
-    var eventLevel: MTEventLevel = MTEventLevel.ESSENTIAL
+    var eventLevel: MTEventLevel = MTEventLevel.CAMERA_ONLY
         private set
 
     /**
-     * Optional throttle in milliseconds applied to high-frequency events when [eventLevel] is [MTEventLevel.ALL].
-     * A value of 0 disables throttling.
+     * Optional throttle in milliseconds applied to high-frequency events when [eventLevel] is
+     * [MTEventLevel.ALL] or [MTEventLevel.CAMERA_ONLY]. A value of 0 disables throttling.
      */
     var highFrequencyEventThrottleMs: Int? = 150
         private set
@@ -553,7 +554,7 @@ class MTMapOptions {
         space: MTSpaceOption? = null,
         halo: MTHaloOption? = null,
         isSessionLogicEnabled: Boolean = true,
-        eventLevel: MTEventLevel = MTEventLevel.ESSENTIAL,
+        eventLevel: MTEventLevel = MTEventLevel.CAMERA_ONLY,
         highFrequencyEventThrottleMs: Int? = 150,
     ) {
         this.language = language

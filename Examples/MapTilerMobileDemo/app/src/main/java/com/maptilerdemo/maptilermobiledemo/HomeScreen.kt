@@ -39,7 +39,6 @@ import com.maptiler.maptilersdk.MTConfig
 import com.maptiler.maptilersdk.annotations.MTMarker
 import com.maptiler.maptilersdk.annotations.MTTextPopup
 import com.maptiler.maptilersdk.events.MTEvent
-import com.maptiler.maptilersdk.helpers.withBalancedPerformanceDefaults
 import com.maptiler.maptilersdk.location.MTLocationError
 import com.maptiler.maptilersdk.location.MTLocationManager
 import com.maptiler.maptilersdk.location.MTLocationManagerDelegate
@@ -136,7 +135,6 @@ fun HomeScreen(
     }
 
     var options = MTMapOptions(space = MTSpaceOption.Enabled)
-    options = options.withBalancedPerformanceDefaults()
     options.setMapTilerLogoIsVisible(false)
 
     CompositionLocalProvider(LocalContentColor provides Color.Black) {

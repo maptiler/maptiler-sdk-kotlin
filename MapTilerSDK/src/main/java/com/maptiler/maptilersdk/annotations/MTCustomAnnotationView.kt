@@ -41,6 +41,9 @@ import kotlin.math.roundToInt
  *   MTCustomAnnotationView(controller, LngLat(16.6, 49.2)) { YourComposable() }
  * }
  *
+ * Requirements: This view relies on `ON_MOVE` and `ON_ZOOM` events.
+ * Set `MTMapOptions.eventLevel` to `CAMERA_ONLY` (recommended) or `ALL` so these events are forwarded.
+ *
  * @param controller The map controller used to project coordinates and observe events.
  * @param coordinates Geographic location of this annotation.
  * @param offset Pixel offset from the projected point (x to the right, y down).
@@ -104,6 +107,7 @@ fun MTCustomAnnotationView(
                 ) {
                     when (event) {
                         MTEvent.ON_MOVE,
+                        MTEvent.ON_ZOOM,
                         -> recalculatePosition()
                         else -> Unit
                     }

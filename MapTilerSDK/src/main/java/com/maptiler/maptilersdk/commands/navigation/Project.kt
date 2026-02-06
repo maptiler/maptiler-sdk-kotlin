@@ -15,5 +15,7 @@ internal data class Project(
 ) : MTCommand {
     override val isPrimitiveReturnType: Boolean = true
 
-    override fun toJS(): String = "${MTBridge.MAP_OBJECT}.project([${coordinate.lng}, ${coordinate.lat}]);"
+    override fun toJS(): String =
+        // Return a plain object literal so WebView can JSON-serialize it.
+        "(() => { const p = ${MTBridge.MAP_OBJECT}.project([${coordinate.lng}, ${coordinate.lat}]); return { x: p.x, y: p.y }; })();"
 }

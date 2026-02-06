@@ -22,8 +22,8 @@ class MTDeviceProfileTest {
         assertTrue(merged.cancelPendingTileRequestsWhileZooming == true)
         assertFalse(merged.crossSourceCollisionsAreEnabled ?: true)
         assertFalse(merged.shouldRefreshExpiredTiles ?: true)
-        assertEquals(4.0, merged.maxTileCacheZoomLevels, 0.0)
-        assertEquals(1.0, merged.pixelRatio, 0.0)
+        assertEquals(4.0, merged.maxTileCacheZoomLevels!!, 0.0)
+        assertEquals(1.0, merged.pixelRatio!!, 0.0)
     }
 
     @Test
@@ -39,10 +39,10 @@ class MTDeviceProfileTest {
 
         val merged = MTDeviceProfile.applyLeanDefaultsIfUnset(base, Tier.MID)
 
-        assertEquals(2.0, merged.pixelRatio, 0.0)
+        assertEquals(2.0, merged.pixelRatio!!, 0.0)
         assertTrue(merged.shouldRefreshExpiredTiles == true)
         assertFalse(merged.cancelPendingTileRequestsWhileZooming ?: true)
-        assertEquals(7.0, merged.maxTileCacheZoomLevels, 0.0)
+        assertEquals(7.0, merged.maxTileCacheZoomLevels!!, 0.0)
         assertTrue(merged.crossSourceCollisionsAreEnabled == true)
     }
 }

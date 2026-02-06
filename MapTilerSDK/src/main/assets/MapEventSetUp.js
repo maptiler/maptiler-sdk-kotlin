@@ -295,6 +295,12 @@ function setUpMapEventsWithLevel(map, level, throttleMs) {
     registerClick();
     registerStyleImageMissing();
 
+    if (lvl === 'CAMERA_ONLY') {
+        // Only camera tracking events; avoid wiring full touch/render pipeline.
+        registerNoDataEvents(['move', 'zoom'], throttleMs);
+        return;
+    }
+
     if (lvl === 'ALL') {
         registerNoDataEvents(heavyFrameEvents, throttleMs);
         registerDataEvents();

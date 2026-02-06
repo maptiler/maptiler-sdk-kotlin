@@ -108,7 +108,7 @@ internal object MTDeviceProfile {
             space = base.space,
             halo = base.halo,
             isSessionLogicEnabled = base.isSessionLogicEnabled,
-            // Keep developer choice; default is already ESSENTIAL (lean)
+            // Keep developer choice; default is CAMERA_ONLY (camera events without full touch/render)
             eventLevel = base.eventLevel,
             highFrequencyEventThrottleMs = base.highFrequencyEventThrottleMs ?: 150,
         )

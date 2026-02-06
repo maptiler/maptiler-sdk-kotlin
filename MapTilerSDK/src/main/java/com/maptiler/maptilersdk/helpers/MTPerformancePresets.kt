@@ -158,7 +158,7 @@ object MTPerformancePresets {
      * - cancelPendingTileRequestsWhileZooming = false (allow progressive detail during zoom)
      * - maxTileCacheZoomLevels = 6.0 (if unset) to reduce churn when navigating
      * - crossSourceCollisionsAreEnabled = base.crossSourceCollisionsAreEnabled ?: true
-     * - eventLevel = ESSENTIAL (per-frame events remain opt-in)
+     * - eventLevel = ALL
      * - highFrequencyEventThrottleMs = 100 (slightly more responsive when ALL is enabled)
      */
     fun highFidelity(base: MTMapOptions = MTMapOptions()): MTMapOptions =
@@ -211,7 +211,7 @@ object MTPerformancePresets {
             space = base.space,
             halo = base.halo,
             isSessionLogicEnabled = base.isSessionLogicEnabled,
-            eventLevel = MTEventLevel.ESSENTIAL,
+            eventLevel = MTEventLevel.ALL,
             highFrequencyEventThrottleMs = base.highFrequencyEventThrottleMs ?: 100,
         )
 }
