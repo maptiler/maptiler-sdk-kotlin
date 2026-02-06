@@ -144,6 +144,9 @@ class NavigationTests {
 
     @Test fun projectToJS_ReturnsCorrectJSString() {
         val cmd = Project(LngLat(14.42, 50.09))
-        assertEquals("${MTBridge.MAP_OBJECT}.project([14.42, 50.09]);", cmd.toJS())
+        assertEquals(
+            "(() => { const p = ${MTBridge.MAP_OBJECT}.project([14.42, 50.09]); return { x: p.x, y: p.y }; })();",
+            cmd.toJS(),
+        )
     }
 }

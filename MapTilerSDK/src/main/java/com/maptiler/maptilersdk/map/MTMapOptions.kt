@@ -6,6 +6,7 @@
 
 package com.maptiler.maptilersdk.map
 
+import com.maptiler.maptilersdk.map.options.MTEventLevel
 import com.maptiler.maptilersdk.map.options.MTHalo
 import com.maptiler.maptilersdk.map.options.MTHaloOption
 import com.maptiler.maptilersdk.map.options.MTSpace
@@ -251,6 +252,22 @@ class MTMapOptions {
      * or lower values to favour performance over sharpness.
      */
     var pixelRatio: Double? = null
+        private set
+
+    /**
+     * Controls which map events are sent from the map object.
+     *
+     * Defaults to [MTEventLevel.CAMERA_ONLY] so camera-tracking overlays work out-of-the-box
+     * without wiring all high-frequency touch/render events.
+     */
+    var eventLevel: MTEventLevel = MTEventLevel.CAMERA_ONLY
+        private set
+
+    /**
+     * Optional throttle in milliseconds applied to high-frequency events when [eventLevel] is
+     * [MTEventLevel.ALL] or [MTEventLevel.CAMERA_ONLY]. A value of 0 disables throttling.
+     */
+    var highFrequencyEventThrottleMs: Int? = 150
         private set
 
     /**
@@ -537,6 +554,8 @@ class MTMapOptions {
         space: MTSpaceOption? = null,
         halo: MTHaloOption? = null,
         isSessionLogicEnabled: Boolean = true,
+        eventLevel: MTEventLevel = MTEventLevel.CAMERA_ONLY,
+        highFrequencyEventThrottleMs: Int? = 150,
     ) {
         this.language = language
         this.center = center
@@ -586,5 +605,7 @@ class MTMapOptions {
         this.space = space
         this.halo = halo
         this.isSessionLogicEnabled = isSessionLogicEnabled
+        this.eventLevel = eventLevel
+        this.highFrequencyEventThrottleMs = highFrequencyEventThrottleMs
     }
 }

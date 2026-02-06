@@ -219,6 +219,8 @@ class MapController(
 
 Render your own UI as map annotations.
 
+Note: Custom annotations rely on camera events. They work out of the box with the default `CAMERA_ONLY` event level (provides `ON_MOVE` and `ON_ZOOM`). If you override `eventLevel`, ensure it is `CAMERA_ONLY` or `ALL`.
+
 Compose — overlay on top of MTMapView
 
 ```kotlin
@@ -254,6 +256,42 @@ customView.setCoordinates(LngLat(16.7, 49.25), controller)
 
 // Remove when no longer needed
 customView.remove()
+```
+
+## ⚙️ Performance, Events, and Throttling
+
+To balance responsiveness and performance, the event level and throttling are configurable via `MTMapOptions`:
+
+- Event levels:
+  - `ESSENTIAL`: Lifecycle and taps only (ready, load, moveend, resize). No per-frame camera updates.
+  - `CAMERA_ONLY` (default): Essentials plus `move` and `zoom` camera events. Ideal for custom annotations.
+  - `ALL`: Everything, including high-frequency touch/render events. Use with care on low-end devices.
+  - `OFF`: Minimal wiring (internal lifecycle only).
+
+- Throttle: `highFrequencyEventThrottleMs` applies to `CAMERA_ONLY` and `ALL` to limit update rate during gestures. Default is `150` ms. Set to `0–32` for smoother overlays, or increase for balanced performance.
+
+Examples:
+
+```kotlin
+// Smooth camera tracking for overlays
+val options = MTMapOptions(
+    eventLevel = MTEventLevel.CAMERA_ONLY,
+    highFrequencyEventThrottleMs = 16,
+)
+
+// Leanest pipeline with lifecycle only
+val lean = MTMapOptions(eventLevel = MTEventLevel.ESSENTIAL)
+```
+
+You can also apply preset helpers:
+
+```kotlin
+// Start from your options and apply lean performance defaults (keeps essentials; camera events can be opted-in)
+val opts = MTMapOptions(center = LngLat(16.6, 49.2), zoom = 10.0)
+val leanOpts = opts.withLeanPerformanceDefaults()
+
+// Or go for high fidelity performance settings
+val hiFi = MTMapOptions().withHighFidelityDefaults()
 ```
 
 ### Space

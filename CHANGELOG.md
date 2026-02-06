@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.1](https://github.com/maptiler/maptiler-sdk-kotlin/releases/tag/1.2.1)
+Released on 2026-02-06.
+### Fixed
+- Performance improvements on low/mid devices (leaner defaults, reduced event wiring overhead, optional throttling for high‑frequency events).
+
+### Added
+- MTDeviceProfile: device‑aware lean defaults applied only when options are unset.
+- MTPerformancePresets: ready‑to‑use `leanPerformance`, `balancedPerformance`, `highFidelity` helpers.
+- Event levels: `MTEventLevel` with `ESSENTIAL`, `CAMERA_ONLY` (default), `ALL`, `OFF`, plus `highFrequencyEventThrottleMs` for throttling.
+- Docs: README updated to explain event levels and when to use `ALL` vs `CAMERA_ONLY`.
+
 ## [1.2.0](https://github.com/maptiler/maptiler-sdk-swift/releases/tag/1.2.0)
 Released on 2025-12-12.
 ### Added

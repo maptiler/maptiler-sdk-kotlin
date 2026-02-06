@@ -3,7 +3,7 @@
  - It does not use ES Modules or TypeScript to ensure compatibility with non-module environments.
  */
 
-function initializeMap(apiKey, style, options, session) {
+function initializeMap(apiKey, style, options, session, eventLevel, throttleMs) {
     maptilersdk.config.apiKey = apiKey;
     maptilersdk.config.session = session;
 
@@ -15,6 +15,11 @@ function initializeMap(apiKey, style, options, session) {
     const mapOptions = {...baseOptions, ...options}
     const map = new maptilersdk.Map(mapOptions);
 
-    setUpMapEvents(map);
+    if (typeof setUpMapEventsWithLevel === 'function') {
+        setUpMapEventsWithLevel(map, eventLevel || 'ESSENTIAL', throttleMs || 0);
+    } else {
+        // Fallback to legacy wiring if the leveled setup is not available.
+        setUpMapEvents(map);
+    }
     window.map = map;
 }

@@ -26,6 +26,9 @@ import java.util.UUID
 /**
  * Classic (XML/Views) variant of a custom annotation view that can be added to [MTMapViewClassic].
  *
+ * Requirements: This view relies on `ON_MOVE` and `ON_ZOOM` events.
+ * Set `MTMapOptions.eventLevel` to `CAMERA_ONLY` (recommended) or `ALL` so these events are forwarded.
+ *
  * This is a container: add your own child Android Views into it to render custom UI.
  * The container is centered on the projected map coordinates.
  */
@@ -142,6 +145,7 @@ class MTCustomAnnotationViewClassic(
     ) {
         when (event) {
             MTEvent.ON_MOVE,
+            MTEvent.ON_ZOOM,
             -> recalculatePosition()
             else -> Unit
         }

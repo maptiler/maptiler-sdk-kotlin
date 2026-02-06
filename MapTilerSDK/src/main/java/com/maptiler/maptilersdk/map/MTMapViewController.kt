@@ -166,10 +166,19 @@ class MTMapViewController(
 
         val currentStyle = style ?: return
 
+        // Apply device-aware lean defaults only where the developer left fields unset.
+        // This keeps behavior non-breaking and favors responsiveness on low/mid devices.
+        val effectiveOptions =
+            options?.let { com.maptiler.maptilersdk.helpers.MTDeviceProfile.applyLeanDefaultsIfUnset(context, it) }
+                ?: com.maptiler.maptilersdk.helpers.MTDeviceProfile.applyLeanDefaultsIfUnset(
+                    context,
+                    MTMapOptions(),
+                )
+
         bridge!!.execute(
             InitializeMap(
                 apiKey,
-                options,
+                effectiveOptions,
                 currentStyle.referenceStyle,
                 currentStyle.styleVariant,
                 isSessionLogicEnabled,
@@ -692,6 +701,11 @@ class MTMapViewController(
         data: MTData?,
     ) {
         MTLogger.log("MTEvent triggered: $event", MTLogType.EVENT)
+
+        // Skip dispatch work when there are no observers and the event isn't required for internal processing.
+        val hasObservers = (delegate != null) || contentDelegates.isNotEmpty()
+        val needsInternal = (event == MTEvent.ON_READY) || (event == MTEvent.ON_IDLE)
+        if (!hasObservers && !needsInternal) return
 
         // Ensure all UI callbacks happen on the main thread.
         coroutineScope?.launch(Dispatchers.Main) {
