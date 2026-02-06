@@ -134,7 +134,7 @@ fun HomeScreen(
         }
     }
 
-    var options = MTMapOptions(space = MTSpaceOption.Enabled)
+    val options = MTMapOptions(space = MTSpaceOption.Enabled)
     options.setMapTilerLogoIsVisible(false)
 
     CompositionLocalProvider(LocalContentColor provides Color.Black) {

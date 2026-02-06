@@ -45,4 +45,12 @@ class MTDeviceProfileTest {
         assertEquals(7.0, merged.maxTileCacheZoomLevels!!, 0.0)
         assertTrue(merged.crossSourceCollisionsAreEnabled == true)
     }
+
+    @Test
+    fun `applyLeanDefaultsIfUnset sets pixelRatio 1_5 for MID`() {
+        val base = MTMapOptions()
+        val merged = MTDeviceProfile.applyLeanDefaultsIfUnset(base, Tier.MID)
+
+        assertEquals(1.5, merged.pixelRatio!!, 0.0)
+    }
 }

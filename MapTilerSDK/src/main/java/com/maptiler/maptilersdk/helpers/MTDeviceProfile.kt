@@ -51,12 +51,24 @@ internal object MTDeviceProfile {
     /**
      * Returns a new [MTMapOptions] that applies lean defaults only where fields are unset.
      * For LOW and MID devices we prefer lighter defaults; HIGH devices are returned unchanged.
+     *
+     * Pixel ratio defaults by tier (if unset by developer):
+     * - LOW: 1.0
+     * - MID: 1.5
+     * - HIGH: unchanged (early return)
      */
     fun applyLeanDefaultsIfUnset(
         base: MTMapOptions,
         tier: Tier,
     ): MTMapOptions {
         if (tier == Tier.HIGH) return base
+
+        val defaultPixelRatio =
+            when (tier) {
+                Tier.LOW -> 1.0
+                Tier.MID -> 1.5
+                Tier.HIGH -> base.pixelRatio ?: 1.0 // unreachable due to early return
+            }
 
         // Merge: prefer base values where present; set only performance‑lean values when null.
         return MTMapOptions(
@@ -88,7 +100,7 @@ internal object MTDeviceProfile {
             maptilerLogoIsVisible = base.maptilerLogoIsVisible,
             maxTileCacheSize = base.maxTileCacheSize,
             maxTileCacheZoomLevels = base.maxTileCacheZoomLevels ?: 4.0,
-            pixelRatio = base.pixelRatio ?: 1.0,
+            pixelRatio = base.pixelRatio ?: defaultPixelRatio,
             shouldPitchWithRotate = base.shouldPitchWithRotate,
             shouldRefreshExpiredTiles = base.shouldRefreshExpiredTiles ?: false,
             shouldRenderWorldCopies = base.shouldRenderWorldCopies,
