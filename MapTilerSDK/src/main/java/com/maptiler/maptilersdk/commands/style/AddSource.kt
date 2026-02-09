@@ -12,6 +12,7 @@ import com.maptiler.maptilersdk.bridge.MTCommand
 import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.helpers.formatUrlForJs
 import com.maptiler.maptilersdk.map.style.source.MTGeoJSONSource
+import com.maptiler.maptilersdk.map.style.source.MTImageSource
 import com.maptiler.maptilersdk.map.style.source.MTRasterDEMSource
 import com.maptiler.maptilersdk.map.style.source.MTRasterTileSource
 import com.maptiler.maptilersdk.map.style.source.MTSource
@@ -36,6 +37,8 @@ internal data class AddSource(
             handleGeoJSONSource(source)
         } else if (source is MTRasterDEMSource) {
             handleMTRasterDEMSource(source)
+        } else if (source is MTImageSource) {
+            handleMTImageSource(source)
         } else {
             ""
         }
@@ -160,5 +163,19 @@ internal data class AddSource(
             $propsString
         });
         """
+    }
+
+    private fun handleMTImageSource(source: MTImageSource): JSString {
+        // coordinates must be encoded as array of [lng,lat] pairs
+        val coords: List<List<Double>> = source.coordinates.map { listOf(it.lng, it.lat) }
+        val coordsString: JSString = JsonConfig.json.encodeToString(coords)
+
+        val props = mutableListOf<String>()
+        props += "type: '${source.type}'"
+        props += "url: '${source.url}'"
+        props += "coordinates: $coordsString"
+
+        val propsString = props.joinToString(", ")
+        return "${MTBridge.MAP_OBJECT}.addSource('${source.identifier}', { $propsString });"
     }
 }
