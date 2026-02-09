@@ -48,6 +48,7 @@ import com.maptiler.maptilersdk.commands.style.RemoveLayer
 import com.maptiler.maptilersdk.commands.style.RemoveLayerById
 import com.maptiler.maptilersdk.commands.style.RemoveSource
 import com.maptiler.maptilersdk.commands.style.RemoveSourceById
+import com.maptiler.maptilersdk.commands.style.SetCoordinatesToImageSource
 import com.maptiler.maptilersdk.commands.style.SetDataToSource
 import com.maptiler.maptilersdk.commands.style.SetFilter
 import com.maptiler.maptilersdk.commands.style.SetGlyphs
@@ -62,6 +63,7 @@ import com.maptiler.maptilersdk.commands.style.SetSpace
 import com.maptiler.maptilersdk.commands.style.SetStyle
 import com.maptiler.maptilersdk.commands.style.SetTilesToSource
 import com.maptiler.maptilersdk.commands.style.SetUrlToSource
+import com.maptiler.maptilersdk.commands.style.UpdateImageSource
 import com.maptiler.maptilersdk.helpers.MTHeatmapLayerOptions
 import com.maptiler.maptilersdk.helpers.MTPointLayerOptions
 import com.maptiler.maptilersdk.helpers.MTPolygonLayerOptions
@@ -74,6 +76,7 @@ import com.maptiler.maptilersdk.map.style.MTMapStyleVariant
 import com.maptiler.maptilersdk.map.style.dsl.PropertyValue
 import com.maptiler.maptilersdk.map.style.image.MTAddImageOptions
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
+import com.maptiler.maptilersdk.map.style.source.MTImageSource
 import com.maptiler.maptilersdk.map.style.source.MTSource
 import com.maptiler.maptilersdk.map.types.MTLanguage
 import com.maptiler.maptilersdk.map.types.MTProjectionType
@@ -405,6 +408,29 @@ internal class StylableWorker(
         scope.launch {
             bridge.execute(
                 SetDataToSource(data, source),
+            )
+        }
+    }
+
+    fun setCoordinatesToImageSource(
+        coordinates: List<com.maptiler.maptilersdk.map.LngLat>,
+        source: MTImageSource,
+    ) {
+        scope.launch {
+            bridge.execute(
+                SetCoordinatesToImageSource(coordinates, source),
+            )
+        }
+    }
+
+    fun updateImageSource(
+        url: URL,
+        coordinates: List<com.maptiler.maptilersdk.map.LngLat>,
+        source: MTImageSource,
+    ) {
+        scope.launch {
+            bridge.execute(
+                UpdateImageSource(url, coordinates, source),
             )
         }
     }

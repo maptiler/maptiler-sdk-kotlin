@@ -26,6 +26,7 @@ import com.maptiler.maptilersdk.helpers.MTPolylineLayerOptions
 import com.maptiler.maptilersdk.map.style.dsl.PropertyValue
 import com.maptiler.maptilersdk.map.style.image.MTAddImageOptions
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
+import com.maptiler.maptilersdk.map.style.source.MTImageSource
 import com.maptiler.maptilersdk.map.style.source.MTSource
 import com.maptiler.maptilersdk.map.types.MTLanguage
 import com.maptiler.maptilersdk.map.types.MTProjectionType
@@ -263,6 +264,17 @@ class MTStyle(
         data: URL,
         source: MTSource,
     ) = stylableWorker.setDataToSource(data, source)
+
+    internal fun setCoordinatesToImageSource(
+        coordinates: List<com.maptiler.maptilersdk.map.LngLat>,
+        source: MTImageSource,
+    ) = stylableWorker.setCoordinatesToImageSource(coordinates, source)
+
+    internal fun updateImageSource(
+        url: URL,
+        coordinates: List<com.maptiler.maptilersdk.map.LngLat>,
+        source: MTImageSource,
+    ) = stylableWorker.updateImageSource(url, coordinates, source)
 
     /**
      * Enables the globe projection visualization.
