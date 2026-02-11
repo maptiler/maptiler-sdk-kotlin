@@ -180,18 +180,32 @@ class MTStyle(
         coroutineScope?.launch {
             mapLayers[layer.identifier] = WeakReference(layer)
 
-            if (mapSources[layer.sourceIdentifier] != null) {
-                val isLoaded = isSourceLoaded(layer.sourceIdentifier)
+            val sourceRef = mapSources[layer.sourceIdentifier]
+            if (sourceRef != null) {
+                val source = sourceRef.get()
 
-                if (isLoaded) {
+                // For non-tiled sources like image/video, add the layer immediately without waiting
+                // on isSourceLoaded() to avoid a deadlock where the source never reports loaded
+                // until a layer references it.
+                val isImmediateAdd =
+                    when (source) {
+                        is MTImageSource, is MTVideoSource -> true
+                        else -> false
+                    }
+
+                if (isImmediateAdd) {
                     stylableWorker.addLayer(layer)
                 } else {
-                    val layerTask =
-                        StyleTask(layer.identifier) {
-                            stylableWorker.addLayer(layer)
-                        }
-
-                    queue.add(layerTask)
+                    val isLoaded = isSourceLoaded(layer.sourceIdentifier)
+                    if (isLoaded) {
+                        stylableWorker.addLayer(layer)
+                    } else {
+                        val layerTask =
+                            StyleTask(layer.identifier) {
+                                stylableWorker.addLayer(layer)
+                            }
+                        queue.add(layerTask)
+                    }
                 }
             } else {
                 throw MTError.MissingParent
