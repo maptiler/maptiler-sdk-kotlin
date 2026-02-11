@@ -14,6 +14,7 @@ import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
 import com.maptiler.maptilersdk.map.style.layer.circle.MTCircleLayer
 import com.maptiler.maptilersdk.map.style.layer.fill.MTFillLayer
+import com.maptiler.maptilersdk.map.style.layer.fillextrusion.MTFillExtrusionLayer
 import com.maptiler.maptilersdk.map.style.layer.heatmap.MTHeatmapLayer
 import com.maptiler.maptilersdk.map.style.layer.hillshade.MTHillshadeLayer
 import com.maptiler.maptilersdk.map.style.layer.line.MTLineLayer
@@ -38,6 +39,8 @@ internal data class AddLayer(
             handleHillshadeLayer(layer)
         } else if (layer is MTHeatmapLayer) {
             handleHeatmapLayer(layer)
+        } else if (layer is MTFillExtrusionLayer) {
+            handleFillExtrusionLayer(layer)
         } else if (layer is MTCircleLayer) {
             handleCircleLayer(layer)
         } else {
@@ -96,6 +99,12 @@ internal data class AddLayer(
     }
 
     private fun handleHeatmapLayer(layer: MTHeatmapLayer): JSString {
+        val layerString: JSString = JsonConfig.json.encodeToString(layer)
+
+        return "${MTBridge.MAP_OBJECT}.addLayer($layerString);"
+    }
+
+    private fun handleFillExtrusionLayer(layer: MTFillExtrusionLayer): JSString {
         val layerString: JSString = JsonConfig.json.encodeToString(layer)
 
         return "${MTBridge.MAP_OBJECT}.addLayer($layerString);"
