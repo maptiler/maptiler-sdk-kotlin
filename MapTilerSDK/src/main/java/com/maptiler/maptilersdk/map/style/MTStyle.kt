@@ -297,6 +297,13 @@ class MTStyle(
     ) = stylableWorker.setCoordinatesToVideoSource(coordinates, source)
 
     /**
+     * Starts playback for a video source by its identifier.
+     *
+     * @param sourceId Identifier of the video source to play.
+     */
+    fun playVideoSourceById(sourceId: String) = stylableWorker.playVideoSourceById(sourceId)
+
+    /**
      * Enables the globe projection visualization.
      */
     fun enableGlobeProjection() = stylableWorker.enableGlobeProjection()

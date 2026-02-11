@@ -44,6 +44,7 @@ import com.maptiler.maptilersdk.commands.style.GetNameForReferenceStyle
 import com.maptiler.maptilersdk.commands.style.GetNameForStyleVariant
 import com.maptiler.maptilersdk.commands.style.GetProjection
 import com.maptiler.maptilersdk.commands.style.IsSourceLoaded
+import com.maptiler.maptilersdk.commands.style.PlayVideoSourceById
 import com.maptiler.maptilersdk.commands.style.RemoveLayer
 import com.maptiler.maptilersdk.commands.style.RemoveLayerById
 import com.maptiler.maptilersdk.commands.style.RemoveSource
@@ -444,6 +445,14 @@ internal class StylableWorker(
         scope.launch {
             bridge.execute(
                 SetCoordinatesToVideoSource(coordinates, source),
+            )
+        }
+    }
+
+    fun playVideoSourceById(sourceId: String) {
+        scope.launch {
+            bridge.execute(
+                PlayVideoSourceById(sourceId),
             )
         }
     }
