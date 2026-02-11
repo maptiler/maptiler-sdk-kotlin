@@ -17,6 +17,7 @@ import com.maptiler.maptilersdk.map.style.source.MTRasterDEMSource
 import com.maptiler.maptilersdk.map.style.source.MTRasterTileSource
 import com.maptiler.maptilersdk.map.style.source.MTSource
 import com.maptiler.maptilersdk.map.style.source.MTVectorTileSource
+import com.maptiler.maptilersdk.map.style.source.MTVideoSource
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -39,6 +40,8 @@ internal data class AddSource(
             handleMTRasterDEMSource(source)
         } else if (source is MTImageSource) {
             handleMTImageSource(source)
+        } else if (source is MTVideoSource) {
+            handleMTVideoSource(source)
         } else {
             ""
         }
@@ -173,6 +176,24 @@ internal data class AddSource(
         val props = mutableListOf<String>()
         props += "type: '${source.type}'"
         props += "url: '${source.url}'"
+        props += "coordinates: $coordsString"
+
+        val propsString = props.joinToString(", ")
+        return "${MTBridge.MAP_OBJECT}.addSource('${source.identifier}', { $propsString });"
+    }
+
+    private fun handleMTVideoSource(source: MTVideoSource): JSString {
+        // coordinates must be encoded as array of [lng,lat] pairs
+        val coords: List<List<Double>> = source.coordinates.map { listOf(it.lng, it.lat) }
+        val coordsString: JSString = JsonConfig.json.encodeToString(coords)
+
+        // encode URLs to a compact JSON string array
+        val urlStrings: List<String> = source.urls.map { it.toString() }
+        val urlsJson: JSString = JsonConfig.json.encodeToString(urlStrings)
+
+        val props = mutableListOf<String>()
+        props += "type: '${source.type}'"
+        props += "urls: $urlsJson"
         props += "coordinates: $coordsString"
 
         val propsString = props.joinToString(", ")

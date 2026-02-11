@@ -28,6 +28,7 @@ import com.maptiler.maptilersdk.map.style.image.MTAddImageOptions
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
 import com.maptiler.maptilersdk.map.style.source.MTImageSource
 import com.maptiler.maptilersdk.map.style.source.MTSource
+import com.maptiler.maptilersdk.map.style.source.MTVideoSource
 import com.maptiler.maptilersdk.map.types.MTLanguage
 import com.maptiler.maptilersdk.map.types.MTProjectionType
 import com.maptiler.maptilersdk.map.workers.stylable.MTStylable
@@ -275,6 +276,11 @@ class MTStyle(
         coordinates: List<com.maptiler.maptilersdk.map.LngLat>,
         source: MTImageSource,
     ) = stylableWorker.updateImageSource(url, coordinates, source)
+
+    internal fun setCoordinatesToVideoSource(
+        coordinates: List<com.maptiler.maptilersdk.map.LngLat>,
+        source: MTVideoSource,
+    ) = stylableWorker.setCoordinatesToVideoSource(coordinates, source)
 
     /**
      * Enables the globe projection visualization.

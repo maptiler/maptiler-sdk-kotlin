@@ -49,6 +49,7 @@ import com.maptiler.maptilersdk.commands.style.RemoveLayerById
 import com.maptiler.maptilersdk.commands.style.RemoveSource
 import com.maptiler.maptilersdk.commands.style.RemoveSourceById
 import com.maptiler.maptilersdk.commands.style.SetCoordinatesToImageSource
+import com.maptiler.maptilersdk.commands.style.SetCoordinatesToVideoSource
 import com.maptiler.maptilersdk.commands.style.SetDataToSource
 import com.maptiler.maptilersdk.commands.style.SetFilter
 import com.maptiler.maptilersdk.commands.style.SetGlyphs
@@ -78,6 +79,7 @@ import com.maptiler.maptilersdk.map.style.image.MTAddImageOptions
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
 import com.maptiler.maptilersdk.map.style.source.MTImageSource
 import com.maptiler.maptilersdk.map.style.source.MTSource
+import com.maptiler.maptilersdk.map.style.source.MTVideoSource
 import com.maptiler.maptilersdk.map.types.MTLanguage
 import com.maptiler.maptilersdk.map.types.MTProjectionType
 import kotlinx.coroutines.CoroutineScope
@@ -431,6 +433,17 @@ internal class StylableWorker(
         scope.launch {
             bridge.execute(
                 UpdateImageSource(url, coordinates, source),
+            )
+        }
+    }
+
+    fun setCoordinatesToVideoSource(
+        coordinates: List<com.maptiler.maptilersdk.map.LngLat>,
+        source: MTVideoSource,
+    ) {
+        scope.launch {
+            bridge.execute(
+                SetCoordinatesToVideoSource(coordinates, source),
             )
         }
     }
