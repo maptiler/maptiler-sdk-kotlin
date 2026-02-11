@@ -83,6 +83,8 @@ internal class WebViewExecutor(
                     settings.allowFileAccessFromFileURLs = true
                     settings.allowUniversalAccessFromFileURLs = true
                     settings.domStorageEnabled = true
+                    // Allow autoplay for HTML5 media (needed for video sources)
+                    settings.mediaPlaybackRequiresUserGesture = false
                     settings.cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
                     settings.useWideViewPort = true
                     settings.loadWithOverviewMode = true
@@ -134,6 +136,8 @@ internal class WebViewExecutor(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             webView.settings.setOffscreenPreRaster(true)
         }
+        // Allow autoplay for HTML5 media when a custom WebView is supplied
+        webView.settings.mediaPlaybackRequiresUserGesture = false
         // Ensure our clients are attached so navigation callbacks work consistently.
         webView.webChromeClient = WebChromeClient()
         webView.webViewClient =

@@ -180,18 +180,32 @@ class MTStyle(
         coroutineScope?.launch {
             mapLayers[layer.identifier] = WeakReference(layer)
 
-            if (mapSources[layer.sourceIdentifier] != null) {
-                val isLoaded = isSourceLoaded(layer.sourceIdentifier)
+            val sourceRef = mapSources[layer.sourceIdentifier]
+            if (sourceRef != null) {
+                val source = sourceRef.get()
 
-                if (isLoaded) {
+                // For non-tiled sources like image/video, add the layer immediately without waiting
+                // on isSourceLoaded() to avoid a deadlock where the source never reports loaded
+                // until a layer references it.
+                val isImmediateAdd =
+                    when (source) {
+                        is MTImageSource, is MTVideoSource -> true
+                        else -> false
+                    }
+
+                if (isImmediateAdd) {
                     stylableWorker.addLayer(layer)
                 } else {
-                    val layerTask =
-                        StyleTask(layer.identifier) {
-                            stylableWorker.addLayer(layer)
-                        }
-
-                    queue.add(layerTask)
+                    val isLoaded = isSourceLoaded(layer.sourceIdentifier)
+                    if (isLoaded) {
+                        stylableWorker.addLayer(layer)
+                    } else {
+                        val layerTask =
+                            StyleTask(layer.identifier) {
+                                stylableWorker.addLayer(layer)
+                            }
+                        queue.add(layerTask)
+                    }
                 }
             } else {
                 throw MTError.MissingParent
@@ -281,6 +295,20 @@ class MTStyle(
         coordinates: List<com.maptiler.maptilersdk.map.LngLat>,
         source: MTVideoSource,
     ) = stylableWorker.setCoordinatesToVideoSource(coordinates, source)
+
+    /**
+     * Starts playback for a video source by its identifier.
+     *
+     * @param sourceId Identifier of the video source to play.
+     */
+    fun playVideoSourceById(sourceId: String) = stylableWorker.playVideoSourceById(sourceId)
+
+    /**
+     * Stops (pauses) playback for a video source by its identifier.
+     *
+     * @param sourceId Identifier of the video source to stop.
+     */
+    fun stopVideoSourceById(sourceId: String) = stylableWorker.stopVideoSourceById(sourceId)
 
     /**
      * Enables the globe projection visualization.
