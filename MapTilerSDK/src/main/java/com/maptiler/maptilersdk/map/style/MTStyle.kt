@@ -304,6 +304,13 @@ class MTStyle(
     fun playVideoSourceById(sourceId: String) = stylableWorker.playVideoSourceById(sourceId)
 
     /**
+     * Stops (pauses) playback for a video source by its identifier.
+     *
+     * @param sourceId Identifier of the video source to stop.
+     */
+    fun stopVideoSourceById(sourceId: String) = stylableWorker.stopVideoSourceById(sourceId)
+
+    /**
      * Enables the globe projection visualization.
      */
     fun enableGlobeProjection() = stylableWorker.enableGlobeProjection()
