@@ -180,6 +180,12 @@ class MTStyle(
         coroutineScope?.launch {
             mapLayers[layer.identifier] = WeakReference(layer)
 
+            // Background layers are source-less; add them immediately.
+            if (layer.type == com.maptiler.maptilersdk.map.style.layer.MTLayerType.BACKGROUND) {
+                stylableWorker.addLayer(layer)
+                return@launch
+            }
+
             val sourceRef = mapSources[layer.sourceIdentifier]
             if (sourceRef != null) {
                 val source = sourceRef.get()
