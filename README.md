@@ -492,8 +492,8 @@ MapTiler SDK Kotlin is released under the BSD 3-Clause license – see the [LIC
 
 - [x] Map interaction
 - [x] Pre-made map styles
-- [x] VectorTile and GeoJSON sources
-- [x] Fill, Line and Symbol layers
+- [x] Sources: Vector tiles, Raster tiles, Raster DEM, GeoJSON, Image, Video
+- [x] Layers: Background, Circle, Fill, Line, Symbol, Raster, Heatmap, Hillshade, Fill‑Extrusion
 - [x] Custom Annotation Views
 - [x] Location tracking
 - [x] Globe and 3D Terrain
