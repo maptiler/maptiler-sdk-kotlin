@@ -7,12 +7,17 @@
 package com.maptiler.maptilersdk.map.style.layer.fillextrusion
 
 import android.graphics.Color
+import com.maptiler.maptilersdk.map.style.dsl.PropertyValue
+import com.maptiler.maptilersdk.map.style.dsl.StyleValue
+import com.maptiler.maptilersdk.map.style.dsl.StyleValueSerializer
+import com.maptiler.maptilersdk.map.style.dsl.toJsonElement
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
 import com.maptiler.maptilersdk.map.style.layer.MTLayerType
 import com.maptiler.maptilersdk.map.style.layer.MTLayerVisibility
 import com.maptiler.maptilersdk.map.style.layer.fill.ColorAsHexSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
 
 /**
  * A fill-extrusion style layer renders one or more filled (and optionally stroked) extruded (3D) polygons on a map.
@@ -65,9 +70,9 @@ class MTFillExtrusionLayer : MTLayer {
      * Defaults to 0. Requires [height].
      */
     var base: Double?
-        get() = _paint.base ?: 0.0
+        get() = (_paint.base as? StyleValue.Number)?.value
         set(value) {
-            _paint.base = value
+            _paint.base = value?.let { StyleValue.Number(it) }
         }
 
     /**
@@ -76,27 +81,27 @@ class MTFillExtrusionLayer : MTLayer {
      */
     @Serializable(with = ColorAsHexSerializer::class)
     var color: Int?
-        get() = _paint.color ?: Color.BLACK
+        get() = (_paint.color as? StyleValue.Color)?.value
         set(value) {
-            _paint.color = value
+            _paint.color = value?.let { StyleValue.Color(it) }
         }
 
     /**
      * The height with which to extrude this layer. Units in meters. Defaults to 0.
      */
     var height: Double?
-        get() = _paint.height ?: 0.0
+        get() = (_paint.height as? StyleValue.Number)?.value
         set(value) {
-            _paint.height = value
+            _paint.height = value?.let { StyleValue.Number(it) }
         }
 
     /**
      * The opacity of the entire fill extrusion layer. Optional number between 0 and 1 inclusive. Defaults to 1.
      */
     var opacity: Double?
-        get() = _paint.opacity ?: 1.0
+        get() = (_paint.opacity as? StyleValue.Number)?.value
         set(value) {
-            _paint.opacity = value
+            _paint.opacity = value?.let { StyleValue.Number(it) }
         }
 
     /**
@@ -145,13 +150,38 @@ class MTFillExtrusionLayer : MTLayer {
             _layout.visibility = value
         }
 
-    @Suppress("PropertyName")
     @SerialName("layout")
+    @Suppress("PropertyName")
     private var _layout: MTFillExtrusionLayout = MTFillExtrusionLayout()
 
-    @Suppress("PropertyName")
     @SerialName("paint")
+    @Suppress("PropertyName")
     private var _paint: MTFillExtrusionPaint = MTFillExtrusionPaint()
+
+    @SerialName("filter")
+    @Suppress("PropertyName")
+    private var _filter: JsonElement? = null
+
+    fun withFilter(expr: PropertyValue) {
+        _filter = expr.toJsonElement()
+    }
+
+    // --- DSL helpers (member functions) ---
+    fun baseConst(value: Double) = apply { this.base = value }
+
+    fun baseExpr(expr: PropertyValue) = apply { this._paint.base = StyleValue.Expression(expr) }
+
+    fun colorConst(color: Int) = apply { this.color = color }
+
+    fun colorExpr(expr: PropertyValue) = apply { this._paint.color = StyleValue.Expression(expr) }
+
+    fun heightConst(value: Double) = apply { this.height = value }
+
+    fun heightExpr(expr: PropertyValue) = apply { this._paint.height = StyleValue.Expression(expr) }
+
+    fun opacityConst(value: Double) = apply { this.opacity = value }
+
+    fun opacityExpr(expr: PropertyValue) = apply { this._paint.opacity = StyleValue.Expression(expr) }
 
     constructor(
         identifier: String,
@@ -162,10 +192,10 @@ class MTFillExtrusionLayer : MTLayer {
         this._layout = MTFillExtrusionLayout(visibility = visibility)
         this._paint =
             MTFillExtrusionPaint(
-                base = base,
-                color = color,
-                height = height,
-                opacity = opacity,
+                base = base?.let { StyleValue.Number(it) },
+                color = color?.let { StyleValue.Color(it) },
+                height = height?.let { StyleValue.Number(it) },
+                opacity = opacity?.let { StyleValue.Number(it) },
                 pattern = pattern,
                 translate = translate,
                 translateAnchor = translateAnchor,
@@ -188,10 +218,10 @@ class MTFillExtrusionLayer : MTLayer {
         this._layout = MTFillExtrusionLayout(visibility = visibility)
         this._paint =
             MTFillExtrusionPaint(
-                base = base,
-                color = color,
-                height = height,
-                opacity = opacity,
+                base = base?.let { StyleValue.Number(it) },
+                color = color?.let { StyleValue.Color(it) },
+                height = height?.let { StyleValue.Number(it) },
+                opacity = opacity?.let { StyleValue.Number(it) },
                 pattern = pattern,
                 translate = translate,
                 translateAnchor = translateAnchor,
@@ -237,10 +267,10 @@ class MTFillExtrusionLayer : MTLayer {
             )
         this._paint =
             MTFillExtrusionPaint(
-                base = base,
-                color = color,
-                height = height,
-                opacity = opacity,
+                base = base?.let { StyleValue.Number(it) },
+                color = color?.let { StyleValue.Color(it) },
+                height = height?.let { StyleValue.Number(it) },
+                opacity = opacity?.let { StyleValue.Number(it) },
                 pattern = pattern,
                 translate = translate,
                 translateAnchor = translateAnchor,
@@ -257,14 +287,17 @@ internal data class MTFillExtrusionLayout(
 @Serializable
 internal data class MTFillExtrusionPaint(
     @SerialName("fill-extrusion-base")
-    var base: Double? = 0.0,
-    @Serializable(with = ColorAsHexSerializer::class)
+    @Serializable(with = StyleValueSerializer::class)
+    var base: StyleValue? = null,
     @SerialName("fill-extrusion-color")
-    var color: Int? = Color.BLACK,
+    @Serializable(with = StyleValueSerializer::class)
+    var color: StyleValue? = null,
     @SerialName("fill-extrusion-height")
-    var height: Double? = 0.0,
+    @Serializable(with = StyleValueSerializer::class)
+    var height: StyleValue? = null,
     @SerialName("fill-extrusion-opacity")
-    var opacity: Double? = 1.0,
+    @Serializable(with = StyleValueSerializer::class)
+    var opacity: StyleValue? = null,
     @SerialName("fill-extrusion-pattern")
     var pattern: String? = null,
     @SerialName("fill-extrusion-translate")
