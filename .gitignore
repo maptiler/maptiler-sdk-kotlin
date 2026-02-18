@@ -56,3 +56,6 @@ CLAUDE.md
 output.txt
 .gemini/
 gha-creds-*.json
+GEMINI.md
+gemini-artifacts
+.geminiignore
