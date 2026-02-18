@@ -41,6 +41,7 @@ import com.maptiler.maptilersdk.events.MTEvent
 import com.maptiler.maptilersdk.logging.MTLogType
 import com.maptiler.maptilersdk.logging.MTLogger
 import com.maptiler.maptilersdk.map.gestures.MTGestureService
+import com.maptiler.maptilersdk.map.options.MTAnimationOptions
 import com.maptiler.maptilersdk.map.options.MTCameraOptions
 import com.maptiler.maptilersdk.map.options.MTFitBoundsOptions
 import com.maptiler.maptilersdk.map.options.MTFlyToOptions
@@ -484,6 +485,17 @@ class MTMapViewController(
      * @param coordinates Coordinates to pan to.
      */
     override fun panTo(coordinates: LngLat) = navigableWorker.panTo(coordinates)
+
+    /**
+     * Zooms the map to the specified zoom level.
+     *
+     * @param zoom The target zoom level.
+     * @param options The animation options.
+     */
+    override fun zoomTo(
+        zoom: Double,
+        options: MTAnimationOptions?,
+    ) = navigableWorker.zoomTo(zoom, options)
 
     /**
      * Changes any combination of center, zoom, bearing, and pitch, animating the transition along a curve that evokes flight.
