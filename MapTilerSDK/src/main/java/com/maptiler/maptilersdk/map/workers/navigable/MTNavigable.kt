@@ -7,6 +7,7 @@
 package com.maptiler.maptilersdk.map.workers.navigable
 
 import com.maptiler.maptilersdk.map.LngLat
+import com.maptiler.maptilersdk.map.options.MTAnimationOptions
 import com.maptiler.maptilersdk.map.options.MTCameraOptions
 import com.maptiler.maptilersdk.map.options.MTFitBoundsOptions
 import com.maptiler.maptilersdk.map.options.MTFlyToOptions
@@ -56,6 +57,17 @@ interface MTNavigable {
      * @param cameraOptions Options for controlling the desired location, zoom, bearing, and pitch of the camera.
      */
     fun easeTo(cameraOptions: MTCameraOptions)
+
+    /**
+     * Zooms the map to the specified zoom level, with an animated transition.
+     *
+     * @param zoom The zoom level to transition to.
+     * @param options Options object.
+     */
+    fun zoomTo(
+        zoom: Double,
+        options: MTAnimationOptions? = null,
+    )
 
     /**
      * Adjusts the camera to ensure the entire bounding box is visible.

@@ -41,6 +41,7 @@ import com.maptiler.maptilersdk.events.MTEvent
 import com.maptiler.maptilersdk.logging.MTLogType
 import com.maptiler.maptilersdk.logging.MTLogger
 import com.maptiler.maptilersdk.map.gestures.MTGestureService
+import com.maptiler.maptilersdk.map.options.MTAnimationOptions
 import com.maptiler.maptilersdk.map.options.MTCameraOptions
 import com.maptiler.maptilersdk.map.options.MTFitBoundsOptions
 import com.maptiler.maptilersdk.map.options.MTFlyToOptions
@@ -509,6 +510,17 @@ class MTMapViewController(
      * @param cameraOptions Options for controlling the desired location, zoom, bearing, and pitch of the camera.
      */
     override fun easeTo(cameraOptions: MTCameraOptions) = navigableWorker.easeTo(cameraOptions)
+
+    /**
+     * Zooms the map to the specified zoom level, with an animated transition.
+     *
+     * @param zoom The zoom level to transition to.
+     * @param options Options object.
+     */
+    override fun zoomTo(
+        zoom: Double,
+        options: MTAnimationOptions?,
+    ) = navigableWorker.zoomTo(zoom, options)
 
     /**
      * Fits the viewport so that the supplied bounds are fully visible, applying optional padding or animation overrides.
