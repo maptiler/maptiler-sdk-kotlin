@@ -17,6 +17,8 @@ import com.maptiler.maptilersdk.commands.navigation.SetMinZoom
 import com.maptiler.maptilersdk.commands.navigation.SetZoom
 import com.maptiler.maptilersdk.commands.navigation.ZoomIn
 import com.maptiler.maptilersdk.commands.navigation.ZoomOut
+import com.maptiler.maptilersdk.commands.navigation.ZoomTo
+import com.maptiler.maptilersdk.map.options.MTAnimationOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -76,6 +78,17 @@ internal class ZoomableWorker(
             is StringValue -> returnTypeValue.value.toDouble()
             is DoubleValue -> returnTypeValue.value
             else -> 0.0
+        }
+    }
+
+    override fun zoomTo(
+        zoom: Double,
+        options: MTAnimationOptions?,
+    ) {
+        scope.launch {
+            bridge.execute(
+                ZoomTo(zoom, options),
+            )
         }
     }
 
