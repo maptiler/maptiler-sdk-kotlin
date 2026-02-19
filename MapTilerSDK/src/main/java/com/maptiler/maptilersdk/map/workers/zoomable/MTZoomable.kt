@@ -6,6 +6,8 @@
 
 package com.maptiler.maptilersdk.map.workers.zoomable
 
+import com.maptiler.maptilersdk.map.options.MTAnimationOptions
+
 /**
  * Defines methods for manipulating zoom level.
  */
@@ -34,6 +36,17 @@ interface MTZoomable {
      * Returns the map's minimum zoom level.
      */
     suspend fun getMinZoom(): Double
+
+    /**
+     * Zooms the map to the specified zoom level, with an optional animation.
+     *
+     * @param zoom The zoom level to transition to.
+     * @param options Options object describing the destination and animation of the transition.
+     */
+    fun zoomTo(
+        zoom: Double,
+        options: MTAnimationOptions? = null,
+    )
 
     /**
      * Sets the map's zoom level.

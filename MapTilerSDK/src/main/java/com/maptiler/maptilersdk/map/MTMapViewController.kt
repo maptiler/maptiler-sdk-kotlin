@@ -41,6 +41,7 @@ import com.maptiler.maptilersdk.events.MTEvent
 import com.maptiler.maptilersdk.logging.MTLogType
 import com.maptiler.maptilersdk.logging.MTLogger
 import com.maptiler.maptilersdk.map.gestures.MTGestureService
+import com.maptiler.maptilersdk.map.options.MTAnimationOptions
 import com.maptiler.maptilersdk.map.options.MTCameraOptions
 import com.maptiler.maptilersdk.map.options.MTFitBoundsOptions
 import com.maptiler.maptilersdk.map.options.MTFlyToOptions
@@ -449,6 +450,17 @@ class MTMapViewController(
      * Returns the map's minimum zoom level.
      */
     override suspend fun getMinZoom(): Double = zoomableWorker.getMinZoom()
+
+    /**
+     * Zooms the map to the specified zoom level, with an optional animation.
+     *
+     * @param zoom The zoom level to transition to.
+     * @param options Options object describing the destination and animation of the transition.
+     */
+    override fun zoomTo(
+        zoom: Double,
+        options: MTAnimationOptions?,
+    ) = zoomableWorker.zoomTo(zoom, options)
 
     /**
      * Sets the map's zoom level.
