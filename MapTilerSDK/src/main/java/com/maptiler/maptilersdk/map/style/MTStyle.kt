@@ -146,6 +146,17 @@ class MTStyle(
     ) = stylableWorker.addImage(identifier, image, options)
 
     /**
+     * Updates an image with the given identifier.
+     *
+     * @param identifier Unique name for the image in the style registry.
+     * @param image Bitmap containing the image data.
+     */
+    fun updateImage(
+        identifier: String,
+        image: Bitmap,
+    ) = stylableWorker.updateImage(identifier, image)
+
+    /**
      * Registers a sprite hosted at the provided URL under the given identifier.
      *
      * @param identifier Unique name for the sprite resource.
