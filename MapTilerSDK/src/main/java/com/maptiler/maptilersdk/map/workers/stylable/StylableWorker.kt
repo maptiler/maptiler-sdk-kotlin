@@ -66,6 +66,7 @@ import com.maptiler.maptilersdk.commands.style.SetStyle
 import com.maptiler.maptilersdk.commands.style.SetTilesToSource
 import com.maptiler.maptilersdk.commands.style.SetUrlToSource
 import com.maptiler.maptilersdk.commands.style.StopVideoSourceById
+import com.maptiler.maptilersdk.commands.style.UpdateImage
 import com.maptiler.maptilersdk.commands.style.UpdateImageSource
 import com.maptiler.maptilersdk.helpers.MTHeatmapLayerOptions
 import com.maptiler.maptilersdk.helpers.MTPointLayerOptions
@@ -253,6 +254,17 @@ internal class StylableWorker(
         scope.launch {
             bridge.execute(
                 AddImage(identifier, image, options),
+            )
+        }
+    }
+
+    fun updateImage(
+        identifier: String,
+        image: Bitmap,
+    ) {
+        scope.launch {
+            bridge.execute(
+                UpdateImage(identifier, image),
             )
         }
     }
