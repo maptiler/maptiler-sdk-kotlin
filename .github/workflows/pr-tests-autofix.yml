@@ -93,11 +93,11 @@ jobs:
         shell: bash
         run: |
           {
-            echo 'FAILURE_EXCERPT<<EOF'
+            echo 'FAILURE_EXCERPT<<END_OF_LOG_EXCERPT'
             if command -v gsed >/dev/null 2>&1; then SED=gsed; else SED=sed; fi
             # Capture relevant Gradle failures and failing test lines; fallback to last 400 lines
             (grep -E "(FAILURE:|There were failing tests|\bFAILED\b|\berror\b|Exception:)" -n gradle-test.log || tail -n 400 gradle-test.log) | $SED -e 's/$//'
-            echo EOF
+            echo END_OF_LOG_EXCERPT
           } >> "$GITHUB_ENV"
 
       - name: Symlink agents
@@ -110,6 +110,7 @@ jobs:
         run: |
           echo "directives<<EOF" >> "$GITHUB_OUTPUT"
           cat .github/copilot-instructions.md >> "$GITHUB_OUTPUT"
+          echo "" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
 
       - id: guard
