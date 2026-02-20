@@ -185,6 +185,14 @@ interface MTNavigable {
     suspend fun project(coordinates: LngLat): MTPoint
 
     /**
+     * Unprojects a point on the container to geographical coordinates.
+     *
+     * @param point The screen-space point in pixels.
+     * @return Geographical coordinate.
+     */
+    suspend fun unproject(point: MTPoint): LngLat
+
+    /**
      * Sets the geographical center of the map.
      *
      * @param center Geographical center of the map.

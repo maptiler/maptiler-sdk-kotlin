@@ -44,6 +44,7 @@ import com.maptiler.maptilersdk.commands.navigation.SetPitch
 import com.maptiler.maptilersdk.commands.navigation.SetPixelRatio
 import com.maptiler.maptilersdk.commands.navigation.SetRoll
 import com.maptiler.maptilersdk.commands.navigation.SetVerticalFieldOfView
+import com.maptiler.maptilersdk.commands.navigation.Unproject
 import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.map.LngLat
 import com.maptiler.maptilersdk.map.options.MTCameraOptions
@@ -392,6 +393,18 @@ internal class NavigableWorker(
         return when (returnTypeValue) {
             is StringValue -> JsonConfig.json.decodeFromString<MTPoint>(returnTypeValue.value)
             else -> MTPoint(0.0, 0.0)
+        }
+    }
+
+    override suspend fun unproject(point: MTPoint): LngLat {
+        val returnTypeValue =
+            bridge.execute(
+                Unproject(point),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> JsonConfig.json.decodeFromString<LngLat>(returnTypeValue.value)
+            else -> LngLat(0.0, 0.0)
         }
     }
 

@@ -26,6 +26,7 @@ import com.maptiler.maptilersdk.commands.navigation.SetMinZoom
 import com.maptiler.maptilersdk.commands.navigation.SetPixelRatio
 import com.maptiler.maptilersdk.commands.navigation.SetVerticalFieldOfView
 import com.maptiler.maptilersdk.commands.navigation.SetZoom
+import com.maptiler.maptilersdk.commands.navigation.Unproject
 import com.maptiler.maptilersdk.commands.navigation.ZoomIn
 import com.maptiler.maptilersdk.commands.navigation.ZoomOut
 import com.maptiler.maptilersdk.map.LngLat
@@ -146,6 +147,14 @@ class NavigationTests {
         val cmd = Project(LngLat(14.42, 50.09))
         assertEquals(
             "(() => { const p = ${MTBridge.MAP_OBJECT}.project([14.42, 50.09]); return { x: p.x, y: p.y }; })();",
+            cmd.toJS(),
+        )
+    }
+
+    @Test fun unprojectToJS_ReturnsCorrectJSString() {
+        val cmd = Unproject(MTPoint(100.0, 200.0))
+        assertEquals(
+            "(() => { const p = ${MTBridge.MAP_OBJECT}.unproject([100.0, 200.0]); return { lng: p.lng, lat: p.lat }; })();",
             cmd.toJS(),
         )
     }
