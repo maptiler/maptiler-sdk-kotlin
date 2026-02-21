@@ -44,9 +44,12 @@ import com.maptiler.maptilersdk.commands.navigation.SetPitch
 import com.maptiler.maptilersdk.commands.navigation.SetPixelRatio
 import com.maptiler.maptilersdk.commands.navigation.SetRoll
 import com.maptiler.maptilersdk.commands.navigation.SetVerticalFieldOfView
+import com.maptiler.maptilersdk.commands.navigation.SnapToNorth
+import com.maptiler.maptilersdk.commands.navigation.Stop
 import com.maptiler.maptilersdk.commands.navigation.Unproject
 import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.map.LngLat
+import com.maptiler.maptilersdk.map.options.MTAnimationOptions
 import com.maptiler.maptilersdk.map.options.MTCameraOptions
 import com.maptiler.maptilersdk.map.options.MTFitBoundsOptions
 import com.maptiler.maptilersdk.map.options.MTFlyToOptions
@@ -76,6 +79,22 @@ internal class NavigableWorker(
         scope.launch {
             bridge.execute(
                 PanTo(coordinates),
+            )
+        }
+    }
+
+    override fun stop() {
+        scope.launch {
+            bridge.execute(
+                Stop(),
+            )
+        }
+    }
+
+    override fun snapToNorth(options: MTAnimationOptions?) {
+        scope.launch {
+            bridge.execute(
+                SnapToNorth(options),
             )
         }
     }

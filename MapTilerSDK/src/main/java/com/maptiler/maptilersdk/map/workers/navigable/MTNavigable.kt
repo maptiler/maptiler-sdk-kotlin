@@ -7,6 +7,7 @@
 package com.maptiler.maptilersdk.map.workers.navigable
 
 import com.maptiler.maptilersdk.map.LngLat
+import com.maptiler.maptilersdk.map.options.MTAnimationOptions
 import com.maptiler.maptilersdk.map.options.MTCameraOptions
 import com.maptiler.maptilersdk.map.options.MTFitBoundsOptions
 import com.maptiler.maptilersdk.map.options.MTFlyToOptions
@@ -31,6 +32,18 @@ interface MTNavigable {
      * @param coordinates Coordinates to pan to.
      */
     fun panTo(coordinates: LngLat)
+
+    /**
+     * Stops any animated transition underway.
+     */
+    fun stop()
+
+    /**
+     * Snaps the map so that north is up (bearing 0), animating the transition.
+     *
+     * @param options Animation options.
+     */
+    fun snapToNorth(options: MTAnimationOptions? = null)
 
     /**
      * Changes any combination of center, zoom, bearing, and pitch, animating the transition along a curve that evokes flight.
