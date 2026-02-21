@@ -35,6 +35,7 @@ import com.maptiler.maptilersdk.commands.annotations.ToggleMarkerPopup
 import com.maptiler.maptilersdk.commands.annotations.TrackTextPopupPointer
 import com.maptiler.maptilersdk.commands.misc.GpxToGeoJSON
 import com.maptiler.maptilersdk.commands.misc.KmlToGeoJSON
+import com.maptiler.maptilersdk.commands.misc.TriggerRepaint
 import com.maptiler.maptilersdk.events.EventProcessor
 import com.maptiler.maptilersdk.events.EventProcessorDelegate
 import com.maptiler.maptilersdk.events.MTEvent
@@ -223,6 +224,17 @@ class MTMapViewController(
 
     fun reload() {
         webViewExecutor?.reload()
+    }
+
+    /**
+     * Trigger the rendering of a single frame.
+     * Use this method with custom layers to repaint the map when the layer changes.
+     * Calling this multiple times before the next frame is rendered will still result in only a single frame being rendered.
+     */
+    fun triggerRepaint() {
+        coroutineScope?.launch {
+            bridge?.execute(TriggerRepaint())
+        }
     }
 
     /**
