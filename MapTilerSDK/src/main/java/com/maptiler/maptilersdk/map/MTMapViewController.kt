@@ -238,6 +238,44 @@ class MTMapViewController(
     }
 
     /**
+     * Set the duration (millisec) of the terrain animation for growing or flattening.
+     * Must be positive.
+     *
+     * @param duration The duration in milliseconds.
+     */
+    fun setTerrainAnimationDuration(duration: Double) {
+        coroutineScope?.launch {
+            bridge?.execute(com.maptiler.maptilersdk.commands.style.SetTerrainAnimationDuration(duration))
+        }
+    }
+
+    /**
+     * Change the terrain exaggeration.
+     *
+     * @param exaggeration The new exaggeration factor.
+     * @param animate If true, the transition will be animated.
+     */
+    fun setTerrainExaggeration(
+        exaggeration: Double,
+        animate: Boolean? = null,
+    ) {
+        coroutineScope?.launch {
+            bridge?.execute(com.maptiler.maptilersdk.commands.style.SetTerrainExaggeration(exaggeration, animate))
+        }
+    }
+
+    /**
+     * Set the map terrain.
+     *
+     * @param terrain The terrain specification or null to disable terrain.
+     */
+    fun setTerrain(terrain: com.maptiler.maptilersdk.map.style.MTTerrainSpecification?) {
+        coroutineScope?.launch {
+            bridge?.execute(com.maptiler.maptilersdk.commands.style.SetTerrain(terrain))
+        }
+    }
+
+    /**
      * Show or hide tile boundaries
      */
     fun showTileBoundaries(show: Boolean) {
