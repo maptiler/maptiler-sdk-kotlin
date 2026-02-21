@@ -510,6 +510,18 @@ class MTMapViewController(
     override fun panTo(coordinates: LngLat) = navigableWorker.panTo(coordinates)
 
     /**
+     * Stops any animated transition underway.
+     */
+    override fun stop() = navigableWorker.stop()
+
+    /**
+     * Snaps the map so that north is up (bearing 0), animating the transition.
+     *
+     * @param options Animation options.
+     */
+    override fun snapToNorth(options: MTAnimationOptions?) = navigableWorker.snapToNorth(options)
+
+    /**
      * Changes any combination of center, zoom, bearing, and pitch, animating the transition along a curve that evokes flight.
      *
      * @param cameraOptions Options for controlling the desired location, zoom, bearing, and pitch of the camera.
