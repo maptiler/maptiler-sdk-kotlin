@@ -238,6 +238,42 @@ class MTMapViewController(
     }
 
     /**
+     * Show or hide tile boundaries
+     */
+    fun showTileBoundaries(show: Boolean) {
+        coroutineScope?.launch {
+            bridge?.execute(com.maptiler.maptilersdk.commands.misc.ShowTileBoundaries(show))
+        }
+    }
+
+    /**
+     * Show or hide padding
+     */
+    fun showPadding(show: Boolean) {
+        coroutineScope?.launch {
+            bridge?.execute(com.maptiler.maptilersdk.commands.misc.ShowPadding(show))
+        }
+    }
+
+    /**
+     * Show or hide overdraw inspector
+     */
+    fun showOverdrawInpector(show: Boolean) {
+        coroutineScope?.launch {
+            bridge?.execute(com.maptiler.maptilersdk.commands.misc.ShowOverdrawInspector(show))
+        }
+    }
+
+    /**
+     * Show or hide collision boxes
+     */
+    fun showCollisionBoxes(show: Boolean) {
+        coroutineScope?.launch {
+            bridge?.execute(com.maptiler.maptilersdk.commands.misc.ShowCollisionBoxes(show))
+        }
+    }
+
+    /**
      * Converts a GPX XML payload to a GeoJSON FeatureCollection string using the SDK converter.
      *
      * This does not mutate the map and can be used to prepare data for a `GeoJSON` source.
