@@ -59,3 +59,4 @@ gha-creds-*.json
 GEMINI.md
 gemini-artifacts
 .geminiignore
+patch.txt
