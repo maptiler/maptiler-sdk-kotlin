@@ -452,6 +452,20 @@ class MTStyle(
     fun setLanguage(language: MTLanguage) = stylableWorker.setLanguage(language)
 
     /**
+     * Sets the map secondary language.
+     *
+     * @param language Desired secondary language of the map labels.
+     */
+    fun setSecondaryLanguage(language: MTLanguage) = stylableWorker.setSecondaryLanguage(language)
+
+    /**
+     * Updates the sprite of the map.
+     *
+     * @param spriteUrl The URL string pointing to the sprite image and JSON.
+     */
+    fun setSprite(spriteUrl: String) = stylableWorker.setSprite(spriteUrl)
+
+    /**
      * Sets the global light options for the current style.
      * Provide a JSON object string compatible with MapLibre GL Light specification.
      * Example: { "anchor": "viewport", "intensity": 0.5 }
