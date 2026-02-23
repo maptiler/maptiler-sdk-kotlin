@@ -256,18 +256,15 @@ class MTMapOptions {
 
     /**
      * Controls which map events are sent from the map object.
-     *
-     * Defaults to [MTEventLevel.CAMERA_ONLY] so camera-tracking overlays work out-of-the-box
-     * without wiring all high-frequency touch/render events.
      */
-    var eventLevel: MTEventLevel = MTEventLevel.CAMERA_ONLY
+    var eventLevel: MTEventLevel = MTEventLevel.ALL
         private set
 
     /**
      * Optional throttle in milliseconds applied to high-frequency events when [eventLevel] is
      * [MTEventLevel.ALL] or [MTEventLevel.CAMERA_ONLY]. A value of 0 disables throttling.
      */
-    var highFrequencyEventThrottleMs: Int? = 150
+    var highFrequencyEventThrottleMs: Int? = 10
         private set
 
     /**
