@@ -276,6 +276,28 @@ class MTMapViewController(
     }
 
     /**
+     * Updates the sprite of the map.
+     *
+     * @param spriteUrl The URL string pointing to the sprite image and JSON.
+     */
+    fun setSprite(spriteUrl: String) {
+        coroutineScope?.launch {
+            bridge?.execute(com.maptiler.maptilersdk.commands.style.SetSprite(spriteUrl))
+        }
+    }
+
+    /**
+     * Sets the secondary map language.
+     *
+     * @param language Desired secondary language of the map labels.
+     */
+    fun setSecondaryLanguage(language: com.maptiler.maptilersdk.map.types.MTLanguage) {
+        coroutineScope?.launch {
+            bridge?.execute(com.maptiler.maptilersdk.commands.style.SetSecondaryLanguage(language))
+        }
+    }
+
+    /**
      * Show or hide tile boundaries
      */
     fun showTileBoundaries(show: Boolean) {

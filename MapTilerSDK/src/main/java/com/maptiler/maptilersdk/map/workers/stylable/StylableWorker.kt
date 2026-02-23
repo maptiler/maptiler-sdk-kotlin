@@ -60,8 +60,10 @@ import com.maptiler.maptilersdk.commands.style.SetLayoutProperty
 import com.maptiler.maptilersdk.commands.style.SetLight
 import com.maptiler.maptilersdk.commands.style.SetPaintProperty
 import com.maptiler.maptilersdk.commands.style.SetRenderWorldCopies
+import com.maptiler.maptilersdk.commands.style.SetSecondaryLanguage
 import com.maptiler.maptilersdk.commands.style.SetSky
 import com.maptiler.maptilersdk.commands.style.SetSpace
+import com.maptiler.maptilersdk.commands.style.SetSprite
 import com.maptiler.maptilersdk.commands.style.SetStyle
 import com.maptiler.maptilersdk.commands.style.SetTilesToSource
 import com.maptiler.maptilersdk.commands.style.SetUrlToSource
@@ -155,6 +157,18 @@ internal class StylableWorker(
     fun setLanguage(language: MTLanguage) {
         scope.launch {
             bridge.execute(SetLanguage(language))
+        }
+    }
+
+    fun setSecondaryLanguage(language: MTLanguage) {
+        scope.launch {
+            bridge.execute(SetSecondaryLanguage(language))
+        }
+    }
+
+    fun setSprite(spriteUrl: String) {
+        scope.launch {
+            bridge.execute(SetSprite(spriteUrl))
         }
     }
 
