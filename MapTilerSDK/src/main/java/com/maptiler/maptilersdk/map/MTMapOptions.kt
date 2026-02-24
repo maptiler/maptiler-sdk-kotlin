@@ -552,7 +552,7 @@ class MTMapOptions {
         halo: MTHaloOption? = null,
         isSessionLogicEnabled: Boolean = true,
         eventLevel: MTEventLevel = MTEventLevel.CAMERA_ONLY,
-        highFrequencyEventThrottleMs: Int? = 150,
+        highFrequencyEventThrottleMs: Int? = 20,
     ) {
         this.language = language
         this.center = center

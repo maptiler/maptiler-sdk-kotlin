@@ -76,7 +76,7 @@ object MTPerformancePresets {
             halo = base.halo,
             isSessionLogicEnabled = base.isSessionLogicEnabled,
             eventLevel = MTEventLevel.ESSENTIAL,
-            highFrequencyEventThrottleMs = base.highFrequencyEventThrottleMs ?: 150,
+            highFrequencyEventThrottleMs = base.highFrequencyEventThrottleMs ?: 20,
         )
 
     /**
@@ -144,7 +144,7 @@ object MTPerformancePresets {
             halo = base.halo,
             isSessionLogicEnabled = base.isSessionLogicEnabled,
             eventLevel = MTEventLevel.ESSENTIAL,
-            highFrequencyEventThrottleMs = base.highFrequencyEventThrottleMs ?: 150,
+            highFrequencyEventThrottleMs = base.highFrequencyEventThrottleMs ?: 30,
         )
 
     /**
@@ -212,7 +212,7 @@ object MTPerformancePresets {
             halo = base.halo,
             isSessionLogicEnabled = base.isSessionLogicEnabled,
             eventLevel = MTEventLevel.ALL,
-            highFrequencyEventThrottleMs = base.highFrequencyEventThrottleMs ?: 100,
+            highFrequencyEventThrottleMs = base.highFrequencyEventThrottleMs ?: 15,
         )
 }
 

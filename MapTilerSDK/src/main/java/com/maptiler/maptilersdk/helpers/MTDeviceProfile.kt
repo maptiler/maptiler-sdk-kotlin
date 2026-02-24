@@ -53,8 +53,8 @@ internal object MTDeviceProfile {
      * For LOW and MID devices we prefer lighter defaults; HIGH devices are returned unchanged.
      *
      * Pixel ratio defaults by tier (if unset by developer):
-     * - LOW: 1.0
-     * - MID: 1.5
+     * - LOW: 1.5
+     * - MID: 1.8
      * - HIGH: unchanged (early return)
      */
     fun applyLeanDefaultsIfUnset(
@@ -65,9 +65,9 @@ internal object MTDeviceProfile {
 
         val defaultPixelRatio =
             when (tier) {
-                Tier.LOW -> 1.0
-                Tier.MID -> 1.5
-                Tier.HIGH -> base.pixelRatio ?: 1.0 // unreachable due to early return
+                Tier.LOW -> 1.5
+                Tier.MID -> 1.8
+                Tier.HIGH -> base.pixelRatio ?: 2.0 // unreachable due to early return
             }
 
         // Merge: prefer base values where present; set only performance‑lean values when null.
@@ -122,7 +122,7 @@ internal object MTDeviceProfile {
             isSessionLogicEnabled = base.isSessionLogicEnabled,
             // Keep developer choice; default is CAMERA_ONLY (camera events without full touch/render)
             eventLevel = base.eventLevel,
-            highFrequencyEventThrottleMs = base.highFrequencyEventThrottleMs ?: 150,
+            highFrequencyEventThrottleMs = base.highFrequencyEventThrottleMs ?: 20,
         )
     }
 
