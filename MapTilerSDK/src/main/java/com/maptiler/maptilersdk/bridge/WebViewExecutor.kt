@@ -15,6 +15,7 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.maptiler.maptilersdk.MTConfig
+import com.maptiler.maptilersdk.helpers.MTDeviceProfile
 import com.maptiler.maptilersdk.logging.MTLogLevel
 import com.maptiler.maptilersdk.logging.MTLogType
 import com.maptiler.maptilersdk.logging.MTLogger
@@ -72,11 +73,17 @@ internal class WebViewExecutor(
         if (_webView == null) {
             _webView =
                 WebView(context).apply {
+                    val tier = MTDeviceProfile.detectTier(context)
+
+                    setLayerType(View.LAYER_TYPE_HARDWARE, null)
+
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         setRendererPriorityPolicy(WebView.RENDERER_PRIORITY_IMPORTANT, true)
                     }
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        settings.setOffscreenPreRaster(true)
+                        // Offscreen pre-rasterization consumes significant VRAM.
+                        // Disable it on low-end devices to prevent frequent GC and tile eviction.
+                        settings.setOffscreenPreRaster(tier != MTDeviceProfile.Tier.LOW)
                     }
                     settings.javaScriptEnabled = true
                     settings.allowFileAccess = true
@@ -130,11 +137,15 @@ internal class WebViewExecutor(
 
     internal fun setWebView(webView: WebView) {
         this._webView = webView
+        val tier = MTDeviceProfile.detectTier(context)
+
+        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             webView.setRendererPriorityPolicy(WebView.RENDERER_PRIORITY_IMPORTANT, true)
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            webView.settings.setOffscreenPreRaster(true)
+            webView.settings.setOffscreenPreRaster(tier != MTDeviceProfile.Tier.LOW)
         }
         // Allow autoplay for HTML5 media when a custom WebView is supplied
         webView.settings.mediaPlaybackRequiresUserGesture = false
