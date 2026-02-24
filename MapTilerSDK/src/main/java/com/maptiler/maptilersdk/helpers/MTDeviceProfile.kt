@@ -22,7 +22,10 @@ internal object MTDeviceProfile {
 
     fun detectTier(context: Context): Tier {
         val am = context.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
-        val memClassMb = am?.memoryClass ?: 256
+        val memInfo = ActivityManager.MemoryInfo()
+        am?.getMemoryInfo(memInfo)
+
+        val totalMemGb = memInfo.totalMem / (1024.0 * 1024.0 * 1024.0)
         val isLowRam =
             try {
                 am?.isLowRamDevice ?: false
@@ -36,12 +39,13 @@ internal object MTDeviceProfile {
 
         val isSamsungA = manufacturer == "samsung" && Regex("SM-A\\d+").containsMatchIn(model)
 
-        // Conservative heuristics aimed at responsiveness, not perfect classification.
-        if (isLowRam || memClassMb <= 128 || sdk < Build.VERSION_CODES.O || (isSamsungA && memClassMb <= 256)) {
+        // LOW: Devices with < 3GB RAM or explicitly marked as Low RAM (Android Go)
+        if (isLowRam || totalMemGb < 3.0 || sdk < Build.VERSION_CODES.O) {
             return Tier.LOW
         }
 
-        if (memClassMb <= 256 || sdk < Build.VERSION_CODES.S || isSamsungA) {
+        // MID: Devices with 3GB to 6GB RAM or known mid-range models
+        if (totalMemGb < 6.0 || isSamsungA) {
             return Tier.MID
         }
 
@@ -53,8 +57,8 @@ internal object MTDeviceProfile {
      * For LOW and MID devices we prefer lighter defaults; HIGH devices are returned unchanged.
      *
      * Pixel ratio defaults by tier (if unset by developer):
-     * - LOW: 1.5
-     * - MID: 1.8
+     * - LOW: 1.5 (Balanced for low-end)
+     * - MID: 1.8 (Better quality for mid-range)
      * - HIGH: unchanged (early return)
      */
     fun applyLeanDefaultsIfUnset(
@@ -68,6 +72,13 @@ internal object MTDeviceProfile {
                 Tier.LOW -> 1.5
                 Tier.MID -> 1.8
                 Tier.HIGH -> base.pixelRatio ?: 2.0 // unreachable due to early return
+            }
+
+        val defaultMaxTileCacheSize =
+            when (tier) {
+                Tier.LOW -> 40.0
+                Tier.MID -> 80.0
+                else -> null
             }
 
         // Merge: prefer base values where present; set only performance‑lean values when null.
@@ -98,10 +109,9 @@ internal object MTDeviceProfile {
             isInteractionEnabled = base.isInteractionEnabled,
             logoPosition = base.logoPosition,
             maptilerLogoIsVisible = base.maptilerLogoIsVisible,
-            maxTileCacheSize = base.maxTileCacheSize,
-            maxTileCacheZoomLevels = base.maxTileCacheZoomLevels ?: 4.0,
+            maxTileCacheSize = base.maxTileCacheSize ?: defaultMaxTileCacheSize,
+            maxTileCacheZoomLevels = base.maxTileCacheZoomLevels ?: 2.0,
             pixelRatio = base.pixelRatio ?: defaultPixelRatio,
-            shouldPitchWithRotate = base.shouldPitchWithRotate,
             shouldRefreshExpiredTiles = base.shouldRefreshExpiredTiles ?: false,
             shouldRenderWorldCopies = base.shouldRenderWorldCopies,
             shouldDragToPitch = base.shouldDragToPitch,
