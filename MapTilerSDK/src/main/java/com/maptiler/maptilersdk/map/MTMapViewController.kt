@@ -832,6 +832,33 @@ class MTMapViewController(
      */
     override fun setPadding(padding: MTPaddingOptions) = navigableWorker.setPadding(padding)
 
+    /**
+     * Sets the maximum number of images (raster tiles, sprites, icons) to load in parallel.
+     *
+     * @param numRequests The maximum number of parallel image requests.
+     */
+    fun setMaxParallelImageRequests(numRequests: Int) {
+        coroutineScope?.launch {
+            bridge?.execute(com.maptiler.maptilersdk.commands.misc.SetMaxParallelImageRequests(numRequests))
+        }
+    }
+
+    /**
+     * Sets the map's RTL text plugin.
+     * Necessary for supporting the right-to-left text direction found in languages like Arabic and Hebrew.
+     *
+     * @param pluginUrl URL pointing to the Mapbox RTL text plugin source.
+     * @param deferred If true, the plugin will not be loaded immediately but deferred until needed.
+     */
+    fun setRTLTextPlugin(
+        pluginUrl: String,
+        deferred: Boolean = false,
+    ) {
+        coroutineScope?.launch {
+            bridge?.execute(com.maptiler.maptilersdk.commands.misc.SetRTLTextPlugin(pluginUrl, deferred))
+        }
+    }
+
     override fun onEventTriggered(
         processor: EventProcessor,
         event: MTEvent,
