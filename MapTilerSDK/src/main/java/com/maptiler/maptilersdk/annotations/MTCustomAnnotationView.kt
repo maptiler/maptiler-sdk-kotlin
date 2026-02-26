@@ -24,7 +24,10 @@ import com.maptiler.maptilersdk.events.MTEvent
 import com.maptiler.maptilersdk.map.LngLat
 import com.maptiler.maptilersdk.map.MTMapViewContentDelegate
 import com.maptiler.maptilersdk.map.MTMapViewController
+import com.maptiler.maptilersdk.map.types.MTData
 import com.maptiler.maptilersdk.map.types.MTPoint
+import com.maptiler.maptilersdk.map.types.MTProjectionType
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -64,6 +67,7 @@ fun MTCustomAnnotationView(
     val scope = rememberCoroutineScope()
     val positionPx = remember { mutableStateOf(IntOffset.Zero) }
     val contentSizePx = remember { mutableStateOf(IntSize.Zero) }
+    val isVisible = remember { mutableStateOf(true) }
     val density = LocalDensity.current.density
 
     fun anchorAdjustment(size: IntSize): IntOffset =
@@ -82,7 +86,27 @@ fun MTCustomAnnotationView(
 
     fun recalculatePosition() {
         scope.launch {
-            val projected = controller.project(coordinates)
+            val projectedDeferred = async { controller.project(coordinates) }
+            val boundsDeferred = async { controller.getBounds() }
+            val projDeferred = async { controller.style?.getProjection() ?: MTProjectionType.MERCATOR }
+
+            val projected = projectedDeferred.await()
+            val bounds = boundsDeferred.await()
+            val proj = projDeferred.await()
+
+            val visible =
+                if (proj == MTProjectionType.GLOBE) {
+                    bounds.contains(coordinates)
+                } else {
+                    true
+                }
+
+            if (isVisible.value != visible) {
+                isVisible.value = visible
+            }
+
+            if (!visible) return@launch
+
             val x = ((projected.x + offset.x) * density).roundToInt()
             val y = ((projected.y + offset.y) * density).roundToInt()
             val originX = controller.mapContainerOriginXPx
@@ -103,7 +127,7 @@ fun MTCustomAnnotationView(
             object : MTMapViewContentDelegate {
                 override fun onEvent(
                     event: MTEvent,
-                    data: com.maptiler.maptilersdk.map.types.MTData?,
+                    data: MTData?,
                 ) {
                     when (event) {
                         MTEvent.ON_MOVE,
@@ -134,6 +158,7 @@ fun MTCustomAnnotationView(
                 }.graphicsLayer {
                     translationX = positionPx.value.x.toFloat()
                     translationY = positionPx.value.y.toFloat()
+                    alpha = if (isVisible.value) 1f else 0f
                 },
     ) {
         content()

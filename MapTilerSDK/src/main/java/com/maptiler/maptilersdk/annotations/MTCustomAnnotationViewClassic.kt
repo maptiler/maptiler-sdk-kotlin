@@ -7,6 +7,7 @@
 package com.maptiler.maptilersdk.annotations
 
 import android.content.Context
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.maptiler.maptilersdk.events.MTEvent
@@ -16,9 +17,11 @@ import com.maptiler.maptilersdk.map.MTMapViewContentDelegate
 import com.maptiler.maptilersdk.map.MTMapViewController
 import com.maptiler.maptilersdk.map.types.MTData
 import com.maptiler.maptilersdk.map.types.MTPoint
+import com.maptiler.maptilersdk.map.types.MTProjectionType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -122,7 +125,29 @@ class MTCustomAnnotationViewClassic(
         val density = dm.density
 
         scope.launch {
-            val p = ctrl.project(_coordinates)
+            val pDeferred = async { ctrl.project(_coordinates) }
+            val boundsDeferred = async { ctrl.getBounds() }
+            val projDeferred = async { ctrl.style?.getProjection() ?: MTProjectionType.MERCATOR }
+
+            val p = pDeferred.await()
+            val bounds = boundsDeferred.await()
+            val proj = projDeferred.await()
+
+            // When globe projection is enabled, hide annotations that are not in the visible bounds.
+            val isVisible =
+                if (proj == MTProjectionType.GLOBE) {
+                    bounds.contains(_coordinates)
+                } else {
+                    true
+                }
+
+            if (!isVisible) {
+                this@MTCustomAnnotationViewClassic.visibility = View.GONE
+                return@launch
+            } else {
+                this@MTCustomAnnotationViewClassic.visibility = View.VISIBLE
+            }
+
             val xPx = ((p.x + offset.x) * density).toFloat()
             val yPx = ((p.y + offset.y) * density).toFloat()
 
