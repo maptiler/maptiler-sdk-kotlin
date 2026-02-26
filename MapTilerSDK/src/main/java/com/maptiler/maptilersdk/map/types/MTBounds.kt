@@ -44,6 +44,28 @@ data class MTBounds(
         southwest = LngLat(west, south),
         northeast = LngLat(east, north),
     )
+
+    /**
+     * Check if the bounds contain a point.
+     */
+    fun contains(point: LngLat): Boolean {
+        val sw = southwest
+        val ne = northeast
+
+        val lat = point.lat
+        val lng = point.lng
+
+        val latInBounds = lat >= sw.lat && lat <= ne.lat
+
+        val lngInBounds =
+            if (sw.lng <= ne.lng) {
+                lng >= sw.lng && lng <= ne.lng
+            } else {
+                lng >= sw.lng || lng <= ne.lng
+            }
+
+        return latInBounds && lngInBounds
+    }
 }
 
 internal object MTBoundsSerializer : KSerializer<MTBounds> {
