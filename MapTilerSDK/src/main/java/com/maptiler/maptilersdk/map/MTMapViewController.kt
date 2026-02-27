@@ -21,6 +21,7 @@ import com.maptiler.maptilersdk.bridge.WebViewExecutorDelegate
 import com.maptiler.maptilersdk.commands.InitializeMap
 import com.maptiler.maptilersdk.commands.annotations.CloseTextPopup
 import com.maptiler.maptilersdk.commands.annotations.OpenTextPopup
+import com.maptiler.maptilersdk.commands.annotations.RemoveMarker
 import com.maptiler.maptilersdk.commands.annotations.SetCoordinatesToMarker
 import com.maptiler.maptilersdk.commands.annotations.SetCoordinatesToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetMarkerDraggable
@@ -504,6 +505,14 @@ class MTMapViewController(
                 ToggleMarkerPopup(marker),
             )
             marker.popup?.refreshIsOpen()
+        }
+    }
+
+    internal fun removeMarker(marker: MTMarker) {
+        coroutineScope?.launch {
+            bridge?.execute(
+                RemoveMarker(marker),
+            )
         }
     }
 

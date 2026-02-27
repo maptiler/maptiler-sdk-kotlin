@@ -17,6 +17,7 @@ import com.maptiler.maptilersdk.commands.annotations.GetMarkerPitchAlignment
 import com.maptiler.maptilersdk.commands.annotations.GetMarkerRotation
 import com.maptiler.maptilersdk.commands.annotations.GetMarkerRotationAlignment
 import com.maptiler.maptilersdk.commands.annotations.IsMarkerDraggable
+import com.maptiler.maptilersdk.commands.annotations.RemoveMarker
 import com.maptiler.maptilersdk.commands.annotations.SetMarkerDraggable
 import com.maptiler.maptilersdk.commands.annotations.SetMarkerOffset
 import com.maptiler.maptilersdk.commands.annotations.SetMarkerRotation
@@ -112,5 +113,6 @@ class AnnotationCommandsTests {
             SetMarkerRotationAlignment(marker, MTRotationAlignment.VIEWPORT).toJS(),
         )
         assertEquals("${marker.identifier}.togglePopup();", ToggleMarkerPopup(marker).toJS())
+        assertEquals("${marker.identifier}.remove();", RemoveMarker(marker).toJS())
     }
 }
