@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.3.0](https://github.com/maptiler/maptiler-sdk-kotlin/releases/tag/1.3.0)
+Released on 2026-02-27.
+### Added
+- Polygon, Polyline and Heatmap helpers: Simple way to add data to the map
+- New layers: Hillside, Fill Extrusion and Heatmap
+- New sources: Raster DEM, Image and Video
+- New performance presets added for more robust settings customization
+
 ## [1.2.1](https://github.com/maptiler/maptiler-sdk-kotlin/releases/tag/1.2.1)
 Released on 2026-02-06.
 ### Fixed
