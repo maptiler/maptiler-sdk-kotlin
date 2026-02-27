@@ -43,14 +43,14 @@ MapTiler Kotlin SDK is a Kotlin library and can be added as a dependency in your
 
 ```kotlin
 dependencies {
-  implementation("com.maptiler:maptiler-sdk-kotlin:1.1.1")
+  implementation("com.maptiler:maptiler-sdk-kotlin:1.3.0")
 }
 ```
 
 Or, use Version Catalog instead, add following to the libs.versions.toml:
 
 ```kotlin
-maptilerSdkKotlin = "1.1.1"
+maptilerSdkKotlin = "1.3.0"
 
 maptiler-sdk-kotlin = { module = "com.maptiler:maptiler-sdk-kotlin", version.ref = "maptilerSdkKotlin" }
 ```
@@ -60,6 +60,8 @@ Then add following implementation in your build.gradle:
 ```kotlin
 implementation(libs.maptiler.sdk.kotlin)
 ```
+
+For latest version visit https://central.sonatype.com/artifact/com.maptiler/maptiler-sdk-kotlin.
 
 <br>
 

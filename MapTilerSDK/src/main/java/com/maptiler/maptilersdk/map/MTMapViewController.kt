@@ -643,6 +643,22 @@ class MTMapViewController(
     override fun easeTo(cameraOptions: MTCameraOptions) = navigableWorker.easeTo(cameraOptions)
 
     /**
+     * Pans, rotates and zooms the map to to fit the box made by points p0 and p1 once the map is rotated to the specified bearing.
+     * To zoom without rotating, pass in the current map bearing.
+     *
+     * @param p0 First point on screen, in pixel coordinates.
+     * @param p1 Second point on screen, in pixel coordinates.
+     * @param bearing Desired map bearing at end of animation, in degrees.
+     * @param options Optional animation and padding configuration.
+     */
+    override fun fitScreenCoordinates(
+        p0: MTPoint,
+        p1: MTPoint,
+        bearing: Double,
+        options: MTFitBoundsOptions?,
+    ) = navigableWorker.fitScreenCoordinates(p0, p1, bearing, options)
+
+    /**
      * Fits the viewport so that the supplied bounds are fully visible, applying optional padding or animation overrides.
      *
      * @param bounds Geographical box that must be visible when the transition finishes.
