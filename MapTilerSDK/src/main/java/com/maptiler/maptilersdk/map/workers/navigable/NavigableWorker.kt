@@ -15,6 +15,7 @@ import com.maptiler.maptilersdk.commands.navigation.AreTilesLoaded
 import com.maptiler.maptilersdk.commands.navigation.CenterOnIpPoint
 import com.maptiler.maptilersdk.commands.navigation.EaseTo
 import com.maptiler.maptilersdk.commands.navigation.FitBounds
+import com.maptiler.maptilersdk.commands.navigation.FitScreenCoordinates
 import com.maptiler.maptilersdk.commands.navigation.FitToIpBounds
 import com.maptiler.maptilersdk.commands.navigation.FlyTo
 import com.maptiler.maptilersdk.commands.navigation.GetBearing
@@ -122,6 +123,19 @@ internal class NavigableWorker(
         scope.launch {
             bridge.execute(
                 EaseTo(cameraOptions),
+            )
+        }
+    }
+
+    override fun fitScreenCoordinates(
+        p0: MTPoint,
+        p1: MTPoint,
+        bearing: Double,
+        options: MTFitBoundsOptions?,
+    ) {
+        scope.launch {
+            bridge.execute(
+                FitScreenCoordinates(p0, p1, bearing, options),
             )
         }
     }

@@ -71,6 +71,22 @@ interface MTNavigable {
     fun easeTo(cameraOptions: MTCameraOptions)
 
     /**
+     * Pans, rotates and zooms the map to to fit the box made by points p0 and p1 once the map is rotated to the specified bearing.
+     * To zoom without rotating, pass in the current map bearing.
+     *
+     * @param p0 First point on screen, in pixel coordinates.
+     * @param p1 Second point on screen, in pixel coordinates.
+     * @param bearing Desired map bearing at end of animation, in degrees.
+     * @param options Optional animation and padding configuration.
+     */
+    fun fitScreenCoordinates(
+        p0: MTPoint,
+        p1: MTPoint,
+        bearing: Double,
+        options: MTFitBoundsOptions? = null,
+    )
+
+    /**
      * Adjusts the camera to ensure the entire bounding box is visible.
      *
      * @param bounds Geographical area that must be visible once the transition completes.
