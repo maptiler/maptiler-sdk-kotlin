@@ -37,6 +37,7 @@ import com.maptiler.maptilersdk.commands.annotations.SetSubpixelPositioningToTex
 import com.maptiler.maptilersdk.commands.annotations.SetTextToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.ToggleMarkerPopup
 import com.maptiler.maptilersdk.commands.annotations.TrackTextPopupPointer
+import com.maptiler.maptilersdk.commands.misc.GetMaptilerSessionId
 import com.maptiler.maptilersdk.commands.misc.GpxToGeoJSON
 import com.maptiler.maptilersdk.commands.misc.KmlToGeoJSON
 import com.maptiler.maptilersdk.commands.misc.TriggerRepaint
@@ -240,6 +241,11 @@ class MTMapViewController(
             bridge?.execute(TriggerRepaint())
         }
     }
+
+    /**
+     * Returns the current SDK session UUID used for sessionized requests and telemetry.
+     */
+    suspend fun getMaptilerSessionId(): String = (bridge?.execute(GetMaptilerSessionId()) as? MTBridgeReturnType.StringValue)?.value ?: ""
 
     /**
      * Set the duration (millisec) of the terrain animation for growing or flattening.
