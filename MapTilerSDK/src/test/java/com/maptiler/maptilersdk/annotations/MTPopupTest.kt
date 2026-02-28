@@ -14,6 +14,7 @@ import com.maptiler.maptilersdk.commands.annotations.CloseTextPopup
 import com.maptiler.maptilersdk.commands.annotations.GetTextPopupLngLat
 import com.maptiler.maptilersdk.commands.annotations.IsTextPopupOpen
 import com.maptiler.maptilersdk.commands.annotations.OpenTextPopup
+import com.maptiler.maptilersdk.commands.annotations.SetAnchorToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetMaxWidthToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetOffsetToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetSubpixelPositioningToTextPopup
@@ -79,6 +80,16 @@ class MTPopupTest {
     }
 
     @Test
+    fun addTextPopupIncludesAnchorWhenProvided() {
+        val popup = MTTextPopup(identifier = "popupAnchor", _coordinates = LngLat(1.0, 1.0))
+        popup.anchor = MTAnchor.BOTTOM_LEFT
+
+        val js = AddTextPopup(popup).toJS()
+
+        assertTrue(js.contains("anchor: 'bottom-left'"))
+    }
+
+    @Test
     fun addTextPopupIncludesSubpixelPositioningWhenProvided() {
         val popup = MTTextPopup(identifier = "popupSubpixel", _coordinates = LngLat(1.0, 1.0))
         popup.subpixelPositioning = true
@@ -97,6 +108,15 @@ class MTPopupTest {
         assertTrue(js.contains("popupEvents.on('close'"))
         assertTrue(js.contains("Android.onEvent(\"popup.open\""))
         assertTrue(js.contains("Android.onEvent(\"popup.close\""))
+    }
+
+    @Test
+    fun setAnchorCommandToJSMatchesSignature() {
+        val popup = MTTextPopup(identifier = "popupAnchor", _coordinates = LngLat(0.0, 0.0))
+
+        val js = SetAnchorToTextPopup(popup, MTAnchor.TOP_LEFT).toJS()
+
+        assertEquals("popupAnchor.setAnchor(\"top-left\");", js)
     }
 
     @Test

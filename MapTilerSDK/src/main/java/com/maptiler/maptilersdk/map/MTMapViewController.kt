@@ -9,6 +9,7 @@ package com.maptiler.maptilersdk.map
 import android.content.Context
 import android.webkit.WebView
 import com.maptiler.maptilersdk.MTConfig
+import com.maptiler.maptilersdk.annotations.MTAnchor
 import com.maptiler.maptilersdk.annotations.MTMarker
 import com.maptiler.maptilersdk.annotations.MTRotationAlignment
 import com.maptiler.maptilersdk.annotations.MTTextPopup
@@ -22,6 +23,7 @@ import com.maptiler.maptilersdk.commands.InitializeMap
 import com.maptiler.maptilersdk.commands.annotations.CloseTextPopup
 import com.maptiler.maptilersdk.commands.annotations.OpenTextPopup
 import com.maptiler.maptilersdk.commands.annotations.RemoveMarker
+import com.maptiler.maptilersdk.commands.annotations.SetAnchorToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetCoordinatesToMarker
 import com.maptiler.maptilersdk.commands.annotations.SetCoordinatesToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetMarkerDraggable
@@ -382,6 +384,17 @@ class MTMapViewController(
         coroutineScope?.launch {
             bridge?.execute(
                 SetCoordinatesToTextPopup(popup),
+            )
+        }
+    }
+
+    internal fun setAnchorToTextPopup(
+        popup: MTTextPopup,
+        anchor: MTAnchor?,
+    ) {
+        coroutineScope?.launch {
+            bridge?.execute(
+                SetAnchorToTextPopup(popup, anchor),
             )
         }
     }

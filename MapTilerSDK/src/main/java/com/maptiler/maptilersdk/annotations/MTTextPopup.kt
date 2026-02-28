@@ -31,6 +31,11 @@ class MTTextPopup(
     var text: String = ""
 
     /**
+     * Anchor used to align the popup relative to its coordinates.
+     */
+    var anchor: MTAnchor? = null
+
+    /**
      * The pixel distance from the popup's coordinates.
      */
     var offset: Double? = 0.0
@@ -115,6 +120,18 @@ class MTTextPopup(
         this.maxWidth = maxWidth
 
         mapViewController.setMaxWidthToTextPopup(this)
+    }
+
+    /**
+     * Sets the popup anchor and updates it on the map.
+     */
+    fun setAnchor(
+        anchor: MTAnchor?,
+        mapViewController: MTMapViewController,
+    ) {
+        this.anchor = anchor
+
+        mapViewController.setAnchorToTextPopup(this, anchor)
     }
 
     /**
