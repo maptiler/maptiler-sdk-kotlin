@@ -192,6 +192,13 @@ class MTTextPopup(
     }
 
     /**
+     * Removes the popup from the map.
+     */
+    fun remove(mapViewController: MTMapViewController) {
+        mapViewController.removeTextPopup(this)
+    }
+
+    /**
      * Returns the current coordinates of the popup.
      */
     suspend fun getLngLat(): LngLat {

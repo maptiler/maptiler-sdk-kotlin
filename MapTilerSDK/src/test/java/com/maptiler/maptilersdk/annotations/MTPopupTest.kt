@@ -14,6 +14,7 @@ import com.maptiler.maptilersdk.commands.annotations.CloseTextPopup
 import com.maptiler.maptilersdk.commands.annotations.GetTextPopupLngLat
 import com.maptiler.maptilersdk.commands.annotations.IsTextPopupOpen
 import com.maptiler.maptilersdk.commands.annotations.OpenTextPopup
+import com.maptiler.maptilersdk.commands.annotations.RemoveTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetAnchorToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetMaxWidthToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetOffsetToTextPopup
@@ -181,5 +182,14 @@ class MTPopupTest {
         val js = CloseTextPopup(popup).toJS()
 
         assertEquals("popupClose.remove();", js)
+    }
+
+    @Test
+    fun removeCommandToJSMatchesSignature() {
+        val popup = MTTextPopup(identifier = "popupRemove", _coordinates = LngLat(0.0, 0.0))
+
+        val js = RemoveTextPopup(popup).toJS()
+
+        assertEquals("popupRemove.remove();", js)
     }
 }

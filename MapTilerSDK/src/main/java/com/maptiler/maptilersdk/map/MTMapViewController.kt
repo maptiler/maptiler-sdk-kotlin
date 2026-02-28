@@ -23,6 +23,7 @@ import com.maptiler.maptilersdk.commands.InitializeMap
 import com.maptiler.maptilersdk.commands.annotations.CloseTextPopup
 import com.maptiler.maptilersdk.commands.annotations.OpenTextPopup
 import com.maptiler.maptilersdk.commands.annotations.RemoveMarker
+import com.maptiler.maptilersdk.commands.annotations.RemoveTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetAnchorToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetCoordinatesToMarker
 import com.maptiler.maptilersdk.commands.annotations.SetCoordinatesToTextPopup
@@ -462,6 +463,16 @@ class MTMapViewController(
         coroutineScope?.launch {
             bridge?.execute(
                 CloseTextPopup(popup),
+            )
+        }
+
+        popup.setOpenState(false)
+    }
+
+    internal fun removeTextPopup(popup: MTTextPopup) {
+        coroutineScope?.launch {
+            bridge?.execute(
+                RemoveTextPopup(popup),
             )
         }
 
