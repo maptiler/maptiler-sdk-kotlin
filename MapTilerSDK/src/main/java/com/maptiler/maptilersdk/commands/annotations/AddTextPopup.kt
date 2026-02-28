@@ -24,6 +24,7 @@ internal data class AddTextPopup(
                 0.0
             }
         val subpixelPositioning = popup.subpixelPositioning?.let { ", subpixelPositioning: $it" } ?: ""
+        val anchorStr = popup.anchor?.let { ", anchor: '${it.value}'" } ?: ""
 
         val maxWidth = popup.maxWidth?.let { JsonConfig.json.encodeToString("${it}px") }
         val textJson = JsonConfig.json.encodeToString(popup.text)
@@ -35,7 +36,7 @@ internal data class AddTextPopup(
                 ""
             }
 
-        val popupOptions = "{ offset: $offset$subpixelPositioning }"
+        val popupOptions = "{ offset: $offset$subpixelPositioning$anchorStr }"
 
         val js = """
             const ${popup.identifier} = new maptilersdk.Popup($popupOptions);
