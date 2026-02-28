@@ -220,6 +220,13 @@ class MTMarker(
         mapViewController.toggleMarkerPopup(this)
     }
 
+    /**
+     * Removes the marker from the map.
+     */
+    fun remove(mapViewController: MTMapViewController) {
+        mapViewController.removeMarker(this)
+    }
+
     internal fun bindBridge(bridge: MTBridge) {
         boundBridge = bridge
     }
