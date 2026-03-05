@@ -254,6 +254,14 @@ interface MTNavigable {
     fun setCenterElevation(elevation: Double)
 
     /**
+     * Returns the current viewport padding as {top, right, bottom, left}.
+     * Use to retrieve padding applied for camera transitions and UI layout.
+     *
+     * @return The current viewport padding.
+     */
+    suspend fun getPadding(): MTPaddingOptions
+
+    /**
      * Sets the padding in pixels around the viewport.
      *
      * @param padding Custom options to use.
