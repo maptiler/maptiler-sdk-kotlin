@@ -818,6 +818,11 @@ class MTMapViewController(
     suspend fun getProjection(): MTProjectionType = style?.getProjection() ?: MTProjectionType.MERCATOR
 
     /**
+     * Returns true if 3D terrain visualization is enabled.
+     */
+    suspend fun hasTerrain(): Boolean = style?.hasTerrain() ?: false
+
+    /**
      * Registers a sprite resource that can be referenced from style layers.
      *
      * @param identifier Unique identifier for the sprite.
