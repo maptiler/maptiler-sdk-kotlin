@@ -27,6 +27,7 @@ import com.maptiler.maptilersdk.commands.navigation.GetCenterElevation
 import com.maptiler.maptilersdk.commands.navigation.GetMaxBounds
 import com.maptiler.maptilersdk.commands.navigation.GetMaxPitch
 import com.maptiler.maptilersdk.commands.navigation.GetMinPitch
+import com.maptiler.maptilersdk.commands.navigation.GetPadding
 import com.maptiler.maptilersdk.commands.navigation.GetPitch
 import com.maptiler.maptilersdk.commands.navigation.GetPixelRatio
 import com.maptiler.maptilersdk.commands.navigation.GetRenderWorldCopies
@@ -477,6 +478,18 @@ internal class NavigableWorker(
             bridge.execute(
                 SetCenterElevation(elevation),
             )
+        }
+    }
+
+    override suspend fun getPadding(): MTPaddingOptions {
+        val returnTypeValue =
+            bridge.execute(
+                GetPadding(),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> JsonConfig.json.decodeFromString<MTPaddingOptions>(returnTypeValue.value)
+            else -> MTPaddingOptions(0.0, 0.0, 0.0, 0.0)
         }
     }
 

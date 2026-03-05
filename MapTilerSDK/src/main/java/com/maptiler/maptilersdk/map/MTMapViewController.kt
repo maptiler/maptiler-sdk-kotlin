@@ -881,6 +881,14 @@ class MTMapViewController(
     override fun setCenterElevation(elevation: Double) = navigableWorker.setCenterElevation(elevation)
 
     /**
+     * Returns the current viewport padding as {top, right, bottom, left}.
+     * Use to retrieve padding applied for camera transitions and UI layout.
+     *
+     * @return The current viewport padding.
+     */
+    override suspend fun getPadding(): MTPaddingOptions = navigableWorker.getPadding()
+
+    /**
      * Sets the padding in pixels around the viewport.
      *
      * @param padding Custom options to use.
