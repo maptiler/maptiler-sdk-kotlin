@@ -354,6 +354,11 @@ class MTStyle(
      */
     suspend fun getProjection(): MTProjectionType = stylableWorker.getProjection()
 
+    /**
+     * Returns true if 3D terrain visualization is enabled.
+     */
+    suspend fun hasTerrain(): Boolean = stylableWorker.hasTerrain()
+
     // CONTROLS / STYLE HELPERS
 
     /**
