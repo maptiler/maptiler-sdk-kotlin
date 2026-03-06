@@ -44,6 +44,7 @@ import com.maptiler.maptilersdk.commands.style.GetNameForReferenceStyle
 import com.maptiler.maptilersdk.commands.style.GetNameForStyleVariant
 import com.maptiler.maptilersdk.commands.style.GetProjection
 import com.maptiler.maptilersdk.commands.style.HasTerrain
+import com.maptiler.maptilersdk.commands.style.IsGlobeProjection
 import com.maptiler.maptilersdk.commands.style.IsSourceLoaded
 import com.maptiler.maptilersdk.commands.style.PlayVideoSourceById
 import com.maptiler.maptilersdk.commands.style.RemoveLayer
@@ -543,6 +544,11 @@ internal class StylableWorker(
             is MTBridgeReturnType.Null, MTBridgeReturnType.UnsupportedType -> MTProjectionType.MERCATOR
             else -> MTProjectionType.MERCATOR
         }
+    }
+
+    suspend fun isGlobeProjection(): Boolean {
+        val returnTypeValue = bridge.execute(IsGlobeProjection())
+        return (returnTypeValue as? MTBridgeReturnType.BoolValue)?.value ?: false
     }
 
     suspend fun isSourceLoaded(sourceId: String): Boolean {

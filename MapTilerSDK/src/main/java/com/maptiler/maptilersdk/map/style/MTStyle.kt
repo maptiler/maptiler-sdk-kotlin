@@ -355,6 +355,11 @@ class MTStyle(
     suspend fun getProjection(): MTProjectionType = stylableWorker.getProjection()
 
     /**
+     * Returns true if the current projection is globe; otherwise false.
+     */
+    suspend fun isGlobeProjection(): Boolean = stylableWorker.isGlobeProjection()
+
+    /**
      * Returns true if 3D terrain visualization is enabled.
      */
     suspend fun hasTerrain(): Boolean = stylableWorker.hasTerrain()

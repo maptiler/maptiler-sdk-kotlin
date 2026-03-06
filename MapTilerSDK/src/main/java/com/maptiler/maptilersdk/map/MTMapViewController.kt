@@ -818,6 +818,11 @@ class MTMapViewController(
     suspend fun getProjection(): MTProjectionType = style?.getProjection() ?: MTProjectionType.MERCATOR
 
     /**
+     * Returns true if the current projection is globe; otherwise false.
+     */
+    suspend fun isGlobeProjection(): Boolean = style?.isGlobeProjection() ?: false
+
+    /**
      * Returns true if 3D terrain visualization is enabled.
      */
     suspend fun hasTerrain(): Boolean = style?.hasTerrain() ?: false
