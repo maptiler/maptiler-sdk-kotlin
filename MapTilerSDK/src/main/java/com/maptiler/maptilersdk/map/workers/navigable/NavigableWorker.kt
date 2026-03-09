@@ -33,6 +33,7 @@ import com.maptiler.maptilersdk.commands.navigation.GetPixelRatio
 import com.maptiler.maptilersdk.commands.navigation.GetRenderWorldCopies
 import com.maptiler.maptilersdk.commands.navigation.GetRoll
 import com.maptiler.maptilersdk.commands.navigation.IsMoving
+import com.maptiler.maptilersdk.commands.navigation.IsRotating
 import com.maptiler.maptilersdk.commands.navigation.JumpTo
 import com.maptiler.maptilersdk.commands.navigation.PanBy
 import com.maptiler.maptilersdk.commands.navigation.PanTo
@@ -486,6 +487,27 @@ internal class NavigableWorker(
         val returnTypeValue =
             bridge.execute(
                 IsMoving(),
+            )
+
+        return when (returnTypeValue) {
+            is BoolValue -> returnTypeValue.value
+            is DoubleValue -> returnTypeValue.value != 0.0
+            is StringValue -> {
+                val normalized = returnTypeValue.value.trim().lowercase()
+                when (normalized) {
+                    "true" -> true
+                    "false" -> false
+                    else -> normalized.toDoubleOrNull()?.let { it != 0.0 } ?: false
+                }
+            }
+            else -> false
+        }
+    }
+
+    override suspend fun isRotating(): Boolean {
+        val returnTypeValue =
+            bridge.execute(
+                IsRotating(),
             )
 
         return when (returnTypeValue) {

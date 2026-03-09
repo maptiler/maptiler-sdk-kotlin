@@ -259,6 +259,11 @@ interface MTNavigable {
     suspend fun isMoving(): Boolean
 
     /**
+     * Returns true while the map is rotating.
+     */
+    suspend fun isRotating(): Boolean
+
+    /**
      * Returns the current viewport padding as {top, right, bottom, left}.
      * Use to retrieve padding applied for camera transitions and UI layout.
      *
