@@ -793,6 +793,11 @@ class MTMapViewController(
     override suspend fun areTilesLoaded(): Boolean = navigableWorker.areTilesLoaded()
 
     /**
+     * Returns true when no ongoing operations remain and all sources/tiles are loaded.
+     */
+    override suspend fun loaded(): Boolean = navigableWorker.loaded()
+
+    /**
      * Returns the pixel ratio currently used to render the map.
      */
     override suspend fun getPixelRatio(): Double = navigableWorker.getPixelRatio()

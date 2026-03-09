@@ -186,6 +186,11 @@ interface MTNavigable {
     suspend fun areTilesLoaded(): Boolean
 
     /**
+     * Returns true when no ongoing operations remain and all sources/tiles are loaded.
+     */
+    suspend fun loaded(): Boolean
+
+    /**
      * Returns the pixel ratio currently used to render the map.
      */
     suspend fun getPixelRatio(): Double

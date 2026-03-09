@@ -36,6 +36,7 @@ import com.maptiler.maptilersdk.commands.navigation.IsMoving
 import com.maptiler.maptilersdk.commands.navigation.IsRotating
 import com.maptiler.maptilersdk.commands.navigation.IsZooming
 import com.maptiler.maptilersdk.commands.navigation.JumpTo
+import com.maptiler.maptilersdk.commands.navigation.Loaded
 import com.maptiler.maptilersdk.commands.navigation.PanBy
 import com.maptiler.maptilersdk.commands.navigation.PanTo
 import com.maptiler.maptilersdk.commands.navigation.Project
@@ -365,6 +366,27 @@ internal class NavigableWorker(
         val returnTypeValue =
             bridge.execute(
                 AreTilesLoaded(),
+            )
+
+        return when (returnTypeValue) {
+            is BoolValue -> returnTypeValue.value
+            is DoubleValue -> returnTypeValue.value != 0.0
+            is StringValue -> {
+                val normalized = returnTypeValue.value.trim().lowercase()
+                when (normalized) {
+                    "true" -> true
+                    "false" -> false
+                    else -> normalized.toDoubleOrNull()?.let { it != 0.0 } ?: false
+                }
+            }
+            else -> false
+        }
+    }
+
+    override suspend fun loaded(): Boolean {
+        val returnTypeValue =
+            bridge.execute(
+                Loaded(),
             )
 
         return when (returnTypeValue) {
