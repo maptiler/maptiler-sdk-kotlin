@@ -823,6 +823,12 @@ class MTMapViewController(
     suspend fun isGlobeProjection(): Boolean = style?.isGlobeProjection() ?: false
 
     /**
+     * Returns true once the style and its resources are fully loaded.
+     * Use before manipulating layers/sources programmatically.
+     */
+    suspend fun isStyleLoaded(): Boolean = style?.isStyleLoaded() ?: false
+
+    /**
      * Returns true if 3D terrain visualization is enabled.
      */
     suspend fun hasTerrain(): Boolean = style?.hasTerrain() ?: false
