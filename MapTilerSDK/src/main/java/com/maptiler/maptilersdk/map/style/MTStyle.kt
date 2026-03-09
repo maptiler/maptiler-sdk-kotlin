@@ -276,6 +276,12 @@ class MTStyle(
     }
 
     /**
+     * Returns true once the style and its resources are fully loaded.
+     * Use before manipulating layers/sources programmatically.
+     */
+    suspend fun isStyleLoaded(): Boolean = stylableWorker.isStyleLoaded()
+
+    /**
      * Returns boolean value indicating whether the source with provided id is loaded.
      *
      * @param sourceId The id of the source.
