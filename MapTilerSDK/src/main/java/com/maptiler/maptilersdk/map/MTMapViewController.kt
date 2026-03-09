@@ -896,6 +896,11 @@ class MTMapViewController(
     override suspend fun isMoving(): Boolean = navigableWorker.isMoving()
 
     /**
+     * Returns true while the map is rotating.
+     */
+    override suspend fun isRotating(): Boolean = navigableWorker.isRotating()
+
+    /**
      * Returns the current viewport padding as {top, right, bottom, left}.
      * Use to retrieve padding applied for camera transitions and UI layout.
      *
