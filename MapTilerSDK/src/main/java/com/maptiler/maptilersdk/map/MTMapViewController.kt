@@ -41,6 +41,7 @@ import com.maptiler.maptilersdk.commands.misc.GetMaptilerSessionId
 import com.maptiler.maptilersdk.commands.misc.GpxToGeoJSON
 import com.maptiler.maptilersdk.commands.misc.KmlToGeoJSON
 import com.maptiler.maptilersdk.commands.misc.Redraw
+import com.maptiler.maptilersdk.commands.misc.Repaint
 import com.maptiler.maptilersdk.commands.misc.TriggerRepaint
 import com.maptiler.maptilersdk.events.EventProcessor
 import com.maptiler.maptilersdk.events.EventProcessorDelegate
@@ -240,6 +241,15 @@ class MTMapViewController(
     fun triggerRepaint() {
         coroutineScope?.launch {
             bridge?.execute(TriggerRepaint())
+        }
+    }
+
+    /**
+     * Requests the map be repainted on the next animation frame.
+     */
+    fun repaint() {
+        coroutineScope?.launch {
+            bridge?.execute(Repaint())
         }
     }
 
