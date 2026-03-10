@@ -671,6 +671,13 @@ class MTMapViewController(
     override fun stop() = navigableWorker.stop()
 
     /**
+     * Resets bearing to 0 degrees.
+     *
+     * @param options Animation options.
+     */
+    override fun resetNorth(options: MTAnimationOptions?) = navigableWorker.resetNorth(options)
+
+    /**
      * Snaps the map so that north is up (bearing 0), animating the transition.
      *
      * @param options Animation options.
