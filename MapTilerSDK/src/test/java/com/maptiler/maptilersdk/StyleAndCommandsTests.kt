@@ -263,4 +263,16 @@ class StyleAndCommandsTests {
         assertEquals(1, recordedCommands.size)
         assertTrue(recordedCommands.first() is AddSprite)
     }
+
+    @Test fun moveLayer_WithoutBeforeId_ReturnsValidJSString() {
+        val command = com.maptiler.maptilersdk.commands.style.MoveLayer("layer-id")
+        val js = command.toJS()
+        assertEquals("${com.maptiler.maptilersdk.bridge.MTBridge.MAP_OBJECT}.moveLayer('layer-id');", js)
+    }
+
+    @Test fun moveLayer_WithBeforeId_ReturnsValidJSString() {
+        val command = com.maptiler.maptilersdk.commands.style.MoveLayer("layer-id", "before-layer-id")
+        val js = command.toJS()
+        assertEquals("${com.maptiler.maptilersdk.bridge.MTBridge.MAP_OBJECT}.moveLayer('layer-id', 'before-layer-id');", js)
+    }
 }

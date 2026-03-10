@@ -168,6 +168,17 @@ class MTStyle(
     ) = stylableWorker.addSprite(identifier, url)
 
     /**
+     * Moves a layer to a different z-position.
+     *
+     * @param id The ID of the layer to move.
+     * @param beforeId The ID of an existing layer to insert the new layer before. If this argument is omitted, the layer will be appended to the end of the layers array.
+     */
+    fun moveLayer(
+        id: String,
+        beforeId: String? = null,
+    ) = stylableWorker.moveLayer(id, beforeId)
+
+    /**
      * Removes a layer by its identifier if present.
      */
     fun removeLayerById(layerId: String) = stylableWorker.removeLayerById(layerId)
