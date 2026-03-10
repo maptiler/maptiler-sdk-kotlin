@@ -47,6 +47,7 @@ import com.maptiler.maptilersdk.commands.style.HasTerrain
 import com.maptiler.maptilersdk.commands.style.IsGlobeProjection
 import com.maptiler.maptilersdk.commands.style.IsSourceLoaded
 import com.maptiler.maptilersdk.commands.style.IsStyleLoaded
+import com.maptiler.maptilersdk.commands.style.MoveLayer
 import com.maptiler.maptilersdk.commands.style.PlayVideoSourceById
 import com.maptiler.maptilersdk.commands.style.RemoveLayer
 import com.maptiler.maptilersdk.commands.style.RemoveLayerById
@@ -340,6 +341,15 @@ internal class StylableWorker(
     fun removeLayerById(layerId: String) {
         scope.launch {
             bridge.execute(RemoveLayerById(layerId))
+        }
+    }
+
+    fun moveLayer(
+        id: String,
+        beforeId: String? = null,
+    ) {
+        scope.launch {
+            bridge.execute(MoveLayer(id, beforeId))
         }
     }
 
