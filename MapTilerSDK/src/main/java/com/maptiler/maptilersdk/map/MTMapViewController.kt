@@ -40,6 +40,7 @@ import com.maptiler.maptilersdk.commands.annotations.TrackTextPopupPointer
 import com.maptiler.maptilersdk.commands.misc.GetMaptilerSessionId
 import com.maptiler.maptilersdk.commands.misc.GpxToGeoJSON
 import com.maptiler.maptilersdk.commands.misc.KmlToGeoJSON
+import com.maptiler.maptilersdk.commands.misc.Redraw
 import com.maptiler.maptilersdk.commands.misc.TriggerRepaint
 import com.maptiler.maptilersdk.events.EventProcessor
 import com.maptiler.maptilersdk.events.EventProcessorDelegate
@@ -239,6 +240,16 @@ class MTMapViewController(
     fun triggerRepaint() {
         coroutineScope?.launch {
             bridge?.execute(TriggerRepaint())
+        }
+    }
+
+    /**
+     * Schedules a re-render of the map.
+     * Useful before reading pixels or screenshots.
+     */
+    fun redraw() {
+        coroutineScope?.launch {
+            bridge?.execute(Redraw())
         }
     }
 
