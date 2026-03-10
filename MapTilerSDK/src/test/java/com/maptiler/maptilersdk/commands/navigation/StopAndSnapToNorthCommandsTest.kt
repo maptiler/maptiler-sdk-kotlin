@@ -33,4 +33,22 @@ class StopAndSnapToNorthCommandsTest {
         assertEquals("map.snapToNorth($optionsJson);", command.toJS())
         assertFalse(command.isPrimitiveReturnType)
     }
+
+    @Test
+    fun `resetNorth without options emits expected invocation`() {
+        val command = ResetNorth()
+
+        assertEquals("map.resetNorth();", command.toJS())
+        assertFalse(command.isPrimitiveReturnType)
+    }
+
+    @Test
+    fun `resetNorth with options serializes configuration`() {
+        val options = MTAnimationOptions(duration = 1000.0, animate = true)
+        val command = ResetNorth(options)
+        val optionsJson = JsonConfig.json.encodeToString(options)
+
+        assertEquals("map.resetNorth($optionsJson);", command.toJS())
+        assertFalse(command.isPrimitiveReturnType)
+    }
 }
