@@ -41,6 +41,7 @@ import com.maptiler.maptilersdk.commands.navigation.PanBy
 import com.maptiler.maptilersdk.commands.navigation.PanTo
 import com.maptiler.maptilersdk.commands.navigation.Project
 import com.maptiler.maptilersdk.commands.navigation.ResetNorth
+import com.maptiler.maptilersdk.commands.navigation.ResetNorthPitch
 import com.maptiler.maptilersdk.commands.navigation.SetBearing
 import com.maptiler.maptilersdk.commands.navigation.SetCenter
 import com.maptiler.maptilersdk.commands.navigation.SetCenterClampedToGround
@@ -102,6 +103,14 @@ internal class NavigableWorker(
         scope.launch {
             bridge.execute(
                 ResetNorth(options),
+            )
+        }
+    }
+
+    override fun resetNorthPitch(options: MTAnimationOptions?) {
+        scope.launch {
+            bridge.execute(
+                ResetNorthPitch(options),
             )
         }
     }

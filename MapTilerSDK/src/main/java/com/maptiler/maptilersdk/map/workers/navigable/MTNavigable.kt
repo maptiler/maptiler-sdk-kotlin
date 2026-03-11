@@ -46,6 +46,13 @@ interface MTNavigable {
     fun resetNorth(options: MTAnimationOptions? = null)
 
     /**
+     * Resets bearing to 0 and pitch to default.
+     *
+     * @param options Animation options.
+     */
+    fun resetNorthPitch(options: MTAnimationOptions? = null)
+
+    /**
      * Snaps the map so that north is up (bearing 0), animating the transition.
      *
      * @param options Animation options.
