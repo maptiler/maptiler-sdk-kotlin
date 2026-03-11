@@ -85,6 +85,17 @@ interface MTNavigable {
     fun easeTo(cameraOptions: MTCameraOptions)
 
     /**
+     * Rotates the map to a given bearing, with an animated transition.
+     *
+     * @param bearing The desired bearing in degrees.
+     * @param options Animation options.
+     */
+    fun rotateTo(
+        bearing: Double,
+        options: MTAnimationOptions? = null,
+    )
+
+    /**
      * Pans, rotates and zooms the map to to fit the box made by points p0 and p1 once the map is rotated to the specified bearing.
      * To zoom without rotating, pass in the current map bearing.
      *
