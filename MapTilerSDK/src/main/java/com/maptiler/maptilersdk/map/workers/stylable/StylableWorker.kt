@@ -60,6 +60,7 @@ import com.maptiler.maptilersdk.commands.style.SetFilter
 import com.maptiler.maptilersdk.commands.style.SetGlyphs
 import com.maptiler.maptilersdk.commands.style.SetHalo
 import com.maptiler.maptilersdk.commands.style.SetLanguage
+import com.maptiler.maptilersdk.commands.style.SetLayerZoomRange
 import com.maptiler.maptilersdk.commands.style.SetLayoutProperty
 import com.maptiler.maptilersdk.commands.style.SetLight
 import com.maptiler.maptilersdk.commands.style.SetPaintProperty
@@ -373,6 +374,22 @@ internal class StylableWorker(
         scope.launch {
             bridge.execute(RemoveSourceById(sourceId))
         }
+    }
+
+    fun setLayerZoomRange(
+        layerId: String,
+        minzoom: Double,
+        maxzoom: Double,
+    ) {
+        scope.launch { bridge.execute(SetLayerZoomRange(layerId, minzoom, maxzoom)) }
+    }
+
+    suspend fun setLayerZoomRangeAwait(
+        layerId: String,
+        minzoom: Double,
+        maxzoom: Double,
+    ) {
+        bridge.execute(SetLayerZoomRange(layerId, minzoom, maxzoom))
     }
 
     // Style property setters

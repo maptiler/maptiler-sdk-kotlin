@@ -184,6 +184,32 @@ class MTStyle(
     fun removeLayerById(layerId: String) = stylableWorker.removeLayerById(layerId)
 
     /**
+     * Sets the zoom levels at which the layer is visible.
+     *
+     * @param layerId The ID of the layer to update.
+     * @param minzoom The minimum zoom level (inclusive).
+     * @param maxzoom The maximum zoom level (exclusive).
+     */
+    fun setLayerZoomRange(
+        layerId: String,
+        minzoom: Double,
+        maxzoom: Double,
+    ) = stylableWorker.setLayerZoomRange(layerId, minzoom, maxzoom)
+
+    /**
+     * Sets the zoom levels at which the layer is visible.
+     *
+     * @param layerId The ID of the layer to update.
+     * @param minzoom The minimum zoom level (inclusive).
+     * @param maxzoom The maximum zoom level (exclusive).
+     */
+    suspend fun setLayerZoomRangeAwait(
+        layerId: String,
+        minzoom: Double,
+        maxzoom: Double,
+    ) = stylableWorker.setLayerZoomRangeAwait(layerId, minzoom, maxzoom)
+
+    /**
      * Removes a source by its identifier if present.
      */
     fun removeSourceById(sourceId: String) = stylableWorker.removeSourceById(sourceId)
