@@ -42,6 +42,7 @@ import com.maptiler.maptilersdk.commands.navigation.PanTo
 import com.maptiler.maptilersdk.commands.navigation.Project
 import com.maptiler.maptilersdk.commands.navigation.ResetNorth
 import com.maptiler.maptilersdk.commands.navigation.ResetNorthPitch
+import com.maptiler.maptilersdk.commands.navigation.RotateTo
 import com.maptiler.maptilersdk.commands.navigation.SetBearing
 import com.maptiler.maptilersdk.commands.navigation.SetCenter
 import com.maptiler.maptilersdk.commands.navigation.SetCenterClampedToGround
@@ -146,6 +147,17 @@ internal class NavigableWorker(
         scope.launch {
             bridge.execute(
                 EaseTo(cameraOptions),
+            )
+        }
+    }
+
+    override fun rotateTo(
+        bearing: Double,
+        options: MTAnimationOptions?,
+    ) {
+        scope.launch {
+            bridge.execute(
+                RotateTo(bearing, options),
             )
         }
     }
