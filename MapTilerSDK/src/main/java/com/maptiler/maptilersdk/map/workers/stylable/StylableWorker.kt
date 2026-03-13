@@ -53,6 +53,7 @@ import com.maptiler.maptilersdk.commands.style.RemoveLayer
 import com.maptiler.maptilersdk.commands.style.RemoveLayerById
 import com.maptiler.maptilersdk.commands.style.RemoveSource
 import com.maptiler.maptilersdk.commands.style.RemoveSourceById
+import com.maptiler.maptilersdk.commands.style.RemoveSprite
 import com.maptiler.maptilersdk.commands.style.SetCoordinatesToImageSource
 import com.maptiler.maptilersdk.commands.style.SetCoordinatesToVideoSource
 import com.maptiler.maptilersdk.commands.style.SetDataToSource
@@ -327,6 +328,14 @@ internal class StylableWorker(
         scope.launch {
             bridge.execute(
                 AddSprite(identifier, spriteUrl),
+            )
+        }
+    }
+
+    fun removeSprite(identifier: String) {
+        scope.launch {
+            bridge.execute(
+                RemoveSprite(identifier),
             )
         }
     }
