@@ -43,6 +43,7 @@ import com.maptiler.maptilersdk.commands.misc.KmlToGeoJSON
 import com.maptiler.maptilersdk.commands.misc.Redraw
 import com.maptiler.maptilersdk.commands.misc.Repaint
 import com.maptiler.maptilersdk.commands.misc.TriggerRepaint
+import com.maptiler.maptilersdk.commands.style.SetSecondaryLanguage
 import com.maptiler.maptilersdk.events.EventProcessor
 import com.maptiler.maptilersdk.events.EventProcessorDelegate
 import com.maptiler.maptilersdk.events.MTEvent
@@ -57,6 +58,7 @@ import com.maptiler.maptilersdk.map.options.MTPaddingOptions
 import com.maptiler.maptilersdk.map.style.MTStyle
 import com.maptiler.maptilersdk.map.types.MTBounds
 import com.maptiler.maptilersdk.map.types.MTData
+import com.maptiler.maptilersdk.map.types.MTLanguage
 import com.maptiler.maptilersdk.map.types.MTPoint
 import com.maptiler.maptilersdk.map.types.MTProjectionType
 import com.maptiler.maptilersdk.map.workers.navigable.MTNavigable
@@ -322,9 +324,9 @@ class MTMapViewController(
      *
      * @param language Desired secondary language of the map labels.
      */
-    fun setSecondaryLanguage(language: com.maptiler.maptilersdk.map.types.MTLanguage) {
+    fun setSecondaryLanguage(language: MTLanguage) {
         coroutineScope?.launch {
-            bridge?.execute(com.maptiler.maptilersdk.commands.style.SetSecondaryLanguage(language))
+            bridge?.execute(SetSecondaryLanguage(language))
         }
     }
 
