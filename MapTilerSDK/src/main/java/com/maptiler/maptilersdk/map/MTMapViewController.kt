@@ -900,6 +900,15 @@ class MTMapViewController(
     }
 
     /**
+     * Removes a sprite from the map.
+     *
+     * @param identifier The ID of the sprite.
+     */
+    fun removeSprite(identifier: String) {
+        style?.removeSprite(identifier)
+    }
+
+    /**
      * Project coordinates to point on the container.
      */
     override suspend fun project(coordinates: LngLat): com.maptiler.maptilersdk.map.types.MTPoint = navigableWorker.project(coordinates)
