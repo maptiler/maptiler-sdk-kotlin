@@ -12,7 +12,7 @@ import org.junit.Test
 
 class RemoveSpriteTest {
     @Test
-    fun `toJS returns proper string for url`() {
+    fun `toJS returns proper string for id`() {
         val command = RemoveSprite("sprite1")
         assertFalse(command.isPrimitiveReturnType)
         assertEquals(
@@ -22,7 +22,7 @@ class RemoveSpriteTest {
     }
 
     @Test
-    fun `toJS correctly escapes quotes in identifier`() {
+    fun `toJS correctly escapes quotes in id`() {
         val command = RemoveSprite("sprite'test")
         assertFalse(command.isPrimitiveReturnType)
         assertEquals(

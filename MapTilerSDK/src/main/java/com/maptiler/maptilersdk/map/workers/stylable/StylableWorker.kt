@@ -332,10 +332,10 @@ internal class StylableWorker(
         }
     }
 
-    fun removeSprite(identifier: String) {
+    fun removeSprite(id: String) {
         scope.launch {
             bridge.execute(
-                RemoveSprite(identifier),
+                RemoveSprite(id),
             )
         }
     }
