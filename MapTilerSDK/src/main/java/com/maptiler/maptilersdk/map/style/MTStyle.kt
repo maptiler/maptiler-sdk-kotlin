@@ -168,11 +168,11 @@ class MTStyle(
     ) = stylableWorker.addSprite(identifier, url)
 
     /**
-     * Removes a sprite from the map.
+     * Removes a previously added sprite by id. Use to detach a sprite and free related resources.
      *
-     * @param identifier The ID of the sprite.
+     * @param id The ID of the sprite.
      */
-    fun removeSprite(identifier: String) = stylableWorker.removeSprite(identifier)
+    fun removeSprite(id: String) = stylableWorker.removeSprite(id)
 
     /**
      * Moves a layer to a different z-position.

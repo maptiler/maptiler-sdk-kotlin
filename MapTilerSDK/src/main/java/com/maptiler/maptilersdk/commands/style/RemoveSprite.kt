@@ -10,13 +10,13 @@ import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTCommand
 
 internal data class RemoveSprite(
-    val identifier: String,
+    val id: String,
 ) : MTCommand {
     override val isPrimitiveReturnType: Boolean = false
 
     override fun toJS(): String {
-        val sanitizedIdentifier = identifier.replace("\\", "\\\\").replace("'", "\\'")
+        val sanitizedId = id.replace("\\", "\\\\").replace("'", "\\'")
 
-        return "${MTBridge.MAP_OBJECT}.removeSprite('$sanitizedIdentifier');"
+        return "${MTBridge.MAP_OBJECT}.removeSprite('$sanitizedId');"
     }
 }

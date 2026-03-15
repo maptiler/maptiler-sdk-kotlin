@@ -900,12 +900,12 @@ class MTMapViewController(
     }
 
     /**
-     * Removes a sprite from the map.
+     * Removes a previously added sprite by id. Use to detach a sprite and free related resources.
      *
-     * @param identifier The ID of the sprite.
+     * @param id The ID of the sprite.
      */
-    fun removeSprite(identifier: String) {
-        style?.removeSprite(identifier)
+    fun removeSprite(id: String) {
+        style?.removeSprite(id)
     }
 
     /**
