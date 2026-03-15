@@ -64,4 +64,32 @@ class SkyTests {
         assertTrue(js.contains("\"fog-ground-blend\":0.0"))
         assertTrue(js.contains("\"atmosphere-blend\":1.0"))
     }
+
+    @Test fun setSky_Empty_ToJS_IsEmptyObject() {
+        val sky = MTSky()
+        val js = SetSky(sky).toJS()
+        assertEquals("${MTBridge.MAP_OBJECT}.setSky({});", js)
+    }
+
+    @Test fun setSky_WithColorHelpers_ToJS_MatchesExpected() {
+        val sky =
+            MTSky(
+                skyColor = MTSky.color(0xFF0000),
+                horizonColor = MTSky.color("#00FF00"),
+                fogColor = MTSky.color(0x0000FF),
+            )
+        val js = SetSky(sky).toJS()
+        assertTrue(js.contains("\"sky-color\":\"#FF0000\""))
+        assertTrue(js.contains("\"horizon-color\":\"#00FF00\""))
+        assertTrue(js.contains("\"fog-color\":\"#0000FF\""))
+    }
+
+    @Test fun setSky_ExpressionBlends_AreNotClamped() {
+        val sky =
+            MTSky(
+                skyHorizonBlend = MTSky.expression(PropertyValue.Num(-1.5)),
+            )
+        val js = SetSky(sky).toJS()
+        assertTrue(js.contains("\"sky-horizon-blend\":-1.5"))
+    }
 }
