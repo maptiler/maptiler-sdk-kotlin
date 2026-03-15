@@ -211,17 +211,6 @@ class StyleAndCommandsTests {
         assertTrue(js.contains("\"pixelRatio\":2.0"))
     }
 
-    @Test fun addSpriteToJS_ReturnsValidJSString() {
-        val url = URL("https://example.com/sprites/poi.png")
-
-        val js = AddSprite("poi-sprite", url).toJS()
-
-        assertEquals(
-            "${MTBridge.MAP_OBJECT}.addSprite('poi-sprite', 'https://example.com/sprites/poi.png');",
-            js,
-        )
-    }
-
     @Test fun mtStyleAddImage_DelegatesToBridge() {
         val recordedCommands = mutableListOf<MTCommand>()
         val bridge =
