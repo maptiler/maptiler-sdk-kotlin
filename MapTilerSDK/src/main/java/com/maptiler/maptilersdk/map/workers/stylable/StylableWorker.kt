@@ -49,6 +49,7 @@ import com.maptiler.maptilersdk.commands.style.IsSourceLoaded
 import com.maptiler.maptilersdk.commands.style.IsStyleLoaded
 import com.maptiler.maptilersdk.commands.style.MoveLayer
 import com.maptiler.maptilersdk.commands.style.PlayVideoSourceById
+import com.maptiler.maptilersdk.commands.style.RemoveImage
 import com.maptiler.maptilersdk.commands.style.RemoveLayer
 import com.maptiler.maptilersdk.commands.style.RemoveLayerById
 import com.maptiler.maptilersdk.commands.style.RemoveSource
@@ -285,6 +286,14 @@ internal class StylableWorker(
         scope.launch {
             bridge.execute(
                 UpdateImage(identifier, image),
+            )
+        }
+    }
+
+    fun removeImage(name: String) {
+        scope.launch {
+            bridge.execute(
+                RemoveImage(name),
             )
         }
     }

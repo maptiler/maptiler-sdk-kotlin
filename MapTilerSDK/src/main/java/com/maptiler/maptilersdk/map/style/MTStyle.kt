@@ -157,6 +157,13 @@ class MTStyle(
     ) = stylableWorker.updateImage(identifier, image)
 
     /**
+     * Removes a previously added image by name. Use to clean up icons no longer referenced by layers.
+     *
+     * @param name The name of the image.
+     */
+    fun removeImage(name: String) = stylableWorker.removeImage(name)
+
+    /**
      * Registers a sprite hosted at the provided URL under the given identifier.
      *
      * @param identifier Unique name for the sprite resource.
