@@ -184,6 +184,20 @@ interface MTNavigable {
     fun setPitch(pitch: Double)
 
     /**
+     * Sets the map's maximum pitch limit.
+     *
+     * @param maxPitch Desired max pitch in degrees (0-85 default constraints).
+     */
+    fun setMaxPitch(maxPitch: Double)
+
+    /**
+     * Sets the map's minimum pitch limit.
+     *
+     * @param minPitch Desired min pitch in degrees (0-85 default constraints).
+     */
+    fun setMinPitch(minPitch: Double)
+
+    /**
      * Sets the map's vertical field of view in degrees (defaults to 36.87 degrees).
      *
      * @param verticalFieldOfView Desired vertical field of view.

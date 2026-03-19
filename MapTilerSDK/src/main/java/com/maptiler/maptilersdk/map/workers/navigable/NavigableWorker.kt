@@ -48,6 +48,8 @@ import com.maptiler.maptilersdk.commands.navigation.SetCenter
 import com.maptiler.maptilersdk.commands.navigation.SetCenterClampedToGround
 import com.maptiler.maptilersdk.commands.navigation.SetCenterElevation
 import com.maptiler.maptilersdk.commands.navigation.SetMaxBounds
+import com.maptiler.maptilersdk.commands.navigation.SetMaxPitch
+import com.maptiler.maptilersdk.commands.navigation.SetMinPitch
 import com.maptiler.maptilersdk.commands.navigation.SetPadding
 import com.maptiler.maptilersdk.commands.navigation.SetPitch
 import com.maptiler.maptilersdk.commands.navigation.SetPixelRatio
@@ -321,6 +323,24 @@ internal class NavigableWorker(
         scope.launch {
             bridge.execute(
                 SetPitch(clamped),
+            )
+        }
+    }
+
+    override fun setMaxPitch(maxPitch: Double) {
+        val clamped = maxPitch.coerceIn(0.0, 85.0)
+        scope.launch {
+            bridge.execute(
+                SetMaxPitch(clamped),
+            )
+        }
+    }
+
+    override fun setMinPitch(minPitch: Double) {
+        val clamped = minPitch.coerceIn(0.0, 85.0)
+        scope.launch {
+            bridge.execute(
+                SetMinPitch(clamped),
             )
         }
     }
