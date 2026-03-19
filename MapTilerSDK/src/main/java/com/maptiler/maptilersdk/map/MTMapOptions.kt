@@ -106,7 +106,7 @@ class MTMapOptions {
         private set
 
     /**
-     * The maximum pitch of the map (0-180).
+     * The maximum pitch of the map (0-85).
      */
     var maxPitch: Double? = null
         private set

@@ -816,6 +816,16 @@ class MTMapViewController(
     override fun setPitch(pitch: Double) = navigableWorker.setPitch(pitch)
 
     /**
+     * Sets the map's maximum pitch limit in degrees (0-85).
+     */
+    override fun setMaxPitch(maxPitch: Double) = navigableWorker.setMaxPitch(maxPitch)
+
+    /**
+     * Sets the map's minimum pitch limit in degrees (0-85).
+     */
+    override fun setMinPitch(minPitch: Double) = navigableWorker.setMinPitch(minPitch)
+
+    /**
      * Sets the map's vertical field of view in degrees (defaults to 36.87 degrees).
      */
     override fun setVerticalFieldOfView(verticalFieldOfView: Double) = navigableWorker.setVerticalFieldOfView(verticalFieldOfView)
