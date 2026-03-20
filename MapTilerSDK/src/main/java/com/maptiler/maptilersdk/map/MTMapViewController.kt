@@ -169,6 +169,13 @@ class MTMapViewController(
     internal suspend fun initializeMap() {
         val apiKey = MTConfig.apiKey
 
+        if (apiKey.isEmpty() || apiKey == "YOUR_API_KEY") {
+            MTLogger.log(
+                "Map Init Failed - API key not set! Set MTConfig.apiKey first.",
+                MTLogType.WARNING,
+            )
+        }
+
         if (options != null) {
             MTConfig.isSessionLogicEnabled = (options!!.isSessionLogicEnabled)
         }

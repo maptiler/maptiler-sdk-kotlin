@@ -7,4 +7,16 @@
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/mt_api_key_warning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="#CCFFFFFF"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="Map Init Failed - API key not set! Set MTConfig.apiKey first."
+        android:textColor="#000000"
+        android:visibility="gone" />
 </FrameLayout>
