@@ -9,9 +9,12 @@ package com.maptiler.maptilersdk.map
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.widget.FrameLayout
+import android.widget.TextView
+import com.maptiler.maptilersdk.MTConfig
 import com.maptiler.maptilersdk.R
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
@@ -63,6 +66,14 @@ class MTMapViewClassic(
         val rootView = LayoutInflater.from(context).inflate(R.layout.mtmapview_layout, this, true)
         webView = rootView.findViewById(R.id.map)
         _controller.setWebView(webView)
+
+        val warningTextView = rootView.findViewById<TextView>(R.id.mt_api_key_warning)
+        val apiKey = MTConfig.apiKey
+        if (apiKey.isEmpty() || apiKey == "YOUR_API_KEY") {
+            warningTextView.visibility = View.VISIBLE
+        } else {
+            warningTextView.visibility = View.GONE
+        }
 
         // Configure settings only (clients + loading are handled by the executor).
         webView.apply {
