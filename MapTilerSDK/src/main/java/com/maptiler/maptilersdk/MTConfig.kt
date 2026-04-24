@@ -15,6 +15,16 @@ import com.maptiler.maptilersdk.logging.MTLogLevel
  */
 object MTConfig {
     /**
+     * SDK version
+     */
+    const val VERSION = "1.3.0"
+
+    /**
+     * Custom User-Agent string for the SDK
+     */
+    const val CUSTOM_USER_AGENT = "MapTiler-Mobile-SDK-Android/$VERSION"
+
+    /**
      * MapTiler API Key
      */
     var apiKey: String = ""

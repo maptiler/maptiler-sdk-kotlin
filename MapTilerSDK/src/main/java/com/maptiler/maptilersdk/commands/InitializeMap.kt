@@ -6,6 +6,7 @@
 
 package com.maptiler.maptilersdk.commands
 
+import com.maptiler.maptilersdk.MTConfig
 import com.maptiler.maptilersdk.bridge.JSString
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTCommand
@@ -56,6 +57,11 @@ internal data class InitializeMap(
 
         val eventLevel = options?.eventLevel?.toString() ?: "ESSENTIAL"
         val throttleMs = options?.highFrequencyEventThrottleMs ?: 0
-        return "initializeMap('$apiKey', $styleString, $optionsString, $isSessionLogicEnabled, '$eventLevel', $throttleMs);"
+        val initCall = "initializeMap('$apiKey', $styleString, $optionsString, $isSessionLogicEnabled, '$eventLevel', $throttleMs);"
+        val telemetry =
+            "if (typeof map !== 'undefined' && map.telemetry) { " +
+                "map.telemetry.registerModule('maptiler-sdk-android', '${MTConfig.VERSION}'); " +
+                "}"
+        return "$initCall $telemetry"
     }
 }
