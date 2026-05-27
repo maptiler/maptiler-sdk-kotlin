@@ -57,11 +57,12 @@ internal data class InitializeMap(
 
         val eventLevel = options?.eventLevel?.toString() ?: "ESSENTIAL"
         val throttleMs = options?.highFrequencyEventThrottleMs ?: 0
+        val prewarmCall = if (options?.prewarm == true) "${MTBridge.SDK_OBJECT}.prewarm(); " else ""
         val initCall = "initializeMap('$apiKey', $styleString, $optionsString, $isSessionLogicEnabled, '$eventLevel', $throttleMs);"
         val telemetry =
             "if (typeof map !== 'undefined' && map.telemetry) { " +
                 "map.telemetry.registerModule('maptiler-sdk-android', '${MTConfig.VERSION}'); " +
                 "}"
-        return "$initCall $telemetry"
+        return "$prewarmCall$initCall $telemetry"
     }
 }
