@@ -396,6 +396,13 @@ class MTMapOptions {
         private set
 
     /**
+     * prewarm property adds prewarming capabilities.
+     * Backed by prewarm to allow prewarming of map resources.
+     */
+    var prewarm: Boolean? = null
+        private set
+
+    /**
      * Boolean indicating whether session logic is enabled.
      *
      * This allows MapTiler to enable session-based billing.
@@ -553,6 +560,7 @@ class MTMapOptions {
         isSessionLogicEnabled: Boolean = true,
         eventLevel: MTEventLevel = MTEventLevel.CAMERA_ONLY,
         highFrequencyEventThrottleMs: Int? = 20,
+        prewarm: Boolean? = null,
     ) {
         this.language = language
         this.center = center
@@ -604,5 +612,6 @@ class MTMapOptions {
         this.isSessionLogicEnabled = isSessionLogicEnabled
         this.eventLevel = eventLevel
         this.highFrequencyEventThrottleMs = highFrequencyEventThrottleMs
+        this.prewarm = prewarm
     }
 }
