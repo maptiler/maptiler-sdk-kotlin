@@ -13,6 +13,7 @@ import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.Null
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.StringValue
 import com.maptiler.maptilersdk.commands.misc.LngLatToArray
 import com.maptiler.maptilersdk.commands.misc.LngLatToString
+import com.maptiler.maptilersdk.commands.misc.PointAdd
 import com.maptiler.maptilersdk.commands.navigation.AreTilesLoaded
 import com.maptiler.maptilersdk.commands.navigation.CenterOnIpPoint
 import com.maptiler.maptilersdk.commands.navigation.EaseTo
@@ -662,6 +663,21 @@ internal class NavigableWorker(
         return when (returnTypeValue) {
             is StringValue -> returnTypeValue.value.trim('"')
             else -> ""
+        }
+    }
+
+    override suspend fun pointAdd(
+        point1: MTPoint,
+        point2: MTPoint,
+    ): MTPoint {
+        val returnTypeValue =
+            bridge.execute(
+                PointAdd(point1, point2),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> JsonConfig.json.decodeFromString<MTPoint>(returnTypeValue.value)
+            else -> MTPoint(0.0, 0.0)
         }
     }
 }

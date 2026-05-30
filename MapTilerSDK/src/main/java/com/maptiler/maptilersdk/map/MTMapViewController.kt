@@ -1009,6 +1009,11 @@ class MTMapViewController(
 
     override suspend fun lngLatToString(lngLat: LngLat): String = navigableWorker.lngLatToString(lngLat)
 
+    override suspend fun pointAdd(
+        point1: com.maptiler.maptilersdk.map.types.MTPoint,
+        point2: com.maptiler.maptilersdk.map.types.MTPoint,
+    ): com.maptiler.maptilersdk.map.types.MTPoint = navigableWorker.pointAdd(point1, point2)
+
     /**
      * Sets the maximum number of images (raster tiles, sprites, icons) to load in parallel.
      *

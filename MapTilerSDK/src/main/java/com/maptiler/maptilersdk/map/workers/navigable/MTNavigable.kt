@@ -351,4 +351,16 @@ interface MTNavigable {
      * @return String representation of the LngLat.
      */
     suspend fun lngLatToString(lngLat: LngLat): String
+
+    /**
+     * Adds the coordinates of one point to another.
+     *
+     * @param point1 The first point.
+     * @param point2 The second point to add to the first.
+     * @return A new MTPoint with the added coordinates.
+     */
+    suspend fun pointAdd(
+        point1: MTPoint,
+        point2: MTPoint,
+    ): MTPoint
 }
