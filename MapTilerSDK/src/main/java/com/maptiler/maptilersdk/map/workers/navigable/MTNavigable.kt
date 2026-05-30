@@ -337,6 +337,14 @@ interface MTNavigable {
     fun setMaxBounds(bounds: MTBounds?)
 
     /**
+     * Returns a new LngLat object whose longitude is wrapped to the range (-180, 180).
+     *
+     * @param lngLat LngLat object to wrap.
+     * @return A new LngLat object with the wrapped longitude.
+     */
+    suspend fun wrap(lngLat: LngLat): LngLat
+
+    /**
      * Converts a LngLat to an array of doubles.
      *
      * @param lngLat LngLat object to convert.
