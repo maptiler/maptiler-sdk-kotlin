@@ -11,6 +11,8 @@ import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.BoolValue
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.DoubleValue
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.Null
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType.StringValue
+import com.maptiler.maptilersdk.commands.misc.LngLatToArray
+import com.maptiler.maptilersdk.commands.misc.LngLatToString
 import com.maptiler.maptilersdk.commands.navigation.AreTilesLoaded
 import com.maptiler.maptilersdk.commands.navigation.CenterOnIpPoint
 import com.maptiler.maptilersdk.commands.navigation.EaseTo
@@ -636,6 +638,30 @@ internal class NavigableWorker(
             bridge.execute(
                 SetPadding(padding),
             )
+        }
+    }
+
+    override suspend fun lngLatToArray(lngLat: LngLat): DoubleArray {
+        val returnTypeValue =
+            bridge.execute(
+                LngLatToArray(lngLat),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> JsonConfig.json.decodeFromString<DoubleArray>(returnTypeValue.value)
+            else -> DoubleArray(0)
+        }
+    }
+
+    override suspend fun lngLatToString(lngLat: LngLat): String {
+        val returnTypeValue =
+            bridge.execute(
+                LngLatToString(lngLat),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> returnTypeValue.value.trim('"')
+            else -> ""
         }
     }
 }

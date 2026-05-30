@@ -1005,6 +1005,10 @@ class MTMapViewController(
      */
     override fun setPadding(padding: MTPaddingOptions) = navigableWorker.setPadding(padding)
 
+    override suspend fun lngLatToArray(lngLat: LngLat): DoubleArray = navigableWorker.lngLatToArray(lngLat)
+
+    override suspend fun lngLatToString(lngLat: LngLat): String = navigableWorker.lngLatToString(lngLat)
+
     /**
      * Sets the maximum number of images (raster tiles, sprites, icons) to load in parallel.
      *

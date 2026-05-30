@@ -335,4 +335,20 @@ interface MTNavigable {
      * @param bounds Geographical limits for map interactions, or null to remove restrictions.
      */
     fun setMaxBounds(bounds: MTBounds?)
+
+    /**
+     * Converts a LngLat to an array of doubles.
+     *
+     * @param lngLat LngLat object to convert.
+     * @return DoubleArray containing longitude and latitude.
+     */
+    suspend fun lngLatToArray(lngLat: LngLat): DoubleArray
+
+    /**
+     * Converts a LngLat to a string representation.
+     *
+     * @param lngLat LngLat object to convert.
+     * @return String representation of the LngLat.
+     */
+    suspend fun lngLatToString(lngLat: LngLat): String
 }
