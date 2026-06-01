@@ -1005,6 +1005,14 @@ class MTMapViewController(
      */
     override fun setPadding(padding: MTPaddingOptions) = navigableWorker.setPadding(padding)
 
+    /**
+     * Returns a new LngLat object whose longitude is wrapped to the range (-180, 180).
+     *
+     * @param lngLat LngLat object to wrap.
+     * @return A new LngLat object with the wrapped longitude.
+     */
+    override suspend fun wrap(lngLat: LngLat): LngLat = navigableWorker.wrap(lngLat)
+
     override suspend fun lngLatToArray(lngLat: LngLat): DoubleArray = navigableWorker.lngLatToArray(lngLat)
 
     override suspend fun lngLatToString(lngLat: LngLat): String = navigableWorker.lngLatToString(lngLat)
