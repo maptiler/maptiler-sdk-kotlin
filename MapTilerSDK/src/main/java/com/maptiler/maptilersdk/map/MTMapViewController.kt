@@ -1022,6 +1022,24 @@ class MTMapViewController(
         point2: com.maptiler.maptilersdk.map.types.MTPoint,
     ): com.maptiler.maptilersdk.map.types.MTPoint = navigableWorker.pointAdd(point1, point2)
 
+    override suspend fun pointAngle(point: MTPoint): Double = navigableWorker.pointAngle(point)
+
+    override suspend fun pointAngleTo(
+        point1: MTPoint,
+        point2: MTPoint,
+    ): Double = navigableWorker.pointAngleTo(point1, point2)
+
+    override suspend fun pointAngleWith(
+        point1: MTPoint,
+        point2: MTPoint,
+    ): Double = navigableWorker.pointAngleWith(point1, point2)
+
+    override suspend fun pointAngleWithSep(
+        point: MTPoint,
+        x: Double,
+        y: Double,
+    ): Double = navigableWorker.pointAngleWithSep(point, x, y)
+
     /**
      * Sets the maximum number of images (raster tiles, sprites, icons) to load in parallel.
      *
