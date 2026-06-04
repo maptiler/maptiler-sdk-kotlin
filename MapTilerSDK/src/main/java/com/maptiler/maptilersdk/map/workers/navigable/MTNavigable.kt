@@ -371,4 +371,50 @@ interface MTNavigable {
         point1: MTPoint,
         point2: MTPoint,
     ): MTPoint
+
+    /**
+     * Get the angle from the 0, 0 coordinate to this point, in radians.
+     *
+     * @param point The point.
+     * @return Angle in radians.
+     */
+    suspend fun pointAngle(point: MTPoint): Double
+
+    /**
+     * Get the angle from this point to another point, in radians.
+     *
+     * @param point1 The first point.
+     * @param point2 The second point.
+     * @return Angle in radians.
+     */
+    suspend fun pointAngleTo(
+        point1: MTPoint,
+        point2: MTPoint,
+    ): Double
+
+    /**
+     * Get the angle between this point and another point, in radians.
+     *
+     * @param point1 The first point.
+     * @param point2 The second point.
+     * @return Angle in radians.
+     */
+    suspend fun pointAngleWith(
+        point1: MTPoint,
+        point2: MTPoint,
+    ): Double
+
+    /**
+     * Find the angle of the two vectors.
+     *
+     * @param point The point.
+     * @param x The x-coordinate.
+     * @param y The y-coordinate.
+     * @return The angle in radians.
+     */
+    suspend fun pointAngleWithSep(
+        point: MTPoint,
+        x: Double,
+        y: Double,
+    ): Double
 }

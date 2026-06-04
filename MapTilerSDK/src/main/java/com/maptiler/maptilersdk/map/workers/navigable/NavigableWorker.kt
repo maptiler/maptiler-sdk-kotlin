@@ -15,6 +15,10 @@ import com.maptiler.maptilersdk.commands.misc.LngLatToArray
 import com.maptiler.maptilersdk.commands.misc.LngLatToString
 import com.maptiler.maptilersdk.commands.misc.LngLatWrap
 import com.maptiler.maptilersdk.commands.misc.PointAdd
+import com.maptiler.maptilersdk.commands.misc.PointAngle
+import com.maptiler.maptilersdk.commands.misc.PointAngleTo
+import com.maptiler.maptilersdk.commands.misc.PointAngleWith
+import com.maptiler.maptilersdk.commands.misc.PointAngleWithSep
 import com.maptiler.maptilersdk.commands.navigation.AreTilesLoaded
 import com.maptiler.maptilersdk.commands.navigation.CenterOnIpPoint
 import com.maptiler.maptilersdk.commands.navigation.EaseTo
@@ -691,6 +695,64 @@ internal class NavigableWorker(
         return when (returnTypeValue) {
             is StringValue -> JsonConfig.json.decodeFromString<MTPoint>(returnTypeValue.value)
             else -> MTPoint(0.0, 0.0)
+        }
+    }
+
+    override suspend fun pointAngle(point: MTPoint): Double {
+        val returnTypeValue =
+            bridge.execute(
+                PointAngle(point),
+            )
+
+        return when (returnTypeValue) {
+            is DoubleValue -> returnTypeValue.value
+            else -> 0.0
+        }
+    }
+
+    override suspend fun pointAngleTo(
+        point1: MTPoint,
+        point2: MTPoint,
+    ): Double {
+        val returnTypeValue =
+            bridge.execute(
+                PointAngleTo(point1, point2),
+            )
+
+        return when (returnTypeValue) {
+            is DoubleValue -> returnTypeValue.value
+            else -> 0.0
+        }
+    }
+
+    override suspend fun pointAngleWith(
+        point1: MTPoint,
+        point2: MTPoint,
+    ): Double {
+        val returnTypeValue =
+            bridge.execute(
+                PointAngleWith(point1, point2),
+            )
+
+        return when (returnTypeValue) {
+            is DoubleValue -> returnTypeValue.value
+            else -> 0.0
+        }
+    }
+
+    override suspend fun pointAngleWithSep(
+        point: MTPoint,
+        x: Double,
+        y: Double,
+    ): Double {
+        val returnTypeValue =
+            bridge.execute(
+                PointAngleWithSep(point, x, y),
+            )
+
+        return when (returnTypeValue) {
+            is DoubleValue -> returnTypeValue.value
+            else -> 0.0
         }
     }
 }
