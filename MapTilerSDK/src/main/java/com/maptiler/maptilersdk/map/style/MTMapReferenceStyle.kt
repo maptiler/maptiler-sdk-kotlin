@@ -40,7 +40,7 @@ sealed class MTMapReferenceStyle {
     /**
      *  A minimalist alternative to STREETS, with a touch of flat design.
      */
-    data object BASIC : MTMapReferenceStyle()
+    data object BASE : MTMapReferenceStyle()
 
     /**
      *  A minimalist style for high contrast navigation.
@@ -121,7 +121,7 @@ sealed class MTMapReferenceStyle {
                     MTMapStyleVariant.LIGHT,
                     MTMapStyleVariant.DARK,
                 )
-            BASIC ->
+            BASE ->
                 listOf(
                     MTMapStyleVariant.DEFAULT_VARIANT,
                     MTMapStyleVariant.LIGHT,
@@ -190,7 +190,7 @@ sealed class MTMapReferenceStyle {
             OUTDOOR -> "OUTDOOR"
             WINTER -> "WINTER"
             DATAVIZ -> "DATAVIZ"
-            BASIC -> "BASIC"
+            BASE -> "BASE"
             BRIGHT -> "BRIGHT"
             TOPO -> "TOPO"
             TONER -> "TONER"
@@ -210,7 +210,7 @@ sealed class MTMapReferenceStyle {
                 OUTDOOR,
                 WINTER,
                 DATAVIZ,
-                BASIC,
+                BASE,
                 BRIGHT,
                 TOPO,
                 TONER,
