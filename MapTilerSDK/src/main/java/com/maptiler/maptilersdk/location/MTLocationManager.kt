@@ -19,6 +19,7 @@ import android.os.CancellationSignal
 import android.os.Handler
 import android.os.Looper
 import androidx.annotation.MainThread
+import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
 import com.maptiler.maptilersdk.logging.MTLogType
 import com.maptiler.maptilersdk.logging.MTLogger
@@ -85,6 +86,7 @@ class MTLocationManager(
         }
 
     /** Starts the location updates. */
+    @RequiresPermission(anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION])
     fun startLocationUpdates() {
         if (!hasLocationPermission()) {
             MTLogger.log("Location permission not granted.", MTLogType.WARNING)
@@ -105,6 +107,7 @@ class MTLocationManager(
     }
 
     /** Requests location only once and calls [MTLocationManagerDelegate.didUpdateLocation]. */
+    @RequiresPermission(anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION])
     fun requestLocationOnce() {
         if (!hasLocationPermission()) {
             MTLogger.log("Location permission not granted.", MTLogType.WARNING)
@@ -191,6 +194,7 @@ class MTLocationManager(
         return coarse || fine
     }
 
+    @RequiresPermission(anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION])
     private fun requestUpdatesSafe(provider: String) {
         if (locationManager.isProviderEnabled(provider)) {
             locationManager.requestLocationUpdates(provider, minTimeMs, minDistanceM, listener, Looper.getMainLooper())
