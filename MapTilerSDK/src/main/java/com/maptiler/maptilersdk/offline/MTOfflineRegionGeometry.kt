@@ -7,6 +7,7 @@
 package com.maptiler.maptilersdk.offline
 
 import com.maptiler.maptilersdk.map.LngLat
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -23,12 +24,14 @@ sealed class MTOfflineRegionGeometry {
      * A rectangular bounding box.
      */
     @Serializable
+    @SerialName("boundingBox")
     data class BoundingBox(override val bbox: MTBoundingBox) : MTOfflineRegionGeometry()
 
     /**
      * A route defined by a series of coordinates.
      */
     @Serializable
+    @SerialName("route")
     data class Route(val coordinates: List<LngLat>) : MTOfflineRegionGeometry() {
         override val bbox: MTBoundingBox
             get() = MTBoundingBox.fromCoordinates(coordinates)
@@ -38,6 +41,7 @@ sealed class MTOfflineRegionGeometry {
      * A polygon defined by a series of coordinates (the boundary).
      */
     @Serializable
+    @SerialName("polygon")
     data class Polygon(val coordinates: List<LngLat>) : MTOfflineRegionGeometry() {
         override val bbox: MTBoundingBox
             get() = MTBoundingBox.fromCoordinates(coordinates)

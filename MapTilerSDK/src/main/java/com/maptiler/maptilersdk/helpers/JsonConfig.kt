@@ -14,5 +14,7 @@ object JsonConfig {
             prettyPrint = false
             encodeDefaults = true
             explicitNulls = false
+            ignoreUnknownKeys = true
+            isLenient = true
         }
 }
