@@ -8,6 +8,7 @@ package com.maptiler.maptilersdk.offline
 
 import com.maptiler.maptilersdk.helpers.MTMath
 import com.maptiler.maptilersdk.map.LngLat
+import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.atan
 import kotlin.math.ceil
