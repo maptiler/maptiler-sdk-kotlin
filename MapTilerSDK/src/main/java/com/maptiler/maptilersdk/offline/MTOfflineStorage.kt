@@ -7,6 +7,8 @@
 package com.maptiler.maptilersdk.offline
 
 import android.content.Context
+import com.maptiler.maptilersdk.logging.MTLogType
+import com.maptiler.maptilersdk.logging.MTLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -37,6 +39,7 @@ internal object MTOfflineStorage {
                 val json = file.readText()
                 MTOfflinePackMetadata.fromJson(json)
             } catch (e: Exception) {
+                MTLogger.log("Failed to load metadata for pack $packId: ${e.message}", MTLogType.ERROR)
                 null
             }
         }
@@ -46,13 +49,20 @@ internal object MTOfflineStorage {
             val root = MTOfflineStoragePaths.getRootDirectory(context)
             if (!root.exists()) return@withContext emptyList()
 
-            root.listFiles()?.mapNotNull { packDir ->
+            val packs = mutableListOf<MTOfflinePackMetadata>()
+            root.listFiles()?.forEach { packDir ->
                 if (packDir.isDirectory) {
-                    loadMetadata(context, packDir.name)
-                } else {
-                    null
+                    val metadata = loadMetadata(context, packDir.name)
+                    if (metadata != null) {
+                        packs.add(metadata)
+                    } else {
+                        // Handle corrupted metadata by cleaning up the invalid pack directory
+                        MTLogger.log("Metadata corrupted or missing for pack ${packDir.name}, cleaning up directory.", MTLogType.WARNING)
+                        deletePack(context, packDir.name)
+                    }
                 }
-            } ?: emptyList()
+            }
+            packs
         }
 
     suspend fun saveManifest(
@@ -77,6 +87,7 @@ internal object MTOfflineStorage {
                 val json = file.readText()
                 MTManifest.fromJson(json)
             } catch (e: Exception) {
+                MTLogger.log("Failed to load manifest for pack $packId: ${e.message}", MTLogType.ERROR)
                 null
             }
         }
@@ -87,21 +98,47 @@ internal object MTOfflineStorage {
     ) = withContext(Dispatchers.IO) {
         val packDir = MTOfflineStoragePaths.getPackDirectory(context, packId)
         if (packDir.exists()) {
-            packDir.deleteRecursively()
+            try {
+                packDir.deleteRecursively()
+                MTLogger.log("Successfully deleted pack $packId", MTLogType.INFO)
+            } catch (e: Exception) {
+                MTLogger.log("Failed to delete pack $packId: ${e.message}", MTLogType.ERROR)
+            }
         }
     }
 
+    /**
+     * Cleans up any stale temporary files.
+     *
+     * @param context Android context.
+     * @param packId Optional pack ID to clean specific pack directory. If null, cleans the global temp directory.
+     */
     suspend fun cleanStaleTempFiles(
         context: Context,
-        packId: String,
+        packId: String? = null,
     ) = withContext(Dispatchers.IO) {
-        val packDir = MTOfflineStoragePaths.getPackDirectory(context, packId)
-        if (!packDir.exists()) return@withContext
+        try {
+            if (packId != null) {
+                val packDir = MTOfflineStoragePaths.getPackDirectory(context, packId)
+                if (!packDir.exists()) return@withContext
 
-        packDir.listFiles()?.forEach { file ->
-            if (file.name.endsWith(".tmp")) {
-                file.delete()
+                packDir.listFiles()?.forEach { file ->
+                    val name = file.name
+                    // Remove hidden files, UUID-style temp files, or .tmp files
+                    if (name.startsWith(".") || name.endsWith(".tmp") || isUuid(name)) {
+                        file.delete()
+                    }
+                }
+            } else {
+                val tempDir = MTOfflineStoragePaths.getTempDirectory(context)
+                if (tempDir.exists()) {
+                    tempDir.listFiles()?.forEach { file ->
+                        file.deleteRecursively()
+                    }
+                }
             }
+        } catch (e: Exception) {
+            MTLogger.log("Error cleaning stale temp files: ${e.message}", MTLogType.ERROR)
         }
     }
 
@@ -124,6 +161,30 @@ internal object MTOfflineStorage {
             file.exists() && file.length() > 0
         }
 
+    /**
+     * Checks if there is enough available space on the device for the given byte size.
+     *
+     * @param context Android context.
+     * @param requiredBytes The estimated number of bytes required.
+     * @return True if there is enough space, false otherwise.
+     */
+    suspend fun hasAvailableSpace(
+        context: Context,
+        requiredBytes: Long,
+    ): Boolean =
+        withContext(Dispatchers.IO) {
+            val root = MTOfflineStoragePaths.getRootDirectory(context)
+            // Ensure directory exists to get accurate stats
+            secureCreateDirectory(root)
+            val usableSpace = root.usableSpace
+            val hasSpace = usableSpace >= requiredBytes
+
+            if (!hasSpace) {
+                MTLogger.log("Not enough available space. Required: $requiredBytes, Usable: $usableSpace", MTLogType.WARNING)
+            }
+            hasSpace
+        }
+
     suspend fun moveFile(
         from: File,
         to: File,
@@ -142,6 +203,7 @@ internal object MTOfflineStorage {
             )
         } catch (e: Exception) {
             // Fallback if atomic move is not supported or fails across volumes
+            MTLogger.log("Atomic move failed, falling back to standard move: ${e.message}", MTLogType.WARNING)
             try {
                 Files.move(
                     from.toPath(),
@@ -149,6 +211,7 @@ internal object MTOfflineStorage {
                     StandardCopyOption.REPLACE_EXISTING,
                 )
             } catch (e2: Exception) {
+                MTLogger.log("Fallback move failed: ${e2.message}", MTLogType.ERROR)
                 throw MTOfflineStorageError.WriteFailed(e2)
             }
         }
@@ -169,6 +232,7 @@ internal object MTOfflineStorage {
             }
             moveFile(tempFile, file)
         } catch (e: Exception) {
+            MTLogger.log("Atomic write failed for ${file.name}: ${e.message}", MTLogType.ERROR)
             if (tempFile.exists()) tempFile.delete()
             if (e is MTOfflineStorageError) throw e
             throw MTOfflineStorageError.WriteFailed(e)
@@ -178,7 +242,9 @@ internal object MTOfflineStorage {
     private fun secureCreateDirectory(directory: File) {
         if (!directory.exists()) {
             if (!directory.mkdirs()) {
-                throw MTOfflineStorageError.WriteFailed(IOException("Failed to create directory: ${directory.absolutePath}"))
+                val msg = "Failed to create directory: ${directory.absolutePath}"
+                MTLogger.log(msg, MTLogType.ERROR)
+                throw MTOfflineStorageError.WriteFailed(IOException(msg))
             }
         }
     }
@@ -197,5 +263,14 @@ internal object MTOfflineStorage {
                 }
         }
         return size
+    }
+
+    private fun isUuid(name: String): Boolean {
+        return try {
+            java.util.UUID.fromString(name)
+            true
+        } catch (e: Exception) {
+            false
+        }
     }
 }
