@@ -206,7 +206,7 @@ internal object MTOfflinePackMetadataSerializer : KSerializer<MTOfflinePackMetad
         val surrogate = decoder.decodeSerializableValue(MTOfflinePackMetadataSurrogate.serializer())
         val expiresAt =
             surrogate.expiresAt
-                ?: surrogate.createdAt.plusMillis(MTOfflineConfiguration.shared.defaultExpirationInterval)
+                ?: surrogate.createdAt.plusMillis(MTOfflineConfiguration.DEFAULT_EXPIRATION_INTERVAL)
         return MTOfflinePackMetadata(
             surrogate.id,
             surrogate.state,

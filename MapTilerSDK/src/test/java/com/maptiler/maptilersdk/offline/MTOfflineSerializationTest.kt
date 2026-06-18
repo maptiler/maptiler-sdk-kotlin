@@ -83,7 +83,7 @@ class MTOfflineSerializationTest {
         val decoded = MTOfflinePackMetadata.fromJson(json)
         val expectedExpiresAt =
             Instant.parse("2026-06-10T10:00:00Z")
-                .plusMillis(MTOfflineConfiguration.shared.defaultExpirationInterval)
+                .plusMillis(MTOfflineConfiguration.DEFAULT_EXPIRATION_INTERVAL)
 
         assertEquals(expectedExpiresAt, decoded.expiresAt)
     }
