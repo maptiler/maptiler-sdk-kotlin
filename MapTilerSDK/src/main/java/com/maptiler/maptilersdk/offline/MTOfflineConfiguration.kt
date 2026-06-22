@@ -14,35 +14,37 @@ internal enum class MTOfflinePlannerType {
     SERVER,
 }
 
-internal class MTOfflineConfiguration {
-    companion object {
-        val shared = MTOfflineConfiguration()
-    }
-
+/**
+ * Global configuration for offline mapping.
+ */
+internal object MTOfflineConfiguration {
     private var _plannerType = AtomicReference(MTOfflinePlannerType.LOCAL)
     private var _userMaxTileCount = AtomicInteger(15000)
 
     /**
-     * Hard safety limit
+     * Hard safety limit for the number of tiles in a single pack.
      */
-    internal val internalMaxTileLimit: Int = 15000
+    internal const val INTERNAL_MAX_TILE_LIMIT: Int = 15000
 
     /**
-     * The default expiration interval for offline packs (30 days).
+     * The default expiration interval for offline packs (30 days) in milliseconds.
      */
-    internal val defaultExpirationInterval: Long = 30L * 24 * 60 * 60 * 1000
+    internal const val DEFAULT_EXPIRATION_INTERVAL: Long = 30L * 24 * 60 * 60 * 1000
 
     /**
-     * The default grace period before an expired pack is deleted (7 days).
+     * The default grace period before an expired pack is deleted (7 days) in milliseconds.
      */
-    internal val defaultGracePeriod: Long = 7L * 24 * 60 * 60 * 1000
+    internal const val DEFAULT_GRACE_PERIOD: Long = 7L * 24 * 60 * 60 * 1000
 
+    /**
+     * The type of planner to use for generating offline manifests.
+     */
     internal var plannerType: MTOfflinePlannerType
         get() = _plannerType.get()
         set(value) = _plannerType.set(value)
 
     /**
-     * The global limit set by the SDK consumer.
+     * The global limit for tile count set by the SDK consumer.
      */
     internal var userMaxTileCount: Int
         get() = _userMaxTileCount.get()
@@ -52,5 +54,5 @@ internal class MTOfflineConfiguration {
      * The effective global limit (most restrictive of internal vs user).
      */
     internal val effectiveGlobalLimit: Int
-        get() = minOf(userMaxTileCount, internalMaxTileLimit)
+        get() = minOf(userMaxTileCount, INTERNAL_MAX_TILE_LIMIT)
 }
