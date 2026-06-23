@@ -129,7 +129,11 @@ class MTOfflineEstimator {
 
     private suspend fun fetchString(url: URL): String =
         withContext(Dispatchers.IO) {
-            url.readText()
+            val request = okhttp3.Request.Builder().url(url.toString()).build()
+            MTOfflineHttpClient.client.newCall(request).execute().use { response ->
+                if (!response.isSuccessful) throw Exception("Bad response: ${response.code}")
+                response.body?.string() ?: throw Exception("Empty body")
+            }
         }
 
     private data class TemplateInfo(

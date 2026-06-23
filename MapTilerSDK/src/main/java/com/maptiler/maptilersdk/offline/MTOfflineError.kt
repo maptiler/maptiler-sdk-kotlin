@@ -55,4 +55,27 @@ public sealed class MTOfflineError : Exception() {
      * A download operation failed.
      */
     public data class DownloadFailed(override val cause: Throwable) : MTOfflineError()
+
+    /**
+     * The requested region exceeds the maximum allowed resource count.
+     */
+    public data class ExceedsMaximumTileCount(val limit: Int, val requested: Int) : MTOfflineError() {
+        override val message: String
+            get() = "The requested region exceeds the maximum allowed resource count (Limit: $limit, Requested: $requested)"
+    }
+
+    /**
+     * The server returned a bad response code.
+     */
+    public data class BadResponse(val statusCode: Int) : MTOfflineError()
+
+    /**
+     * A network error occurred.
+     */
+    public data class NetworkError(override val cause: Throwable) : MTOfflineError()
+
+    /**
+     * The downloaded content type does not match the expected type.
+     */
+    public data class ContentMismatch(val expected: String, val actual: String) : MTOfflineError()
 }
