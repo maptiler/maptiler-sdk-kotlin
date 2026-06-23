@@ -202,6 +202,55 @@ sealed class MTMapReferenceStyle {
             is CUSTOM -> this.url.toString()
         }
 
+    /**
+     * Resolves the concrete MapTiler Cloud style URL for this reference style and optional variant.
+     * Returns null if the custom URL is malformed.
+     *
+     * @param variant The optional style variant.
+     * @param apiKey The MapTiler API key.
+     * @return The resolved style URL.
+     */
+    fun fetchStyleUrl(
+        variant: MTMapStyleVariant? = null,
+        apiKey: String,
+    ): URL? {
+        if (this is CUSTOM) {
+            return this.url
+        }
+
+        val mapId = getMapTilerCloudId(variant)
+        return try {
+            URL("https://api.maptiler.com/maps/$mapId/style.json?key=$apiKey")
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun getMapTilerCloudId(variant: MTMapStyleVariant?): String {
+        val isDefault = variant == null || variant == MTMapStyleVariant.DEFAULT_VARIANT
+
+        return when (this) {
+            STREETS -> if (isDefault) "streets-v4" else "streets-v4-${variant!!.value}"
+            OUTDOOR -> if (isDefault) "outdoor-v4" else "outdoor-v4-${variant!!.value}"
+            WINTER -> if (isDefault) "winter-v4" else "winter-v4-${variant!!.value}"
+            BASE -> if (isDefault) "base-v4" else "base-v4-${variant!!.value}"
+            BRIGHT -> if (isDefault) "bright-v4" else "bright-v4-${variant!!.value}"
+            TOPO -> if (isDefault) "topo-v4" else "topo-v4-${variant!!.value}"
+            TONER -> if (isDefault) "toner-v4" else "toner-v4-${variant!!.value}"
+
+            SATELLITE -> "satellite"
+            OPENSTREETMAP -> "openstreetmap"
+            OCEAN -> "ocean"
+
+            DATAVIZ -> if (isDefault) "dataviz" else "dataviz-${variant!!.value}"
+            BACKDROP -> if (isDefault) "backdrop" else "backdrop-${variant!!.value}"
+            AQUARELLE -> if (isDefault) "aquarelle" else "aquarelle-${variant!!.value}"
+            LANDSCAPE -> if (isDefault) "landscape" else "landscape-${variant!!.value}"
+
+            is CUSTOM -> ""
+        }
+    }
+
     companion object {
         fun all(): List<MTMapReferenceStyle> =
             listOf(
