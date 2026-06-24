@@ -151,6 +151,10 @@ internal object MTOfflineStorage {
             calculateDirectorySize(packDir)
         }
 
+    fun isFileVerified(file: File): Boolean {
+        return file.exists() && file.length() > 0
+    }
+
     suspend fun isFileVerified(
         context: Context,
         packId: String,
@@ -158,7 +162,7 @@ internal object MTOfflineStorage {
     ): Boolean =
         withContext(Dispatchers.IO) {
             val file = MTOfflineStoragePaths.getAbsoluteFile(context, packId, relativePath)
-            file.exists() && file.length() > 0
+            isFileVerified(file)
         }
 
     /**
@@ -216,6 +220,11 @@ internal object MTOfflineStorage {
             }
         }
     }
+
+    suspend fun write(
+        data: ByteArray,
+        file: File,
+    ) = writeAtomic(file, data)
 
     // MARK: - Private Helpers
 
