@@ -69,6 +69,20 @@ internal object MTOfflineStoragePaths {
     }
 
     /**
+     * The tiles directory for a specific pack: `<packDirectory>/tiles/`
+     *
+     * @param context Android context
+     * @param packId The unique identifier of the pack.
+     * @return The tiles directory.
+     */
+    internal fun getTilesDirectory(
+        context: Context,
+        packId: String,
+    ): File {
+        return File(getPackDirectory(context, packId), "tiles")
+    }
+
+    /**
      * The manifest file path for a specific pack: `<packDirectory>/manifest.json`
      *
      * @param context Android context
@@ -161,9 +175,23 @@ internal object MTOfflineStoragePaths {
         fontStack: String,
         range: String,
     ): File {
-        val glyphsDir = File(getPackDirectory(context, packId), "glyphs")
+        val glyphsDir = getGlyphsDirectory(context, packId)
         val fontStackDir = File(glyphsDir, fontStack)
         return File(fontStackDir, "$range.pbf")
+    }
+
+    /**
+     * The glyphs directory for a specific pack: `<packDirectory>/glyphs/`
+     *
+     * @param context Android context
+     * @param packId The unique identifier of the pack.
+     * @return The glyphs directory.
+     */
+    internal fun getGlyphsDirectory(
+        context: Context,
+        packId: String,
+    ): File {
+        return File(getPackDirectory(context, packId), "glyphs")
     }
 
     /**
@@ -186,7 +214,7 @@ internal object MTOfflineStoragePaths {
         x: Int,
         y: Int,
     ): File {
-        val tilesDir = File(getPackDirectory(context, packId), "tiles")
+        val tilesDir = getTilesDirectory(context, packId)
         val sourceDir = File(tilesDir, sourceId)
         val zDir = File(sourceDir, "$z")
         val xDir = File(zDir, "$x")
