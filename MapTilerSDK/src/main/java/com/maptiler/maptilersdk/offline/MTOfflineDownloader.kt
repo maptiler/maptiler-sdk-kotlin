@@ -95,10 +95,19 @@ internal class MTOfflineDownloader(
         for (task in tasks) {
             val destFile = task.destinationFile
             if (destFile != null && MTOfflineStorage.isFileVerified(destFile)) {
-                skippedCount++
-            } else {
-                pendingTasks.add(task)
+                // Check for size mismatch if it's a resource task
+                if (task is MTResourceDownloadTask) {
+                    val expectedSize = task.resource.size
+                    if (expectedSize == null || destFile.length() == expectedSize) {
+                        skippedCount++
+                        continue
+                    }
+                } else {
+                    skippedCount++
+                    continue
+                }
             }
+            pendingTasks.add(task)
         }
 
         return Pair(pendingTasks, skippedCount)

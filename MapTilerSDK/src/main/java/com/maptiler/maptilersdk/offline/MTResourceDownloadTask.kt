@@ -7,8 +7,8 @@
 package com.maptiler.maptilersdk.offline
 
 import android.content.Context
+import com.maptiler.maptilersdk.helpers.MTConnectivity
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import okhttp3.Request
 import java.io.File
@@ -28,24 +28,31 @@ internal class MTResourceDownloadTask(
         get() = MTOfflineStoragePaths.getAbsoluteFile(context, packId, resource.destinationPath)
 
     override suspend fun execute() {
-        val maxAttempts = 3
-        var currentAttempt = 0
-        var lastError: Exception? = null
+        val retryPolicy = MTNetworkRetryPolicy(maxAttempts = 3)
 
-        while (currentAttempt < maxAttempts) {
-            try {
-                performDownload()
-                return // Success
-            } catch (e: Exception) {
-                currentAttempt++
-                lastError = e
-                if (currentAttempt < maxAttempts) {
-                    delay(1000L * currentAttempt)
+        try {
+            retryPolicy.execute {
+                // Ensure network is available before attempting download
+                MTConnectivity.suspendUntilNetworkAvailable(context)
+
+                // If the file exists and its size matches the expected size (if provided), skip it.
+                val destFile = destinationFile
+                if (destFile != null && MTOfflineStorage.isFileVerified(destFile)) {
+                    val expectedSize = resource.size
+                    if (expectedSize == null || destFile.length() == expectedSize) {
+                        return@execute // Success, nothing to do
+                    }
                 }
-            }
-        }
 
-        throw lastError ?: MTOfflineError.DownloadFailed(Exception("Unknown error"))
+                performDownload()
+            }
+        } catch (e: MTOfflineError) {
+            throw e
+        } catch (e: IOException) {
+            throw MTOfflineError.NetworkError(e)
+        } catch (e: Exception) {
+            throw MTOfflineError.DownloadFailed(e)
+        }
     }
 
     private suspend fun performDownload() =
@@ -66,11 +73,14 @@ internal class MTResourceDownloadTask(
                         validateContentType(contentType, resource.url)
 
                         val body = response.body ?: throw MTOfflineError.DownloadFailed(IOException("Empty response body"))
+
                         val data = body.bytes()
 
                         val destFile = destinationFile ?: return@withContext
                         MTOfflineStorage.write(data, destFile)
                     }
+                    429 -> throw MTOfflineError.BadResponse(429)
+                    in 500..599 -> throw MTOfflineError.BadResponse(statusCode)
                     else -> throw MTOfflineError.BadResponse(statusCode)
                 }
             }
