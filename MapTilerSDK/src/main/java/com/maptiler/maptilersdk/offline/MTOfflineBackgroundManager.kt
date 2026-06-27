@@ -7,10 +7,15 @@
 package com.maptiler.maptilersdk.offline
 
 import android.content.Context
+import androidx.work.Constraints
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 
 /**
- * Stub for Background Manager.
- * Will be implemented using WorkManager.
+ * Manages background downloading using WorkManager.
  */
 internal object MTOfflineBackgroundManager {
     /**
@@ -21,7 +26,30 @@ internal object MTOfflineBackgroundManager {
         packId: String,
         tasks: List<MTDownloadTask>,
     ) {
-        // Implement using WorkManager
+        val workManager = WorkManager.getInstance(context)
+
+        val constraints =
+            Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.UNMETERED)
+                .build()
+
+        val inputData =
+            Data.Builder()
+                .putString("packId", packId)
+                .build()
+
+        val workRequest =
+            OneTimeWorkRequestBuilder<MTOfflineDownloadWorker>()
+                .setConstraints(constraints)
+                .setInputData(inputData)
+                .addTag("offline_pack_$packId")
+                .build()
+
+        workManager.enqueueUniqueWork(
+            "offline_pack_$packId",
+            ExistingWorkPolicy.REPLACE,
+            workRequest,
+        )
     }
 
     /**
@@ -31,6 +59,7 @@ internal object MTOfflineBackgroundManager {
         context: Context,
         packId: String,
     ) {
-        // Implement using WorkManager
+        val workManager = WorkManager.getInstance(context)
+        workManager.cancelUniqueWork("offline_pack_$packId")
     }
 }

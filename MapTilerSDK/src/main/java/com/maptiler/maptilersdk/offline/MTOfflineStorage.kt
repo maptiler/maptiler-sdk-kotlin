@@ -152,7 +152,34 @@ internal object MTOfflineStorage {
         }
 
     fun isFileVerified(file: File): Boolean {
-        return file.exists() && file.length() > 0
+        if (!file.exists() || file.length() == 0L) return false
+
+        // Check for expiration metadata
+        val metaFile = File(file.parent, "${file.name}.meta")
+        if (metaFile.exists()) {
+            try {
+                val expiresAt = metaFile.readText().toLong()
+                if (System.currentTimeMillis() > expiresAt) {
+                    return false // Expired
+                }
+            } catch (e: Exception) {
+                // Ignore corrupted metadata
+            }
+        }
+
+        return true
+    }
+
+    suspend fun saveResourceMetadata(
+        file: File,
+        expiresAt: Long,
+    ) = withContext(Dispatchers.IO) {
+        val metaFile = File(file.parent, "${file.name}.meta")
+        try {
+            writeAtomic(metaFile, expiresAt.toString().toByteArray())
+        } catch (e: Exception) {
+            MTLogger.log("Failed to save resource metadata for ${file.name}: ${e.message}", MTLogType.ERROR)
+        }
     }
 
     suspend fun isFileVerified(

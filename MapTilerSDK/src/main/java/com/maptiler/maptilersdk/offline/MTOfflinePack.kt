@@ -33,6 +33,7 @@ public class MTOfflinePack internal constructor(
      */
     public val region: MTOfflineRegionDefinition,
     private val context: Context,
+    customMetadata: ByteArray? = null,
     private val downloader: MTOfflineDownloader = MTOfflineDownloader(context),
 ) {
     /**
@@ -101,6 +102,7 @@ public class MTOfflinePack internal constructor(
                 createdAt = Instant.now(),
                 expiresAt = Instant.now().plusMillis(MTOfflineConfiguration.DEFAULT_EXPIRATION_INTERVAL),
                 region = region,
+                context = customMetadata,
                 totalResources = 0,
                 totalTileResources = 0,
                 downloadedResources = 0,
@@ -112,7 +114,13 @@ public class MTOfflinePack internal constructor(
         metadata: MTOfflinePackMetadata,
         context: Context,
         downloader: MTOfflineDownloader = MTOfflineDownloader(context),
-    ) : this(metadata.id, metadata.region, context, downloader) {
+    ) : this(
+        id = metadata.id,
+        region = metadata.region,
+        context = context,
+        customMetadata = metadata.context,
+        downloader = downloader,
+    ) {
         this.metadata = metadata
 
         internalProgress =
@@ -268,6 +276,10 @@ public class MTOfflinePack internal constructor(
         completed: Int,
         skipped: Int,
     ) {
+        if (initialDownloadedResources == 0 && skipped > 0 && internalProgress.downloadedResources == 0) {
+            initialDownloadedResources = skipped
+        }
+
         val newDownloaded = internalProgress.downloadedResources + completed + skipped
 
         val now = System.currentTimeMillis()
