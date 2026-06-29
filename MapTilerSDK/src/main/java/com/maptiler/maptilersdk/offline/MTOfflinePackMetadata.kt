@@ -112,6 +112,12 @@ data class MTOfflinePackMetadata(
         get() = Instant.now().isAfter(expiresAt)
 
     /**
+     * Returns true if the pack is beyond its grace period.
+     */
+    val isPastGracePeriod: Boolean
+        get() = Instant.now().isAfter(expiresAt.plusMillis(MTOfflineConfiguration.DEFAULT_GRACE_PERIOD))
+
+    /**
      * Encodes this metadata to a JSON string.
      */
     fun toJson(): String = JsonConfig.json.encodeToString(serializer(), this)

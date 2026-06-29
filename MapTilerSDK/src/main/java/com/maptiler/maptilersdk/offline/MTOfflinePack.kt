@@ -7,10 +7,14 @@
 package com.maptiler.maptilersdk.offline
 
 import android.content.Context
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.maptiler.maptilersdk.logging.MTLogType
 import com.maptiler.maptilersdk.logging.MTLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -84,10 +88,17 @@ public class MTOfflinePack internal constructor(
     public val isExpired: Boolean get() = metadata.isExpired
 
     /**
+     * Returns true if the pack is beyond its grace period.
+     */
+    public val isPastGracePeriod: Boolean get() = metadata.isPastGracePeriod
+
+    /**
      * Optional custom data, typically used to store application-specific context (e.g. JSON data).
      */
     public val contextData: ByteArray? get() = metadata.context
 
+    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private var backgroundWorkJob: Job? = null
     private var isUsingBackground: Boolean = false
     private var lastProgressEventTime: Long = 0
     private var downloadStartTime: Long = 0
@@ -108,6 +119,7 @@ public class MTOfflinePack internal constructor(
                 downloadedResources = 0,
             )
         _stateFlow.value = metadata.state
+        observeBackgroundWork()
     }
 
     internal constructor(
@@ -141,6 +153,67 @@ public class MTOfflinePack internal constructor(
             }
 
         changeState(nextState)
+    }
+
+    private fun observeBackgroundWork() {
+        backgroundWorkJob?.cancel()
+        backgroundWorkJob =
+            scope.launch {
+                WorkManager.getInstance(context)
+                    .getWorkInfosByTagFlow("offline_pack_$id")
+                    .collect { workInfos ->
+                        val workInfo = workInfos.firstOrNull() ?: return@collect
+
+                        val newState =
+                            when (workInfo.state) {
+                                WorkInfo.State.ENQUEUED,
+                                WorkInfo.State.RUNNING,
+                                -> MTOfflinePackState.DOWNLOADING
+
+                                WorkInfo.State.SUCCEEDED -> MTOfflinePackState.COMPLETED
+                                WorkInfo.State.FAILED -> MTOfflinePackState.FAILED
+                                WorkInfo.State.CANCELLED -> MTOfflinePackState.CANCELED
+                                else -> return@collect
+                            }
+
+                        synchronized(this@MTOfflinePack) {
+                            // Ensure isUsingBackground is accurately set if we discover WorkManager is actively managing this
+                            if (workInfo.state == WorkInfo.State.ENQUEUED || workInfo.state == WorkInfo.State.RUNNING) {
+                                isUsingBackground = true
+                            }
+
+                            // If we're already in a foreground download, and receive a DOWNLOADING state from background,
+                            // we just let it be. But if we receive a terminal state, we accept it.
+                            if (_stateFlow.value == MTOfflinePackState.DOWNLOADING &&
+                                newState == MTOfflinePackState.DOWNLOADING
+                            ) {
+                                return@collect
+                            }
+
+                            if (_stateFlow.value != newState) {
+                                changeState(newState)
+                            }
+
+                            // If we're managed by background or just finished, refresh progress/metadata from disk
+                            if ((newState == MTOfflinePackState.DOWNLOADING && isUsingBackground) ||
+                                newState == MTOfflinePackState.COMPLETED ||
+                                newState == MTOfflinePackState.FAILED
+                            ) {
+                                launch {
+                                    MTOfflineStorage.loadMetadata(context, id)?.let { diskMetadata ->
+                                        internalProgress =
+                                            internalProgress.copy(
+                                                totalResources = diskMetadata.totalResources,
+                                                downloadedResources = diskMetadata.downloadedResources,
+                                                totalTileResources = diskMetadata.totalTileResources,
+                                            )
+                                        _progressFlow.value = internalProgress
+                                    }
+                                }
+                            }
+                        }
+                    }
+            }
     }
 
     private fun changeState(newState: MTOfflinePackState) {
@@ -214,7 +287,9 @@ public class MTOfflinePack internal constructor(
         useBackground: Boolean = false,
     ) {
         synchronized(this) {
-            if (_stateFlow.value == MTOfflinePackState.DOWNLOADING) return
+            if (_stateFlow.value == MTOfflinePackState.DOWNLOADING) {
+                return
+            }
             isUsingBackground = useBackground
             changeState(MTOfflinePackState.DOWNLOADING)
         }
@@ -337,7 +412,8 @@ public class MTOfflinePack internal constructor(
      */
     public fun cancel() {
         synchronized(this) {
-            if (_stateFlow.value == MTOfflinePackState.DOWNLOADING) {
+            val currentState = _stateFlow.value
+            if (currentState == MTOfflinePackState.DOWNLOADING) {
                 changeState(MTOfflinePackState.CANCELED)
                 if (isUsingBackground) {
                     MTOfflineBackgroundManager.cancelTasks(context, id)
@@ -353,7 +429,8 @@ public class MTOfflinePack internal constructor(
      */
     public fun pause() {
         synchronized(this) {
-            if (_stateFlow.value == MTOfflinePackState.DOWNLOADING) {
+            val currentState = _stateFlow.value
+            if (currentState == MTOfflinePackState.DOWNLOADING) {
                 changeState(MTOfflinePackState.PAUSED)
                 if (isUsingBackground) {
                     MTOfflineBackgroundManager.cancelTasks(context, id)
@@ -450,16 +527,40 @@ public class MTOfflinePack internal constructor(
          */
         public suspend fun cleanupExpiredPacks(context: Context) {
             val allPacks = packs(context)
-            val gracePeriodMillis = MTOfflineConfiguration.DEFAULT_GRACE_PERIOD
-            val now = Instant.now()
 
             for (pack in allPacks) {
-                if (pack.state == MTOfflinePackState.EXPIRED) {
-                    val expiresAt = pack.expiresAt
-                    if (now.isAfter(expiresAt.plusMillis(gracePeriodMillis))) {
-                        pack.remove()
+                if (pack.state == MTOfflinePackState.EXPIRED && pack.isPastGracePeriod) {
+                    pack.remove()
+                }
+            }
+
+            // Also perform a hard cleanup of any orphaned resources
+            hardDeleteOrphanedResources(context)
+        }
+
+        /**
+         * Hard-deletes all tiles and resources that are no longer referenced by any known offline pack.
+         * This can happen if a pack deletion was interrupted or if metadata was corrupted.
+         *
+         * @param context Android context.
+         */
+        public suspend fun hardDeleteOrphanedResources(context: Context) {
+            withContext(Dispatchers.IO) {
+                val root = MTOfflineStoragePaths.getRootDirectory(context)
+                if (!root.exists()) return@withContext
+
+                val metadataList = MTOfflineStorage.listMetadata(context)
+                val validIds = metadataList.map { it.id }.toSet()
+
+                root.listFiles()?.forEach { packDir ->
+                    if (packDir.isDirectory && packDir.name !in validIds) {
+                        MTLogger.log("Cleaning up orphaned pack directory: ${packDir.name}", MTLogType.WARNING)
+                        packDir.deleteRecursively()
                     }
                 }
+
+                // Also clean up temp directory
+                MTOfflineStorage.cleanStaleTempFiles(context)
             }
         }
 

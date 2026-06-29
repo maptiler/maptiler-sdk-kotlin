@@ -55,6 +55,8 @@ import com.maptiler.maptilersdk.map.options.MTCameraOptions
 import com.maptiler.maptilersdk.map.options.MTFitBoundsOptions
 import com.maptiler.maptilersdk.map.options.MTFlyToOptions
 import com.maptiler.maptilersdk.map.options.MTPaddingOptions
+import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
+import com.maptiler.maptilersdk.map.style.MTMapStyleVariant
 import com.maptiler.maptilersdk.map.style.MTStyle
 import com.maptiler.maptilersdk.map.types.MTBounds
 import com.maptiler.maptilersdk.map.types.MTData
@@ -65,6 +67,10 @@ import com.maptiler.maptilersdk.map.workers.navigable.MTNavigable
 import com.maptiler.maptilersdk.map.workers.navigable.NavigableWorker
 import com.maptiler.maptilersdk.map.workers.zoomable.MTZoomable
 import com.maptiler.maptilersdk.map.workers.zoomable.ZoomableWorker
+import com.maptiler.maptilersdk.offline.MTOfflineHTTPServer
+import com.maptiler.maptilersdk.offline.MTOfflinePack
+import com.maptiler.maptilersdk.offline.MTOfflinePackState
+import com.maptiler.maptilersdk.offline.MTOfflineStoragePaths
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -202,6 +208,80 @@ class MTMapViewController(
                 isSessionLogicEnabled,
             ),
         )
+    }
+
+    /**
+     * Loads an offline pack onto the map view.
+     *
+     * @param pack The [MTOfflinePack] to load.
+     * @param limitToRegion If true, limits max bounds and zoom range to the pack's region.
+     */
+    suspend fun loadOfflinePack(
+        pack: MTOfflinePack,
+        limitToRegion: Boolean = true,
+    ) {
+        if (pack.state != MTOfflinePackState.COMPLETED) {
+            throw IllegalStateException("Offline pack ${pack.id} is not ready to load. Current state: ${pack.state}.")
+        }
+
+        val styleFile = MTOfflineStoragePaths.getStyleFile(context, pack.id)
+        if (!styleFile.exists()) {
+            throw IllegalStateException("Offline pack ${pack.id} is missing style.json on disk.")
+        }
+
+        if (!MTOfflineHTTPServer.isRunning()) {
+            MTOfflineHTTPServer.start(context)
+        }
+
+        val baseURL = MTOfflineHTTPServer.baseURLString()
+        val localStyleURL = "$baseURL/offline/${pack.id}/style.json"
+
+        val styleUrl = URL(localStyleURL)
+        val referenceStyle = MTMapReferenceStyle.CUSTOM(styleUrl)
+
+        val currentStyle = style ?: MTStyle(referenceStyle, null)
+        style = currentStyle
+        currentStyle.setStyle(referenceStyle, null)
+
+        if (limitToRegion) {
+            val region = pack.region
+            val paddedBbox = region.bbox
+            setMaxBounds(paddedBbox.toBounds())
+            setMinZoom(region.minZoom.toDouble())
+            setMaxZoom(region.maxZoom.toDouble())
+        }
+
+        // Nudge camera to force fresh tile requests
+        kotlinx.coroutines.delay(150)
+        panBy(MTPoint(1.0, 1.0))
+        panBy(MTPoint(-1.0, -1.0))
+    }
+
+    /**
+     * Unloads the current offline pack and restores the map to an online style.
+     *
+     * @param fallbackStyle The reference style to load after unloading the pack.
+     * @param fallbackVariant The style variant to load.
+     * @param resetCameraLimits If true, clears any zoom and bounding box restrictions.
+     */
+    suspend fun unloadOfflinePack(
+        fallbackStyle: MTMapReferenceStyle = MTMapReferenceStyle.STREETS,
+        fallbackVariant: MTMapStyleVariant? = null,
+        resetCameraLimits: Boolean = true,
+    ) {
+        val currentStyle = style ?: return
+        currentStyle.setStyle(fallbackStyle, fallbackVariant)
+
+        if (resetCameraLimits) {
+            setMaxBounds(null)
+            setMinZoom(0.0)
+            setMaxZoom(24.0)
+        }
+
+        // Nudge camera to force fresh tile requests
+        kotlinx.coroutines.delay(150)
+        panBy(MTPoint(1.0, 1.0))
+        panBy(MTPoint(-1.0, -1.0))
     }
 
     private fun initializeWorkers() {

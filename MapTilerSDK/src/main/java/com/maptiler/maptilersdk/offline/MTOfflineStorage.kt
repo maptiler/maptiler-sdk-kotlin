@@ -32,17 +32,31 @@ internal object MTOfflineStorage {
         packId: String,
     ): MTOfflinePackMetadata? =
         withContext(Dispatchers.IO) {
-            val file = MTOfflineStoragePaths.getMetadataFile(context, packId)
-            if (!file.exists()) return@withContext null
-
-            try {
-                val json = file.readText()
-                MTOfflinePackMetadata.fromJson(json)
-            } catch (e: Exception) {
-                MTLogger.log("Failed to load metadata for pack $packId: ${e.message}", MTLogType.ERROR)
-                null
-            }
+            loadMetadataBlocking(context, packId)
         }
+
+    /**
+     * Loads the metadata from the pack directory synchronously.
+     *
+     * @param context Android context.
+     * @param packId The ID of the offline pack.
+     * @return The metadata object, or null if not found or corrupted.
+     */
+    fun loadMetadataBlocking(
+        context: Context,
+        packId: String,
+    ): MTOfflinePackMetadata? {
+        val file = MTOfflineStoragePaths.getMetadataFile(context, packId)
+        if (!file.exists()) return null
+
+        return try {
+            val json = file.readText()
+            MTOfflinePackMetadata.fromJson(json)
+        } catch (e: Exception) {
+            MTLogger.log("Failed to load metadata for pack $packId: ${e.message}", MTLogType.ERROR)
+            null
+        }
+    }
 
     suspend fun listMetadata(context: Context): List<MTOfflinePackMetadata> =
         withContext(Dispatchers.IO) {
