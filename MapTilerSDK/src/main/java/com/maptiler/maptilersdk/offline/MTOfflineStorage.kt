@@ -32,17 +32,31 @@ internal object MTOfflineStorage {
         packId: String,
     ): MTOfflinePackMetadata? =
         withContext(Dispatchers.IO) {
-            val file = MTOfflineStoragePaths.getMetadataFile(context, packId)
-            if (!file.exists()) return@withContext null
-
-            try {
-                val json = file.readText()
-                MTOfflinePackMetadata.fromJson(json)
-            } catch (e: Exception) {
-                MTLogger.log("Failed to load metadata for pack $packId: ${e.message}", MTLogType.ERROR)
-                null
-            }
+            loadMetadataBlocking(context, packId)
         }
+
+    /**
+     * Loads the metadata from the pack directory synchronously.
+     *
+     * @param context Android context.
+     * @param packId The ID of the offline pack.
+     * @return The metadata object, or null if not found or corrupted.
+     */
+    fun loadMetadataBlocking(
+        context: Context,
+        packId: String,
+    ): MTOfflinePackMetadata? {
+        val file = MTOfflineStoragePaths.getMetadataFile(context, packId)
+        if (!file.exists()) return null
+
+        return try {
+            val json = file.readText()
+            MTOfflinePackMetadata.fromJson(json)
+        } catch (e: Exception) {
+            MTLogger.log("Failed to load metadata for pack $packId: ${e.message}", MTLogType.ERROR)
+            null
+        }
+    }
 
     suspend fun listMetadata(context: Context): List<MTOfflinePackMetadata> =
         withContext(Dispatchers.IO) {
@@ -152,7 +166,34 @@ internal object MTOfflineStorage {
         }
 
     fun isFileVerified(file: File): Boolean {
-        return file.exists() && file.length() > 0
+        if (!file.exists() || file.length() == 0L) return false
+
+        // Check for expiration metadata
+        val metaFile = File(file.parent, "${file.name}.meta")
+        if (metaFile.exists()) {
+            try {
+                val expiresAt = metaFile.readText().toLong()
+                if (System.currentTimeMillis() > expiresAt) {
+                    return false // Expired
+                }
+            } catch (e: Exception) {
+                // Ignore corrupted metadata
+            }
+        }
+
+        return true
+    }
+
+    suspend fun saveResourceMetadata(
+        file: File,
+        expiresAt: Long,
+    ) = withContext(Dispatchers.IO) {
+        val metaFile = File(file.parent, "${file.name}.meta")
+        try {
+            writeAtomic(metaFile, expiresAt.toString().toByteArray())
+        } catch (e: Exception) {
+            MTLogger.log("Failed to save resource metadata for ${file.name}: ${e.message}", MTLogType.ERROR)
+        }
     }
 
     suspend fun isFileVerified(

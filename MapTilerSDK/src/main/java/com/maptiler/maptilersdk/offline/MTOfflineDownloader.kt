@@ -12,6 +12,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 /**
@@ -24,6 +26,8 @@ internal class MTOfflineDownloader(
     @Volatile
     private var isPackCancelled: Boolean = false
 
+    private val progressMutex = Mutex()
+
     /**
      * Downloads the specified tasks.
      *
@@ -34,14 +38,16 @@ internal class MTOfflineDownloader(
     suspend fun download(
         tasks: List<MTDownloadTask>,
         packId: String,
-        progressHandler: ((completed: Int, skipped: Int) -> Unit)? = null,
+        progressHandler: (suspend (completed: Int, skipped: Int) -> Unit)? = null,
     ) = withContext(Dispatchers.IO) {
         isPackCancelled = false
 
         MTOfflineStorage.cleanStaleTempFiles(context, packId)
 
         val (pendingTasks, skippedCount) = filterPendingTasks(tasks)
-        progressHandler?.invoke(0, skippedCount)
+        progressMutex.withLock {
+            progressHandler?.invoke(0, skippedCount)
+        }
 
         if (pendingTasks.isEmpty()) return@withContext
 
@@ -59,7 +65,9 @@ internal class MTOfflineDownloader(
                                 try {
                                     task.execute()
                                     if (!isPackCancelled) {
-                                        progressHandler?.invoke(1, 0)
+                                        progressMutex.withLock {
+                                            progressHandler?.invoke(1, 0)
+                                        }
                                     }
                                 } catch (e: Exception) {
                                     if (e !is CancellationException) {
