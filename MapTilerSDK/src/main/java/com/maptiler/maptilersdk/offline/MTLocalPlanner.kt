@@ -165,18 +165,38 @@ internal class MTLocalPlanner : MTOfflinePlanner {
 
             val ext = detectExtension(template)
 
-            val tiles = mutableSetOf<MTTileIndex>()
             if (geometry is MTOfflineRegionGeometry.BoundingBox) {
-                val splitBoxes = geometry.bbox.normalizedAndSplit()
-                for (box in splitBoxes) {
-                    for (z in effMin..effMax) {
-                        tiles.addAll(MTTileMath.tiles(MTOfflineRegionGeometry.BoundingBox(box), z, paddingMeters))
-                    }
+                val isTms = template.contains("{-y}")
+                val scheme = if (isTms) "tms" else "xyz"
+                val inputs =
+                    MTOfflineCoverageInputs(
+                        scheme = scheme,
+                        zoomRange = MTOfflineZoomRange(effMin, effMax),
+                    )
+                val generator = MTOfflineCoverageGenerator(geometry.bbox, inputs, paddingMeters)
+
+                for (tile in generator) {
+                    val z = tile.z
+                    val x = tile.x
+                    val y = tile.y
+
+                    val tileUrlStr =
+                        template
+                            .replace("{z}", z.toString())
+                            .replace("{x}", x.toString())
+                            .replace("{y}", y.toString())
+                            .replace("{-y}", y.toString()) // Generator already flips Y if scheme is tms
+
+                    val destPath = "tiles/${source.id}/$z/$x/$y.$ext"
+                    resources.add(MTMapResource(url = tileUrlStr, destinationPath = destPath))
                 }
-            } else {
-                for (z in effMin..effMax) {
-                    tiles.addAll(MTTileMath.tiles(geometry, z, paddingMeters))
-                }
+                continue
+            }
+
+            // For route/polygon, we need all tiles anyway for union.
+            val tiles = mutableSetOf<MTTileIndex>()
+            for (z in effMin..effMax) {
+                tiles.addAll(MTTileMath.tiles(geometry, z, paddingMeters))
             }
 
             for (tile in tiles) {

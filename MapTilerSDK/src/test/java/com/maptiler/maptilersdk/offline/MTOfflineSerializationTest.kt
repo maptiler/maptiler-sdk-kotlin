@@ -6,6 +6,7 @@
 
 package com.maptiler.maptilersdk.offline
 
+import com.maptiler.maptilersdk.map.LngLat
 import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
@@ -64,8 +65,7 @@ class MTOfflineSerializationTest {
                 "createdAt": "2026-06-10T10:00:00Z",
                 "region": {
                     "geometry": {
-                        "type": "boundingBox",
-                        "bbox": {
+                        "boundingBox": {
                             "minLon": 0.0,
                             "minLat": 0.0,
                             "maxLon": 10.0,
@@ -86,6 +86,67 @@ class MTOfflineSerializationTest {
                 .plusMillis(MTOfflineConfiguration.DEFAULT_EXPIRATION_INTERVAL)
 
         assertEquals(expectedExpiresAt, decoded.expiresAt)
+    }
+
+    @Test
+    fun testLegacyBboxSupport() {
+        val json =
+            """
+            {
+                "id": "test-id",
+                "state": "PENDING",
+                "size": 0,
+                "createdAt": "2026-06-10T10:00:00Z",
+                "region": {
+                    "bbox": {
+                        "minLon": 10.0,
+                        "minLat": 20.0,
+                        "maxLon": 30.0,
+                        "maxLat": 40.0
+                    },
+                    "minZoom": 0,
+                    "maxZoom": 10,
+                    "referenceStyle": "STREETS",
+                    "pixelRatio": 1.0
+                }
+            }
+            """.trimIndent()
+
+        val decoded = MTOfflinePackMetadata.fromJson(json)
+        val geometry = decoded.region.geometry
+        assert(geometry is MTOfflineRegionGeometry.BoundingBox)
+        val bbox = (geometry as MTOfflineRegionGeometry.BoundingBox).bbox
+        assertEquals(10.0, bbox.minLon, 0.0001)
+        assertEquals(40.0, bbox.maxLat, 0.0001)
+    }
+
+    @Test
+    fun testRouteSerialization() {
+        val coords = listOf(LngLat(0.0, 0.0), LngLat(1.0, 1.0))
+        val region =
+            MTOfflineRegionDefinition(
+                geometry = MTOfflineRegionGeometry.Route(coords),
+                minZoom = 0,
+                maxZoom = 10,
+                referenceStyle = MTMapReferenceStyle.STREETS,
+            )
+
+        val json =
+            MTOfflineRegionDefinition.serializer().let {
+                com.maptiler.maptilersdk.helpers.JsonConfig.json.encodeToString(it, region)
+            }
+
+        // Verify format: {"geometry": {"route": [[0.0, 0.0], [1.0, 1.0]]}, "bbox": {...}, ...}
+        assert(json.contains("\"route\":[[0.0,0.0],[1.0,1.0]]"))
+        assert(json.contains("\"bbox\":{\"minLon\":0.0,\"minLat\":0.0,\"maxLon\":1.0,\"maxLat\":1.0}"))
+
+        val decoded =
+            com.maptiler.maptilersdk.helpers.JsonConfig.json.decodeFromString(
+                MTOfflineRegionDefinition.serializer(),
+                json,
+            )
+        assert(decoded.geometry is MTOfflineRegionGeometry.Route)
+        assertEquals(2, (decoded.geometry as MTOfflineRegionGeometry.Route).coordinates.size)
     }
 
     @Test
