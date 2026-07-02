@@ -21,7 +21,7 @@ import java.net.URL
 /**
  * Defines a region for offline download.
  */
-@Serializable
+@Serializable(with = MTOfflineRegionDefinitionSerializer::class)
 data class MTOfflineRegionDefinition(
     /**
      * The geometry of the region.
@@ -38,12 +38,10 @@ data class MTOfflineRegionDefinition(
     /**
      * The reference style for the map.
      */
-    @Serializable(with = MTMapReferenceStyleSerializer::class)
     val referenceStyle: MTMapReferenceStyle,
     /**
      * The optional style variant.
      */
-    @Serializable(with = MTMapStyleVariantSerializer::class)
     val styleVariant: MTMapStyleVariant? = null,
     /**
      * The device pixel ratio.
@@ -85,6 +83,63 @@ data class MTOfflineRegionDefinition(
         pixelRatio = pixelRatio,
         maxTileCount = maxTileCount,
         padding = padding,
+    )
+}
+
+internal object MTOfflineRegionDefinitionSerializer : KSerializer<MTOfflineRegionDefinition> {
+    override val descriptor: SerialDescriptor = DefinitionSurrogate.serializer().descriptor
+
+    override fun serialize(
+        encoder: Encoder,
+        value: MTOfflineRegionDefinition,
+    ) {
+        val surrogate =
+            DefinitionSurrogate(
+                geometry = value.geometry,
+                bbox = value.bbox,
+                minZoom = value.minZoom,
+                maxZoom = value.maxZoom,
+                referenceStyle = value.referenceStyle,
+                styleVariant = value.styleVariant,
+                pixelRatio = value.pixelRatio,
+                maxTileCount = value.maxTileCount,
+                padding = value.padding,
+            )
+        encoder.encodeSerializableValue(DefinitionSurrogate.serializer(), surrogate)
+    }
+
+    override fun deserialize(decoder: Decoder): MTOfflineRegionDefinition {
+        val surrogate = decoder.decodeSerializableValue(DefinitionSurrogate.serializer())
+
+        val geometry =
+            surrogate.geometry ?: surrogate.bbox?.let { MTOfflineRegionGeometry.BoundingBox(it) }
+                ?: throw IllegalArgumentException("MTOfflineRegionDefinition must have either 'geometry' or 'bbox'")
+
+        return MTOfflineRegionDefinition(
+            geometry = geometry,
+            minZoom = surrogate.minZoom,
+            maxZoom = surrogate.maxZoom,
+            referenceStyle = surrogate.referenceStyle,
+            styleVariant = surrogate.styleVariant,
+            pixelRatio = surrogate.pixelRatio,
+            maxTileCount = surrogate.maxTileCount,
+            padding = surrogate.padding,
+        )
+    }
+
+    @Serializable
+    private data class DefinitionSurrogate(
+        val geometry: MTOfflineRegionGeometry? = null,
+        val bbox: MTBoundingBox? = null,
+        val minZoom: Int,
+        val maxZoom: Int,
+        @Serializable(with = MTMapReferenceStyleSerializer::class)
+        val referenceStyle: MTMapReferenceStyle,
+        @Serializable(with = MTMapStyleVariantSerializer::class)
+        val styleVariant: MTMapStyleVariant? = null,
+        val pixelRatio: Float = 1.0f,
+        val maxTileCount: Int? = null,
+        val padding: Double? = null,
     )
 }
 

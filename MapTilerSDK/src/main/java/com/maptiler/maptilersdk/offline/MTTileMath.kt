@@ -486,4 +486,59 @@ internal object MTTileMath {
         }
         return counts
     }
+
+    /**
+     * Calculates the closed ranges of X and Y tile coordinates for a given bounding box and zoom level.
+     */
+    fun tileRanges(
+        bbox: MTBoundingBox,
+        zoom: Int,
+        paddingMeters: Double?,
+    ): Pair<IntRange, IntRange> {
+        val buffer = calculateTileBuffer(paddingMeters, bbox, zoom)
+        val bounds = tileBounds(bbox, zoom, buffer)
+        return Pair(bounds.minX..bounds.maxX, bounds.minY..bounds.maxY)
+    }
+
+    /**
+     * Calculates the closed ranges of X and Y tile coordinates for a given bounding box and zoom level.
+     */
+    fun tileRanges(
+        bbox: MTBoundingBox,
+        zoom: Int,
+        buffer: Int = 1,
+    ): Pair<IntRange, IntRange> {
+        val bounds = tileBounds(bbox, zoom, buffer)
+        return Pair(bounds.minX..bounds.maxX, bounds.minY..bounds.maxY)
+    }
+
+    /**
+     * Calculates the closed ranges of X and Y tile coordinates for a given bounding box and a range of zoom levels.
+     */
+    fun tileRanges(
+        bbox: MTBoundingBox,
+        zoomRange: IntRange,
+        paddingMeters: Double?,
+    ): Map<Int, Pair<IntRange, IntRange>> {
+        val result = mutableMapOf<Int, Pair<IntRange, IntRange>>()
+        for (z in zoomRange) {
+            result[z] = tileRanges(bbox, z, paddingMeters)
+        }
+        return result
+    }
+
+    /**
+     * Calculates the closed ranges of X and Y tile coordinates for a given bounding box and a range of zoom levels.
+     */
+    fun tileRanges(
+        bbox: MTBoundingBox,
+        zoomRange: IntRange,
+        buffer: Int = 1,
+    ): Map<Int, Pair<IntRange, IntRange>> {
+        val result = mutableMapOf<Int, Pair<IntRange, IntRange>>()
+        for (z in zoomRange) {
+            result[z] = tileRanges(bbox, z, buffer)
+        }
+        return result
+    }
 }
