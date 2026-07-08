@@ -8,6 +8,8 @@ package com.maptilerdemo.maptilermobiledemo
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -31,6 +33,7 @@ fun BottomNavigationBar(navController: NavController) {
     val navItems =
         listOf(
             BottomNavItem("Demo", "home", Icons.Default.Home),
+            BottomNavItem("Offline", "offline", Icons.Default.Place),
         )
 
     NavigationBar(

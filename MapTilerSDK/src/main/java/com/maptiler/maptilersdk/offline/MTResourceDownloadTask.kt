@@ -121,7 +121,6 @@ internal class MTResourceDownloadTask(
 
         var ttlSeconds: Long? = null
 
-        // 1. Check max-age in Cache-Control
         if (cacheControl != null) {
             val maxAgePattern = java.util.regex.Pattern.compile("max-age=(\\d+)")
             val matcher = maxAgePattern.matcher(cacheControl)
@@ -130,7 +129,6 @@ internal class MTResourceDownloadTask(
             }
         }
 
-        // 2. Check Expires header if max-age is not present
         if (ttlSeconds == null && expires != null) {
             try {
                 val expiresDate = synchronized(rfc1123Formatter) { rfc1123Formatter.parse(expires) }
