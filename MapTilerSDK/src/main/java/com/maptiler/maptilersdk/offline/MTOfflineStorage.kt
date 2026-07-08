@@ -291,7 +291,11 @@ internal object MTOfflineStorage {
 
     private fun secureCreateDirectory(directory: File) {
         if (!directory.exists()) {
-            if (!directory.mkdirs()) {
+            val created = directory.mkdirs()
+            // In a concurrent environment, another thread might have created it
+            // just between our exists() check and mkdirs() call.
+            // So we only throw if it still doesn't exist.
+            if (!created && !directory.exists()) {
                 val msg = "Failed to create directory: ${directory.absolutePath}"
                 MTLogger.log(msg, MTLogType.ERROR)
                 throw MTOfflineStorageError.WriteFailed(IOException(msg))

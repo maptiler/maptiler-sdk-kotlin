@@ -18,10 +18,7 @@ internal object MTOfflinePlannerFactory {
     fun createPlanner(): MTOfflinePlanner {
         return when (MTOfflineConfiguration.plannerType) {
             MTOfflinePlannerType.LOCAL -> MTLocalPlanner()
-            MTOfflinePlannerType.SERVER -> {
-                // Fallback to local if server planner is not yet implemented or available
-                MTLocalPlanner()
-            }
+            MTOfflinePlannerType.SERVER -> MTServerPlanner()
         }
     }
 }
