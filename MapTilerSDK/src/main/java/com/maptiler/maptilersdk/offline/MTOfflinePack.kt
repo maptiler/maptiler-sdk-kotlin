@@ -26,6 +26,20 @@ import kotlin.math.max
 
 /**
  * Represents a downloadable offline region.
+ *
+ * NOTE: Loading offline packs requires cleartext traffic to be enabled for `127.0.0.1`
+ * because assets are served via a local HTTP server.
+ *
+ * The SDK provides a default network security configuration (`maptiler_network_security_config.xml`)
+ * that allows HTTP traffic to `127.0.0.1`. If your app defines its own `android:networkSecurityConfig`,
+ * you must manually merge the following domain configuration into your file:
+ *
+ * ```xml
+ * <domain-config cleartextTrafficPermitted="true">
+ *     <domain includeSubdomains="false">127.0.0.1</domain>
+ *     <domain includeSubdomains="false">localhost</domain>
+ * </domain-config>
+ * ```
  */
 public class MTOfflinePack internal constructor(
     /**

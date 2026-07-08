@@ -12,6 +12,10 @@ import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Manages the creation, retrieval, and deletion of offline map packs.
+ *
+ * NOTE: Loading offline packs requires cleartext traffic to be enabled for `127.0.0.1`.
+ * The SDK includes a default `networkSecurityConfig` for this, but if your app
+ * uses its own configuration, you must ensure `127.0.0.1` is permitted for cleartext.
  */
 public object MTOfflineManager {
     private val activePacks = ConcurrentHashMap<String, MTOfflinePack>()

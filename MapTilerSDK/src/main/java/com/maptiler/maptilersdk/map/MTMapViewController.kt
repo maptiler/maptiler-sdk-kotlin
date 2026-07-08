@@ -213,6 +213,9 @@ class MTMapViewController(
     /**
      * Loads an offline pack onto the map view.
      *
+     * NOTE: This method requires cleartext traffic to be enabled for `127.0.0.1`.
+     * The SDK includes a default `networkSecurityConfig` for this.
+     *
      * @param pack The [MTOfflinePack] to load.
      * @param limitToRegion If true, limits max bounds and zoom range to the pack's region.
      */
