@@ -20,6 +20,8 @@ internal class MTServerPlanner : MTOfflinePlanner {
         val packLimit = definition.maxTileCount ?: Int.MAX_VALUE
         val effectiveLimit = minOf(globalLimit, packLimit)
 
+        // Internal tile limit must be enforced.
+        // Once server planner is implemented keep the guard.
         if (tileCount > effectiveLimit) {
             throw MTOfflineError.ExceedsMaximumTileCount(
                 limit = effectiveLimit,
