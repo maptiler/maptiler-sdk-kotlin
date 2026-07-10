@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.0.0](https://github.com/maptiler/maptiler-sdk-kotlin/releases/tag/2.0.0)
+Released on 2026-06-05.
+### Added
+- New MTOfflinePack API providing options for map region downloads for the offline usage. Download and serve map regions while not connected to the internet. Supports all the base styles and glyph ranges.
+- Replaced Basic style with Base style.
+- Added new v4 base map styles.
+
 ## [1.3.0](https://github.com/maptiler/maptiler-sdk-kotlin/releases/tag/1.3.0)
 Released on 2026-02-27.
 ### Added
@@ -20,7 +27,7 @@ Released on 2026-02-06.
 - Event levels: `MTEventLevel` with `ESSENTIAL`, `CAMERA_ONLY` (default), `ALL`, `OFF`, plus `highFrequencyEventThrottleMs` for throttling.
 - Docs: README updated to explain event levels and when to use `ALL` vs `CAMERA_ONLY`.
 
-## [1.2.0](https://github.com/maptiler/maptiler-sdk-swift/releases/tag/1.2.0)
+## [1.2.0](https://github.com/maptiler/maptiler-sdk-kotlin/releases/tag/1.2.0)
 Released on 2025-12-12.
 ### Added
 - Raster source: Custom raster and raster DEM data can now be added to the map.
