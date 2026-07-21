@@ -556,11 +556,42 @@ internal class StylableWorker(
         }
     }
 
-    fun enableTerrain(exaggerationFactor: Double? = null) {
+    fun enableTerrain(
+        exaggerationFactor: Double? = null,
+        styleUrl: String = "",
+    ) {
+        val offlinePath = "/offline/"
+        val terrainId = "maptiler-terrain"
+
         scope.launch {
-            bridge.execute(
-                EnableTerrain(exaggerationFactor),
-            )
+            if (styleUrl.contains(offlinePath)) {
+                // Pack identifier is top level
+                val packId = styleUrl.split(offlinePath)[1].substringBefore("/")
+                val baseURL = styleUrl.substringBefore(offlinePath)
+
+                val sourceExistsReturn = bridge.execute(com.maptiler.maptilersdk.commands.style.SourceExists(terrainId))
+                val hasSource =
+                    when (sourceExistsReturn) {
+                        is MTBridgeReturnType.BoolValue -> sourceExistsReturn.value
+                        is MTBridgeReturnType.StringValue -> sourceExistsReturn.value == "true"
+                        else -> false
+                    }
+
+                if (!hasSource) {
+                    val localURL = "$baseURL/offline/$packId/tiles/$terrainId/{z}/{x}/{y}.webp"
+                    val source = com.maptiler.maptilersdk.map.style.source.MTRasterDEMSource(terrainId, arrayOf(URL(localURL)))
+                    bridge.execute(com.maptiler.maptilersdk.commands.style.AddSource(source))
+                }
+                bridge.execute(
+                    com.maptiler.maptilersdk.commands.style.SetTerrain(
+                        com.maptiler.maptilersdk.map.style.MTTerrainSpecification(terrainId, exaggerationFactor),
+                    ),
+                )
+            } else {
+                bridge.execute(
+                    EnableTerrain(exaggerationFactor),
+                )
+            }
         }
     }
 

@@ -55,6 +55,10 @@ data class MTOfflineRegionDefinition(
      * An optional buffer in meters to add around the geometry for map interaction and tile fetching.
      */
     val padding: Double? = null,
+    /**
+     * Set to true to include terrain (3D elevation) data in the offline pack download.
+     */
+    val isTerrainEnabled: Boolean = false,
 ) {
     /**
      * The bounding box of the region.
@@ -74,6 +78,7 @@ data class MTOfflineRegionDefinition(
         pixelRatio: Float = 1.0f,
         maxTileCount: Int? = null,
         padding: Double? = null,
+        isTerrainEnabled: Boolean = false,
     ) : this(
         geometry = MTOfflineRegionGeometry.BoundingBox(bbox),
         minZoom = minZoom,
@@ -83,6 +88,7 @@ data class MTOfflineRegionDefinition(
         pixelRatio = pixelRatio,
         maxTileCount = maxTileCount,
         padding = padding,
+        isTerrainEnabled = isTerrainEnabled,
     )
 }
 
@@ -104,6 +110,7 @@ internal object MTOfflineRegionDefinitionSerializer : KSerializer<MTOfflineRegio
                 pixelRatio = value.pixelRatio,
                 maxTileCount = value.maxTileCount,
                 padding = value.padding,
+                isTerrainEnabled = value.isTerrainEnabled,
             )
         encoder.encodeSerializableValue(DefinitionSurrogate.serializer(), surrogate)
     }
@@ -124,6 +131,7 @@ internal object MTOfflineRegionDefinitionSerializer : KSerializer<MTOfflineRegio
             pixelRatio = surrogate.pixelRatio,
             maxTileCount = surrogate.maxTileCount,
             padding = surrogate.padding,
+            isTerrainEnabled = surrogate.isTerrainEnabled ?: false,
         )
     }
 
@@ -140,6 +148,7 @@ internal object MTOfflineRegionDefinitionSerializer : KSerializer<MTOfflineRegio
         val pixelRatio: Float = 1.0f,
         val maxTileCount: Int? = null,
         val padding: Double? = null,
+        val isTerrainEnabled: Boolean? = false,
     )
 }
 

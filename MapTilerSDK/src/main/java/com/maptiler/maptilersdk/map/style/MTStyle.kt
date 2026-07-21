@@ -399,7 +399,10 @@ class MTStyle(
      *
      * @param exaggerationFactor Optional exaggeration factor to apply when enabling terrain.
      */
-    fun enableTerrain(exaggerationFactor: Double? = null) = stylableWorker.enableTerrain(exaggerationFactor)
+    fun enableTerrain(exaggerationFactor: Double? = null) {
+        val styleUrl = (referenceStyle as? MTMapReferenceStyle.CUSTOM)?.url?.toString() ?: ""
+        stylableWorker.enableTerrain(exaggerationFactor, styleUrl)
+    }
 
     /**
      * Disables the 3D terrain visualization.
