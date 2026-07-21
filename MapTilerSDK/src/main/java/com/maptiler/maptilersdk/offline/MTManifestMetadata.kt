@@ -23,4 +23,5 @@ internal data class MTManifestMetadata(
     val minZoom: Int,
     val maxZoom: Int,
     val pixelRatio: Float,
+    val isTerrainEnabled: Boolean = false,
 )

@@ -30,11 +30,13 @@ internal class MTStyleProcessor(
      *
      * @param style The original style as a [JsonObject].
      * @param maxZoom Optional max zoom level to force on vector/raster sources.
+     * @param isTerrainEnabled Optional flag to inject the terrain block if missing.
      * @return The transformed style as a [JsonObject].
      */
     fun transform(
         style: JsonObject,
         maxZoom: Int? = null,
+        isTerrainEnabled: Boolean = false,
     ): JsonObject {
         val mutableStyle = style.toMutableMap()
 
@@ -42,8 +44,27 @@ internal class MTStyleProcessor(
         rewriteGlyphs(mutableStyle)
 
         val purgedSourceIds = mutableSetOf<String>()
-        rewriteSources(mutableStyle, purgedSourceIds, maxZoom)
+        rewriteSources(mutableStyle, purgedSourceIds, maxZoom, isTerrainEnabled)
         rewriteLayers(mutableStyle, purgedSourceIds)
+
+        if (isTerrainEnabled) {
+            val sources = mutableStyle["sources"]?.jsonObject
+            var rasterDemId = "maptiler-terrain"
+            if (sources != null) {
+                for ((key, value) in sources) {
+                    if (value.jsonObject["type"]?.jsonPrimitive?.content == "raster-dem") {
+                        rasterDemId = key
+                        break
+                    }
+                }
+            }
+
+            mutableStyle["terrain"] =
+                buildJsonObject {
+                    put("source", rasterDemId)
+                    put("exaggeration", 1.0)
+                }
+        }
 
         return JsonObject(mutableStyle)
     }
@@ -90,7 +111,9 @@ internal class MTStyleProcessor(
         style: MutableMap<String, JsonElement>,
         purgedSourceIds: MutableSet<String>,
         maxZoom: Int?,
+        isTerrainEnabled: Boolean,
     ) {
+        val rasterId = "raster-dem"
         val sources = style["sources"]?.jsonObject ?: return
         val mutableSources = sources.toMutableMap()
 
@@ -103,6 +126,28 @@ internal class MTStyleProcessor(
 
         mutableSources.forEach { (sourceId, source) ->
             mutableSources[sourceId] = transformSource(sourceId, source.jsonObject, maxZoom)
+        }
+
+        if (isTerrainEnabled) {
+            var hasRasterDem = false
+            for ((_, source) in mutableSources) {
+                if (source.jsonObject["type"]?.jsonPrimitive?.content == rasterId) {
+                    hasRasterDem = true
+                    break
+                }
+            }
+            if (!hasRasterDem) {
+                val rasterDemId = "maptiler-terrain"
+                val sourceObj =
+                    buildJsonObject {
+                        put("type", rasterId)
+                        put("tiles", buildJsonArray { add("$baseURL/offline/$packId/tiles/$rasterDemId/{z}/{x}/{y}.webp") })
+                        if (maxZoom != null) {
+                            put("maxzoom", maxZoom)
+                        }
+                    }
+                mutableSources[rasterDemId] = sourceObj
+            }
         }
 
         style["sources"] = JsonObject(mutableSources)
@@ -152,6 +197,11 @@ internal class MTStyleProcessor(
         val url = source["url"]?.jsonPrimitive?.content?.lowercase()
         if (url != null && url.contains("satellite")) {
             return "jpg"
+        }
+
+        // Terrain files are in webp format
+        if (type == "raster-dem") {
+            return "webp"
         }
 
         return "png"

@@ -56,6 +56,7 @@ internal class MTLocalPlanner : MTOfflinePlanner {
                 minZoom = definition.minZoom,
                 maxZoom = definition.maxZoom,
                 pixelRatio = definition.pixelRatio,
+                isTerrainEnabled = definition.isTerrainEnabled,
             )
 
         val apiKey = MTConfig.apiKey
@@ -64,6 +65,19 @@ internal class MTLocalPlanner : MTOfflinePlanner {
                 ?: throw MTOfflineError.InvalidRegion
 
         val (styleResource, dependencies) = resolveStyle(styleUrl)
+
+        if (definition.isTerrainEnabled) {
+            val hasTerrainSource = dependencies.sources.any { it.type == "raster-dem" }
+            if (!hasTerrainSource) {
+                val terrainSource =
+                    MTStyleSource(
+                        id = "maptiler-terrain",
+                        type = "raster-dem",
+                        url = "https://api.maptiler.com/tiles/terrain-rgb-v2/tiles.json?key=$apiKey",
+                    )
+                (dependencies.sources as MutableList).add(terrainSource)
+            }
+        }
 
         val tileResources =
             generateTileResources(

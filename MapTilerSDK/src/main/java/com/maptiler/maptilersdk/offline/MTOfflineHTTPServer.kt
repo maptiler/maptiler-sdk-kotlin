@@ -166,19 +166,22 @@ internal object MTOfflineHTTPServer {
             val packId = pathParts
 
             var downloadedMaxZoom: Int? = null
+            var isTerrainEnabled = false
             // Load manifest to get metadata
             val manifestFile = MTOfflineStoragePaths.getManifestFile(context, packId)
             if (manifestFile.exists()) {
                 try {
                     val manifestJson = manifestFile.readText()
                     val manifest = com.maptiler.maptilersdk.helpers.JsonConfig.json.decodeFromString<JsonObject>(manifestJson)
-                    downloadedMaxZoom = manifest["metadata"]?.jsonObject?.get("maxZoom")?.jsonPrimitive?.content?.toIntOrNull()
+                    val metadata = manifest["metadata"]?.jsonObject
+                    downloadedMaxZoom = metadata?.get("maxZoom")?.jsonPrimitive?.content?.toIntOrNull()
+                    isTerrainEnabled = metadata?.get("isTerrainEnabled")?.jsonPrimitive?.content?.toBoolean() ?: false
                 } catch (e: Exception) {
                 }
             }
 
             val processor = MTStyleProcessor(baseURLString(), packId)
-            val transformed = processor.transform(jsonObject, downloadedMaxZoom)
+            val transformed = processor.transform(jsonObject, downloadedMaxZoom, isTerrainEnabled)
             val transformedData = com.maptiler.maptilersdk.helpers.JsonConfig.json.encodeToString(JsonObject.serializer(), transformed)
 
             sendResponse(socket, 200, transformedData.toByteArray(), "application/json")

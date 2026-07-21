@@ -89,6 +89,14 @@ class MTRasterDEMSource : MTTileSource {
         this.url = url
     }
 
+    constructor(
+        identifier: String,
+        tiles: Array<URL>,
+    ) {
+        this.identifier = identifier
+        this.tiles = tiles
+    }
+
     /**
      * Sets the url of the source. Used for updating the source data.
      *
