@@ -22,7 +22,7 @@ object MTConfig {
     /**
      * Custom User-Agent string for the SDK
      */
-    const val CUSTOM_USER_AGENT = "MapTiler-Mobile-SDK-Android/$VERSION"
+    var customUserAgent: String = "MapTiler-Mobile-SDK-Android/$VERSION"
 
     /**
      * MapTiler API Key
@@ -67,4 +67,21 @@ object MTConfig {
      * @see <https://docs.maptiler.com/guides/maps-apis/maps-platform/what-is-map-session-in-maptiler-cloud/>
      */
     var isTelemetryEnabled: Boolean = true
+
+    /**
+     * Sets a custom application identifier to be prepended to the SDK's User-Agent string.
+     * This allows you to restrict your MapTiler API key to specific applications.
+     *
+     * Must be called before MTMapView is initialized and before offline downloads are started.
+     * @param identifier The application identifier (e.g., your application ID).
+     * Only alphanumeric characters, periods, hyphens, and underscores are allowed.
+     */
+    fun setApplicationIdentifier(identifier: String) {
+        val allowedChars = setOf('-', '.', '_')
+        val sanitized = identifier.filter { it.isLetterOrDigit() || allowedChars.contains(it) }
+
+        if (sanitized.isNotEmpty()) {
+            customUserAgent = "$sanitized MapTiler-Mobile-SDK-Android/$VERSION"
+        }
+    }
 }

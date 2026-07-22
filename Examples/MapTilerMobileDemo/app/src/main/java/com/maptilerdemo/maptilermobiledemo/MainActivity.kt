@@ -21,6 +21,8 @@ class MainActivity : ComponentActivity() {
         MTConfig.apiKey = BuildConfig.MAPTILER_API_KEY
         MTConfig.logLevel = MTLogLevel.Debug(true)
 
+        MTConfig.setApplicationIdentifier("com.maptilerdemo.app")
+
         enableEdgeToEdge()
         setContent {
             MaterialTheme {

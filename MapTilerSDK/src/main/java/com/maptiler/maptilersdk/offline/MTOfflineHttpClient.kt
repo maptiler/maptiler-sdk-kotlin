@@ -25,7 +25,7 @@ internal object MTOfflineHttpClient {
             val originalRequest = chain.request()
             val requestWithUserAgent =
                 originalRequest.newBuilder()
-                    .header("User-Agent", MTConfig.CUSTOM_USER_AGENT)
+                    .header("User-Agent", MTConfig.customUserAgent)
                     .build()
             return chain.proceed(requestWithUserAgent)
         }
