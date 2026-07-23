@@ -40,6 +40,9 @@ fun MarkersAndPopups() {
 
                     // Add a red marker
                     val marker = MTMarker(target, android.graphics.Color.RED)
+                    marker.onClick = {
+                        android.util.Log.i("MapTilerSDK", "Marker clicked at Brno!")
+                    }
                     controller.style?.addMarker(marker)
 
                     // Add a standalone text popup near the same location

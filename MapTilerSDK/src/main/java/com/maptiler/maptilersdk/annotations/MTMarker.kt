@@ -55,6 +55,11 @@ class MTMarker(
     var draggable: Boolean? = false
 
     /**
+     * Callback triggered when the marker is clicked.
+     */
+    var onClick: ((MTMarker) -> Unit)? = null
+
+    /**
      * Optional attached popup.
      */
     var popup: MTTextPopup? = null

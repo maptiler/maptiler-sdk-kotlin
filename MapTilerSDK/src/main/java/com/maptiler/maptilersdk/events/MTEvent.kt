@@ -120,6 +120,12 @@ enum class MTEvent {
     ON_MARKER_DRAG_START,
 
     /**
+     * Triggered when a marker is clicked.
+     */
+    @SerialName("marker.click")
+    ON_MARKER_CLICK,
+
+    /**
      * Triggered after the last frame rendered before the map enters an "idle" state.
      * Idle state means that no camera transitions are in progress, all currently requested tiles have loaded,
      * and all fade/transition animations have completed.

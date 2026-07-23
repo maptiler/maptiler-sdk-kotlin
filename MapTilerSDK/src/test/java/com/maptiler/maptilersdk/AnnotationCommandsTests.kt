@@ -91,6 +91,18 @@ class AnnotationCommandsTests {
         assertTrue(js.contains(dragStartHandler))
     }
 
+    @Test fun addMarkerToJS_AddsClickEventHandler() {
+        val marker = MTMarker(LngLat(10.0, 20.0))
+
+        val js = AddMarker(marker).toJS()
+
+        val clickHandler = "${marker.identifier}.getElement().addEventListener('click'"
+        val eventProp = "Android.onEvent('marker.click', JSON.stringify(data))"
+
+        assertTrue(js.contains(clickHandler))
+        assertTrue(js.contains(eventProp))
+    }
+
     @Test fun markerGetterCommands_ToJS_UseMarkerIdentifier() {
         val marker = MTMarker(LngLat(10.0, 20.0))
 

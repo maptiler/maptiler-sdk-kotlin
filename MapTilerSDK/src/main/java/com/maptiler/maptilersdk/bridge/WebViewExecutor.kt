@@ -96,7 +96,7 @@ internal class WebViewExecutor(
                     settings.useWideViewPort = true
                     settings.loadWithOverviewMode = true
 
-                    settings.userAgentString = "${settings.userAgentString} ${MTConfig.CUSTOM_USER_AGENT}"
+                    settings.userAgentString = "${settings.userAgentString} ${MTConfig.customUserAgent}"
 
                     isVerticalScrollBarEnabled = false
 
@@ -151,7 +151,7 @@ internal class WebViewExecutor(
         }
         // Allow autoplay for HTML5 media when a custom WebView is supplied
         webView.settings.mediaPlaybackRequiresUserGesture = false
-        webView.settings.userAgentString = "${webView.settings.userAgentString} ${MTConfig.CUSTOM_USER_AGENT}"
+        webView.settings.userAgentString = "${webView.settings.userAgentString} ${MTConfig.customUserAgent}"
         // Ensure our clients are attached so navigation callbacks work consistently.
         webView.webChromeClient = WebChromeClient()
         webView.webViewClient =
