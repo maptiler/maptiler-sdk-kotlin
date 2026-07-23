@@ -49,7 +49,12 @@ fun SourcesAndLayers() {
                 }
 
                 override fun onEventTriggered(event: com.maptiler.maptilersdk.events.MTEvent, data: MTData?) {
-                    // No-op for this example
+                    if (event == com.maptiler.maptilersdk.events.MTEvent.ON_TAP && data?.point != null) {
+                        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+                            val featuresJson = controller.queryRenderedFeatures(data.point, listOf("contours-line"))
+                            android.util.Log.i("MapTilerSDK", "Tapped features on contours-line: ${featuresJson ?: "none"}")
+                        }
+                    }
                 }
             }
     }

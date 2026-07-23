@@ -27,4 +27,9 @@ class EventDecodingTests {
         assertEquals(MTEvent.ON_MARKER_DRAG_START, dragStart)
         assertEquals(MTEvent.ON_MARKER_DRAG_END, dragEnd)
     }
+
+    @Test fun markerClickEvent_DecodesToMarkerClickValue() {
+        val click: MTEvent = Json.decodeFromString("\"marker.click\"")
+        assertEquals(MTEvent.ON_MARKER_CLICK, click)
+    }
 }

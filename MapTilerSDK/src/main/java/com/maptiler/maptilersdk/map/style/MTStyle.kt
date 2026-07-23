@@ -55,6 +55,7 @@ class MTStyle(
 
     private val mapSources: MutableMap<String, WeakReference<MTSource>> = mutableMapOf()
     private val mapLayers: MutableMap<String, WeakReference<MTLayer>> = mutableMapOf()
+    private val mapMarkers: MutableMap<String, MTMarker> = mutableMapOf()
 
     private val queue: MutableList<StyleTask> = mutableListOf()
 
@@ -109,14 +110,22 @@ class MTStyle(
      *
      * @param marker Marker to add.
      */
-    override fun addMarker(marker: MTMarker) = stylableWorker.addMarker(marker)
+    override fun addMarker(marker: MTMarker) {
+        mapMarkers[marker.identifier] = marker
+        stylableWorker.addMarker(marker)
+    }
 
     /**
      * Removes the marker from the map.
      *
      * @param marker Marker to remove.
      */
-    override fun removeMarker(marker: MTMarker) = stylableWorker.removeMarker(marker)
+    override fun removeMarker(marker: MTMarker) {
+        mapMarkers.remove(marker.identifier)
+        stylableWorker.removeMarker(marker)
+    }
+
+    internal fun findMarker(identifier: String): MTMarker? = mapMarkers[identifier]
 
     /**
      * Adds a text popup to the map.

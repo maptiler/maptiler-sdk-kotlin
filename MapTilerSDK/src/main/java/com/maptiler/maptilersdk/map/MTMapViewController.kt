@@ -784,6 +784,29 @@ class MTMapViewController(
     override fun snapToNorth(options: MTAnimationOptions?) = navigableWorker.snapToNorth(options)
 
     /**
+     * Returns an array of GeoJSON Feature objects representing visible features at a given point.
+     *
+     * @param point The point at which to query for features.
+     * @param layers Optional list of layer IDs to filter the query.
+     * @param filter Optional filter to apply to the query (MapLibre filter expression as JSON string).
+     * @return A JSON string representing the array of features.
+     */
+    suspend fun queryRenderedFeatures(
+        point: MTPoint,
+        layers: List<String>? = null,
+        filter: String? = null,
+    ): String? {
+        val br = bridge ?: return null
+        val returnTypeValue = br.execute(com.maptiler.maptilersdk.commands.style.QueryRenderedFeatures(point, layers, filter))
+
+        return when (returnTypeValue) {
+            is com.maptiler.maptilersdk.bridge.MTBridgeReturnType.StringValue ->
+                returnTypeValue.value.trim('"').replace("\\\"", "\"")
+            else -> null
+        }
+    }
+
+    /**
      * Changes any combination of center, zoom, bearing, and pitch, animating the transition along a curve that evokes flight.
      *
      * @param cameraOptions Options for controlling the desired location, zoom, bearing, and pitch of the camera.
@@ -1164,6 +1187,11 @@ class MTMapViewController(
 
         // Ensure all UI callbacks happen on the main thread.
         coroutineScope?.launch(Dispatchers.Main) {
+            if (event == MTEvent.ON_MARKER_CLICK && data?.id != null) {
+                val marker = style?.findMarker(data.id!!)
+                marker?.onClick?.invoke(marker)
+            }
+
             delegate?.onEventTriggered(event, data)
 
             if (contentDelegates.isNotEmpty()) {

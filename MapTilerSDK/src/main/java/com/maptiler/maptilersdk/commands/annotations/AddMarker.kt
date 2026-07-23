@@ -160,6 +160,18 @@ internal data class AddMarker(
             ${marker.identifier}.on('drag', handle${marker.identifier}DragEvent('marker.drag'));
             ${marker.identifier}.on('dragend', handle${marker.identifier}DragEvent('marker.dragend'));
             ${marker.identifier}.on('dragstart', handle${marker.identifier}DragEvent('marker.dragstart'));
+
+            ${marker.identifier}.getElement().addEventListener('click', (event) => {
+                const lngLat = ${marker.identifier}.getLngLat();
+                const data = {
+                    id: '${marker.identifier}',
+                    lngLat: {
+                        lng: lngLat.lng,
+                        lat: lngLat.lat
+                    }
+                };
+                Android.onEvent('marker.click', JSON.stringify(data));
+            });
             """
     }
 }
