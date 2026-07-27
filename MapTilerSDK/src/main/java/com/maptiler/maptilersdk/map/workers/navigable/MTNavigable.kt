@@ -373,6 +373,30 @@ interface MTNavigable {
     ): MTPoint
 
     /**
+     * Divides this point by a scalar.
+     *
+     * @param point The point.
+     * @param scalar The number to divide by.
+     * @return A new MTPoint with the divided coordinates.
+     */
+    suspend fun pointDiv(
+        point: MTPoint,
+        scalar: Double,
+    ): MTPoint
+
+    /**
+     * Divides this point by another point.
+     *
+     * @param point1 The first point.
+     * @param point2 The second point to divide the first by.
+     * @return A new MTPoint with the divided coordinates.
+     */
+    suspend fun pointDivByPoint(
+        point1: MTPoint,
+        point2: MTPoint,
+    ): MTPoint
+
+    /**
      * Get the angle from the 0, 0 coordinate to this point, in radians.
      *
      * @param point The point.

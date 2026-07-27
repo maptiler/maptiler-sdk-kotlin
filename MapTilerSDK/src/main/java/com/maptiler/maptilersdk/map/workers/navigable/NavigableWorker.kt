@@ -21,6 +21,8 @@ import com.maptiler.maptilersdk.commands.misc.PointAngleWith
 import com.maptiler.maptilersdk.commands.misc.PointAngleWithSep
 import com.maptiler.maptilersdk.commands.misc.PointDist
 import com.maptiler.maptilersdk.commands.misc.PointDistSqr
+import com.maptiler.maptilersdk.commands.misc.PointDiv
+import com.maptiler.maptilersdk.commands.misc.PointDivByPoint
 import com.maptiler.maptilersdk.commands.navigation.AreTilesLoaded
 import com.maptiler.maptilersdk.commands.navigation.CenterOnIpPoint
 import com.maptiler.maptilersdk.commands.navigation.EaseTo
@@ -692,6 +694,36 @@ internal class NavigableWorker(
         val returnTypeValue =
             bridge.execute(
                 PointAdd(point1, point2),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> JsonConfig.json.decodeFromString<MTPoint>(returnTypeValue.value)
+            else -> MTPoint(0.0, 0.0)
+        }
+    }
+
+    override suspend fun pointDiv(
+        point: MTPoint,
+        scalar: Double,
+    ): MTPoint {
+        val returnTypeValue =
+            bridge.execute(
+                PointDiv(point, scalar),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> JsonConfig.json.decodeFromString<MTPoint>(returnTypeValue.value)
+            else -> MTPoint(0.0, 0.0)
+        }
+    }
+
+    override suspend fun pointDivByPoint(
+        point1: MTPoint,
+        point2: MTPoint,
+    ): MTPoint {
+        val returnTypeValue =
+            bridge.execute(
+                PointDivByPoint(point1, point2),
             )
 
         return when (returnTypeValue) {
