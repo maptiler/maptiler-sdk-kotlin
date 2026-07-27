@@ -417,4 +417,28 @@ interface MTNavigable {
         x: Double,
         y: Double,
     ): Double
+
+    /**
+     * Calculate the distance between two points.
+     *
+     * @param point1 The first point.
+     * @param point2 The second point.
+     * @return Distance.
+     */
+    suspend fun pointDist(
+        point1: MTPoint,
+        point2: MTPoint,
+    ): Double
+
+    /**
+     * Calculate the squared distance between two points.
+     *
+     * @param point1 The first point.
+     * @param point2 The second point.
+     * @return Squared distance.
+     */
+    suspend fun pointDistSqr(
+        point1: MTPoint,
+        point2: MTPoint,
+    ): Double
 }

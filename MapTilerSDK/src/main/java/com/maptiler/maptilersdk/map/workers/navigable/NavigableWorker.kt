@@ -19,6 +19,8 @@ import com.maptiler.maptilersdk.commands.misc.PointAngle
 import com.maptiler.maptilersdk.commands.misc.PointAngleTo
 import com.maptiler.maptilersdk.commands.misc.PointAngleWith
 import com.maptiler.maptilersdk.commands.misc.PointAngleWithSep
+import com.maptiler.maptilersdk.commands.misc.PointDist
+import com.maptiler.maptilersdk.commands.misc.PointDistSqr
 import com.maptiler.maptilersdk.commands.navigation.AreTilesLoaded
 import com.maptiler.maptilersdk.commands.navigation.CenterOnIpPoint
 import com.maptiler.maptilersdk.commands.navigation.EaseTo
@@ -748,6 +750,36 @@ internal class NavigableWorker(
         val returnTypeValue =
             bridge.execute(
                 PointAngleWithSep(point, x, y),
+            )
+
+        return when (returnTypeValue) {
+            is DoubleValue -> returnTypeValue.value
+            else -> 0.0
+        }
+    }
+
+    override suspend fun pointDist(
+        point1: MTPoint,
+        point2: MTPoint,
+    ): Double {
+        val returnTypeValue =
+            bridge.execute(
+                PointDist(point1, point2),
+            )
+
+        return when (returnTypeValue) {
+            is DoubleValue -> returnTypeValue.value
+            else -> 0.0
+        }
+    }
+
+    override suspend fun pointDistSqr(
+        point1: MTPoint,
+        point2: MTPoint,
+    ): Double {
+        val returnTypeValue =
+            bridge.execute(
+                PointDistSqr(point1, point2),
             )
 
         return when (returnTypeValue) {
