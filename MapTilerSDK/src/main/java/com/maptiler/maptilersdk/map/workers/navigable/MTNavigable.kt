@@ -465,4 +465,16 @@ interface MTNavigable {
         point1: MTPoint,
         point2: MTPoint,
     ): Double
+
+    /**
+     * Check if this point is equal to another point.
+     *
+     * @param point1 The first point.
+     * @param point2 The second point.
+     * @return True if the points are equal, false otherwise.
+     */
+    suspend fun pointEquals(
+        point1: MTPoint,
+        point2: MTPoint,
+    ): Boolean
 }
