@@ -24,6 +24,7 @@ import com.maptiler.maptilersdk.commands.misc.PointDistSqr
 import com.maptiler.maptilersdk.commands.misc.PointDiv
 import com.maptiler.maptilersdk.commands.misc.PointDivByPoint
 import com.maptiler.maptilersdk.commands.misc.PointEquals
+import com.maptiler.maptilersdk.commands.misc.PointMag
 import com.maptiler.maptilersdk.commands.navigation.AreTilesLoaded
 import com.maptiler.maptilersdk.commands.navigation.CenterOnIpPoint
 import com.maptiler.maptilersdk.commands.navigation.EaseTo
@@ -833,6 +834,18 @@ internal class NavigableWorker(
         return when (returnTypeValue) {
             is BoolValue -> returnTypeValue.value
             else -> false
+        }
+    }
+
+    override suspend fun pointMag(point: MTPoint): Double {
+        val returnTypeValue =
+            bridge.execute(
+                PointMag(point),
+            )
+
+        return when (returnTypeValue) {
+            is DoubleValue -> returnTypeValue.value
+            else -> 0.0
         }
     }
 }

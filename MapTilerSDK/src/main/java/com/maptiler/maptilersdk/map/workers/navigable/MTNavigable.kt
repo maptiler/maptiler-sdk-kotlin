@@ -477,4 +477,12 @@ interface MTNavigable {
         point1: MTPoint,
         point2: MTPoint,
     ): Boolean
+
+    /**
+     * Calculate magnitude of the point vector.
+     *
+     * @param point The point.
+     * @return Magnitude of the point vector.
+     */
+    suspend fun pointMag(point: MTPoint): Double
 }

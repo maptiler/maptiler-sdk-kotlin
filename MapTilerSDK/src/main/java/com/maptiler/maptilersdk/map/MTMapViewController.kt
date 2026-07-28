@@ -1172,6 +1172,14 @@ class MTMapViewController(
     ): Boolean = navigableWorker.pointEquals(point1, point2)
 
     /**
+     * Calculate magnitude of the point vector.
+     *
+     * @param point The point.
+     * @return Magnitude of the point vector.
+     */
+    override suspend fun pointMag(point: MTPoint): Double = navigableWorker.pointMag(point)
+
+    /**
      * Sets the maximum number of images (raster tiles, sprites, icons) to load in parallel.
      *
      * @param numRequests The maximum number of parallel image requests.
