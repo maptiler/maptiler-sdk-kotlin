@@ -1166,6 +1166,11 @@ class MTMapViewController(
         point2: MTPoint,
     ): Double = navigableWorker.pointDistSqr(point1, point2)
 
+    override suspend fun pointEquals(
+        point1: MTPoint,
+        point2: MTPoint,
+    ): Boolean = navigableWorker.pointEquals(point1, point2)
+
     /**
      * Sets the maximum number of images (raster tiles, sprites, icons) to load in parallel.
      *
