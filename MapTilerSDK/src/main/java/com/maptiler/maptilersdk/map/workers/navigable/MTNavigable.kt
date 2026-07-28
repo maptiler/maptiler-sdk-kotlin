@@ -485,4 +485,40 @@ interface MTNavigable {
      * @return Magnitude of the point vector.
      */
     suspend fun pointMag(point: MTPoint): Double
+
+    /**
+     * Multiply this point by a 4x1 transformation matrix.
+     *
+     * @param point The point to multiply.
+     * @param matrix The transformation matrix (4 elements).
+     * @return A new MTPoint with the multiplied coordinates.
+     */
+    suspend fun pointMatMult(
+        point: MTPoint,
+        matrix: List<Double>,
+    ): MTPoint
+
+    /**
+     * Multiply this point by a scalar.
+     *
+     * @param point The point.
+     * @param scalar The number to multiply by.
+     * @return A new MTPoint with the multiplied coordinates.
+     */
+    suspend fun pointMult(
+        point: MTPoint,
+        scalar: Double,
+    ): MTPoint
+
+    /**
+     * Multiply this point by another point.
+     *
+     * @param point1 The first point.
+     * @param point2 The second point to multiply the first by.
+     * @return A new MTPoint with the multiplied coordinates.
+     */
+    suspend fun pointMultByPoint(
+        point1: MTPoint,
+        point2: MTPoint,
+    ): MTPoint
 }

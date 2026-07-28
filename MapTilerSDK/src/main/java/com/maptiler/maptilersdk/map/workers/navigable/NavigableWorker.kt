@@ -25,7 +25,9 @@ import com.maptiler.maptilersdk.commands.misc.PointDiv
 import com.maptiler.maptilersdk.commands.misc.PointDivByPoint
 import com.maptiler.maptilersdk.commands.misc.PointEquals
 import com.maptiler.maptilersdk.commands.misc.PointMag
-import com.maptiler.maptilersdk.commands.navigation.AreTilesLoaded
+import com.maptiler.maptilersdk.commands.misc.PointMatMult
+import com.maptiler.maptilersdk.commands.misc.PointMult
+import com.maptiler.maptilersdk.commands.misc.PointMultByPoint
 import com.maptiler.maptilersdk.commands.navigation.CenterOnIpPoint
 import com.maptiler.maptilersdk.commands.navigation.EaseTo
 import com.maptiler.maptilersdk.commands.navigation.FitBounds
@@ -846,6 +848,51 @@ internal class NavigableWorker(
         return when (returnTypeValue) {
             is DoubleValue -> returnTypeValue.value
             else -> 0.0
+        }
+    }
+
+    override suspend fun pointMatMult(
+        point: MTPoint,
+        matrix: List<Double>,
+    ): MTPoint {
+        val returnTypeValue =
+            bridge.execute(
+                PointMatMult(point, matrix),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> JsonConfig.json.decodeFromString<MTPoint>(returnTypeValue.value)
+            else -> MTPoint(0.0, 0.0)
+        }
+    }
+
+    override suspend fun pointMult(
+        point: MTPoint,
+        scalar: Double,
+    ): MTPoint {
+        val returnTypeValue =
+            bridge.execute(
+                PointMult(point, scalar),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> JsonConfig.json.decodeFromString<MTPoint>(returnTypeValue.value)
+            else -> MTPoint(0.0, 0.0)
+        }
+    }
+
+    override suspend fun pointMultByPoint(
+        point1: MTPoint,
+        point2: MTPoint,
+    ): MTPoint {
+        val returnTypeValue =
+            bridge.execute(
+                PointMultByPoint(point1, point2),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> JsonConfig.json.decodeFromString<MTPoint>(returnTypeValue.value)
+            else -> MTPoint(0.0, 0.0)
         }
     }
 }

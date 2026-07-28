@@ -1180,6 +1180,42 @@ class MTMapViewController(
     override suspend fun pointMag(point: MTPoint): Double = navigableWorker.pointMag(point)
 
     /**
+     * Multiply this point by a 4x1 transformation matrix.
+     *
+     * @param point The point to multiply.
+     * @param matrix The transformation matrix (4 elements).
+     * @return A new MTPoint with the multiplied coordinates.
+     */
+    override suspend fun pointMatMult(
+        point: MTPoint,
+        matrix: List<Double>,
+    ): MTPoint = navigableWorker.pointMatMult(point, matrix)
+
+    /**
+     * Multiply this point by a scalar.
+     *
+     * @param point The point.
+     * @param scalar The number to multiply by.
+     * @return A new MTPoint with the multiplied coordinates.
+     */
+    override suspend fun pointMult(
+        point: MTPoint,
+        scalar: Double,
+    ): MTPoint = navigableWorker.pointMult(point, scalar)
+
+    /**
+     * Multiply this point by another point.
+     *
+     * @param point1 The first point.
+     * @param point2 The second point to multiply the first by.
+     * @return A new MTPoint with the multiplied coordinates.
+     */
+    override suspend fun pointMultByPoint(
+        point1: MTPoint,
+        point2: MTPoint,
+    ): MTPoint = navigableWorker.pointMultByPoint(point1, point2)
+
+    /**
      * Sets the maximum number of images (raster tiles, sprites, icons) to load in parallel.
      *
      * @param numRequests The maximum number of parallel image requests.
