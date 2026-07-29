@@ -529,4 +529,16 @@ interface MTNavigable {
         point1: MTPoint,
         point2: MTPoint,
     ): MTPoint
+
+    /**
+     * Rotate this point around the 0, 0 origin by an angle.
+     *
+     * @param point The point to rotate.
+     * @param angle The angle to rotate by, in radians.
+     * @return A new MTPoint with the rotated coordinates.
+     */
+    suspend fun pointRotate(
+        point: MTPoint,
+        angle: Double,
+    ): MTPoint
 }
