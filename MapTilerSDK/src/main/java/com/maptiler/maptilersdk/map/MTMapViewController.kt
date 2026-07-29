@@ -1224,6 +1224,18 @@ class MTMapViewController(
     ): MTPoint = navigableWorker.pointMultByPoint(point1, point2)
 
     /**
+     * Rotate this point around the 0, 0 origin by an angle.
+     *
+     * @param point The point to rotate.
+     * @param angle The angle to rotate by, in radians.
+     * @return A new MTPoint with the rotated coordinates.
+     */
+    override suspend fun pointRotate(
+        point: MTPoint,
+        angle: Double,
+    ): MTPoint = navigableWorker.pointRotate(point, angle)
+
+    /**
      * Sets the maximum number of images (raster tiles, sprites, icons) to load in parallel.
      *
      * @param numRequests The maximum number of parallel image requests.
