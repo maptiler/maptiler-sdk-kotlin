@@ -1180,6 +1180,14 @@ class MTMapViewController(
     override suspend fun pointMag(point: MTPoint): Double = navigableWorker.pointMag(point)
 
     /**
+     * Calculate perpendicular point.
+     *
+     * @param point The point.
+     * @return Perpendicular point.
+     */
+    override suspend fun pointPerp(point: MTPoint): MTPoint = navigableWorker.pointPerp(point)
+
+    /**
      * Multiply this point by a 4x1 transformation matrix.
      *
      * @param point The point to multiply.

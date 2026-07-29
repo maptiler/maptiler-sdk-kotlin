@@ -487,6 +487,14 @@ interface MTNavigable {
     suspend fun pointMag(point: MTPoint): Double
 
     /**
+     * Calculate perpendicular point.
+     *
+     * @param point The point.
+     * @return Perpendicular point.
+     */
+    suspend fun pointPerp(point: MTPoint): MTPoint
+
+    /**
      * Multiply this point by a 4x1 transformation matrix.
      *
      * @param point The point to multiply.
