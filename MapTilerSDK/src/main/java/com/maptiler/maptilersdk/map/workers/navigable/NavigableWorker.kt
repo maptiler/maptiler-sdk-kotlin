@@ -28,6 +28,7 @@ import com.maptiler.maptilersdk.commands.misc.PointMag
 import com.maptiler.maptilersdk.commands.misc.PointMatMult
 import com.maptiler.maptilersdk.commands.misc.PointMult
 import com.maptiler.maptilersdk.commands.misc.PointMultByPoint
+import com.maptiler.maptilersdk.commands.navigation.AreTilesLoaded
 import com.maptiler.maptilersdk.commands.navigation.CenterOnIpPoint
 import com.maptiler.maptilersdk.commands.navigation.EaseTo
 import com.maptiler.maptilersdk.commands.navigation.FitBounds
