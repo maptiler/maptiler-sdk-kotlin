@@ -1193,6 +1193,14 @@ class MTMapViewController(
     override suspend fun pointPerp(point: MTPoint): MTPoint = navigableWorker.pointPerp(point)
 
     /**
+     * Calculate unit vector of this point.
+     *
+     * @param point The point.
+     * @return A new MTPoint with the unit vector coordinates.
+     */
+    override suspend fun pointUnit(point: MTPoint): MTPoint = navigableWorker.pointUnit(point)
+
+    /**
      * Multiply this point by a 4x1 transformation matrix.
      *
      * @param point The point to multiply.

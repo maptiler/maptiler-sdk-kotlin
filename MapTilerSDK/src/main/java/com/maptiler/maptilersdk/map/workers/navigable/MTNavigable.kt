@@ -507,6 +507,14 @@ interface MTNavigable {
     suspend fun pointPerp(point: MTPoint): MTPoint
 
     /**
+     * Calculate unit vector of this point.
+     *
+     * @param point The point.
+     * @return A new MTPoint with the unit vector coordinates.
+     */
+    suspend fun pointUnit(point: MTPoint): MTPoint
+
+    /**
      * Multiply this point by a 4x1 transformation matrix.
      *
      * @param point The point to multiply.
