@@ -30,6 +30,7 @@ import com.maptiler.maptilersdk.commands.misc.PointMult
 import com.maptiler.maptilersdk.commands.misc.PointMultByPoint
 import com.maptiler.maptilersdk.commands.misc.PointPerp
 import com.maptiler.maptilersdk.commands.misc.PointRotate
+import com.maptiler.maptilersdk.commands.misc.PointRotateAround
 import com.maptiler.maptilersdk.commands.navigation.AreTilesLoaded
 import com.maptiler.maptilersdk.commands.navigation.CenterOnIpPoint
 import com.maptiler.maptilersdk.commands.navigation.EaseTo
@@ -918,6 +919,22 @@ internal class NavigableWorker(
         val returnTypeValue =
             bridge.execute(
                 PointRotate(point, angle),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> JsonConfig.json.decodeFromString<MTPoint>(returnTypeValue.value)
+            else -> MTPoint(0.0, 0.0)
+        }
+    }
+
+    override suspend fun pointRotateAround(
+        point: MTPoint,
+        angle: Double,
+        pivot: MTPoint,
+    ): MTPoint {
+        val returnTypeValue =
+            bridge.execute(
+                PointRotateAround(point, angle, pivot),
             )
 
         return when (returnTypeValue) {
