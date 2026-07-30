@@ -1128,6 +1128,11 @@ class MTMapViewController(
         point2: com.maptiler.maptilersdk.map.types.MTPoint,
     ): com.maptiler.maptilersdk.map.types.MTPoint = navigableWorker.pointAdd(point1, point2)
 
+    override suspend fun pointSub(
+        point1: com.maptiler.maptilersdk.map.types.MTPoint,
+        point2: com.maptiler.maptilersdk.map.types.MTPoint,
+    ): com.maptiler.maptilersdk.map.types.MTPoint = navigableWorker.pointSub(point1, point2)
+
     override suspend fun pointDiv(
         point: com.maptiler.maptilersdk.map.types.MTPoint,
         scalar: Double,

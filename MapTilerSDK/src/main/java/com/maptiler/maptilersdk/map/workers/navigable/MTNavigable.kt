@@ -373,6 +373,18 @@ interface MTNavigable {
     ): MTPoint
 
     /**
+     * Subtracts the coordinates of one point from another.
+     *
+     * @param point1 The first point.
+     * @param point2 The second point to subtract from the first.
+     * @return A new MTPoint with the subtracted coordinates.
+     */
+    suspend fun pointSub(
+        point1: MTPoint,
+        point2: MTPoint,
+    ): MTPoint
+
+    /**
      * Divides this point by a scalar.
      *
      * @param point The point.
