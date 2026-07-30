@@ -32,6 +32,7 @@ import com.maptiler.maptilersdk.commands.misc.PointPerp
 import com.maptiler.maptilersdk.commands.misc.PointRotate
 import com.maptiler.maptilersdk.commands.misc.PointRotateAround
 import com.maptiler.maptilersdk.commands.misc.PointRound
+import com.maptiler.maptilersdk.commands.misc.PointSub
 import com.maptiler.maptilersdk.commands.navigation.AreTilesLoaded
 import com.maptiler.maptilersdk.commands.navigation.CenterOnIpPoint
 import com.maptiler.maptilersdk.commands.navigation.EaseTo
@@ -703,6 +704,21 @@ internal class NavigableWorker(
         val returnTypeValue =
             bridge.execute(
                 PointAdd(point1, point2),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> JsonConfig.json.decodeFromString<MTPoint>(returnTypeValue.value)
+            else -> MTPoint(0.0, 0.0)
+        }
+    }
+
+    override suspend fun pointSub(
+        point1: MTPoint,
+        point2: MTPoint,
+    ): MTPoint {
+        val returnTypeValue =
+            bridge.execute(
+                PointSub(point1, point2),
             )
 
         return when (returnTypeValue) {
