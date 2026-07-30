@@ -1250,6 +1250,14 @@ class MTMapViewController(
     ): MTPoint = navigableWorker.pointRotateAround(point, angle, pivot)
 
     /**
+     * Round point coordinates.
+     *
+     * @param point The point to round.
+     * @return A new MTPoint with the rounded coordinates.
+     */
+    override suspend fun pointRound(point: MTPoint): MTPoint = navigableWorker.pointRound(point)
+
+    /**
      * Sets the maximum number of images (raster tiles, sprites, icons) to load in parallel.
      *
      * @param numRequests The maximum number of parallel image requests.

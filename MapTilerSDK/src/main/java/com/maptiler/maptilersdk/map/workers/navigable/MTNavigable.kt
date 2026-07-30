@@ -555,4 +555,12 @@ interface MTNavigable {
         angle: Double,
         pivot: MTPoint,
     ): MTPoint
+
+    /**
+     * Round point coordinates.
+     *
+     * @param point The point to round.
+     * @return A new MTPoint with the rounded coordinates.
+     */
+    suspend fun pointRound(point: MTPoint): MTPoint
 }
