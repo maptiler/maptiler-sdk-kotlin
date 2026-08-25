@@ -432,6 +432,7 @@ class MTMapViewController(
 
     private var _navigationControlShowCompass: Boolean = true
     private var _navigationControlVisualizePitch: Boolean = false
+    private var _navigationControlShowZoom: Boolean = true
 
     /**
      * navigationControl showCompass property adds compass visibility.
@@ -444,6 +445,21 @@ class MTMapViewController(
             coroutineScope?.launch {
                 bridge?.execute(
                     com.maptiler.maptilersdk.commands.misc.SetNavigationControlShowCompass(value),
+                )
+            }
+        }
+
+    /**
+     * navigationControl showZoom property adds zoom controls visibility.
+     * Backed by navigationControl showZoom to toggle zoom controls visibility.
+     */
+    var navigationControlShowZoom: Boolean
+        get() = _navigationControlShowZoom
+        set(value) {
+            _navigationControlShowZoom = value
+            coroutineScope?.launch {
+                bridge?.execute(
+                    com.maptiler.maptilersdk.commands.misc.SetNavigationControlShowZoom(value),
                 )
             }
         }
@@ -478,6 +494,7 @@ class MTMapViewController(
         visualizePitch: Boolean = false,
     ) {
         _navigationControlShowCompass = showCompass
+        _navigationControlShowZoom = showZoom
         _navigationControlVisualizePitch = visualizePitch
         coroutineScope?.launch {
             bridge?.execute(
