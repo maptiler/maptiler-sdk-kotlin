@@ -509,6 +509,19 @@ class MTMapViewController(
     }
 
     /**
+     * Adds the MapTiler terrain control to the map.
+     *
+     * @param position The position of the control.
+     */
+    fun addTerrainControl(position: MTMapCorner = MTMapCorner.TOP_RIGHT) {
+        coroutineScope?.launch {
+            bridge?.execute(
+                com.maptiler.maptilersdk.commands.misc.AddTerrainControl(position),
+            )
+        }
+    }
+
+    /**
      * Show or hide padding
      */
     fun showPadding(show: Boolean) {
