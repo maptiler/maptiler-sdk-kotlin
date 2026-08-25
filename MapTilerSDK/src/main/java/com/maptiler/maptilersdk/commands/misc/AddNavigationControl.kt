@@ -8,8 +8,8 @@ package com.maptiler.maptilersdk.commands.misc
 
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTCommand
+import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.map.types.MTMapCorner
-import com.maptiler.maptilersdk.utils.JsonConfig
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
 
