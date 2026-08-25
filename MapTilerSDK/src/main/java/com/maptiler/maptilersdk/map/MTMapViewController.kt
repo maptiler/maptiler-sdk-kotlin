@@ -430,6 +430,23 @@ class MTMapViewController(
         }
     }
 
+    private var _navigationControlShowCompass: Boolean = true
+
+    /**
+     * navigationControl showCompass property adds compass visibility.
+     * Backed by navigationControl showCompass to toggle compass visibility.
+     */
+    var navigationControlShowCompass: Boolean
+        get() = _navigationControlShowCompass
+        set(value) {
+            _navigationControlShowCompass = value
+            coroutineScope?.launch {
+                bridge?.execute(
+                    com.maptiler.maptilersdk.commands.misc.SetNavigationControlShowCompass(value),
+                )
+            }
+        }
+
     /**
      * Adds the MapTiler navigation control to the map.
      *
