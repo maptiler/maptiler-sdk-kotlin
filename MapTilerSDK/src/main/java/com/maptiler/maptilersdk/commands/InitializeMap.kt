@@ -45,13 +45,7 @@ internal data class InitializeMap(
             styleString = "${MTBridge.SDK_OBJECT}.${MTBridge.STYLE_OBJECT}.$style"
         }
 
-        var optionsString: JSString = ""
-
-        if (options != null) {
-            optionsString = JsonConfig.json.encodeToString(options)
-        } else {
-            optionsString = "null"
-        }
+        var optionsString: JSString = JsonConfig.json.encodeToString(options)
 
         if (options?.language is MTLanguage.Special) {
             optionsString =
