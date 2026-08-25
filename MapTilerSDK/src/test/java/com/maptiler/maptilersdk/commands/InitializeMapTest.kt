@@ -40,21 +40,4 @@ class InitializeMapTest {
                 "'${MTConfig.VERSION}'); }"
         assertEquals(expected, command.toJS())
     }
-
-    @Test
-    fun `toJS matches signature with navigationControlShowCompass`() {
-        val options = MTMapOptions(navigationControlShowCompass = true)
-        val command = InitializeMap("apikey", options, MTMapReferenceStyle.STREETS, null, true)
-        val expectedOptionsStr =
-            "{\"logoPosition\":\"top-left\",\"eventLevel\":\"CAMERA_ONLY\"," +
-                "\"highFrequencyEventThrottleMs\":20,\"minimap\":false,\"geolocateControl\":false," +
-                "\"navigationControl\":{\"showCompass\":true},\"projectionControl\":false,\"scaleControl\":false," +
-                "\"terrainControl\":false,\"isSessionLogicEnabled\":true}"
-        val expected =
-            "initializeMap('apikey', maptilersdk.MapStyle.STREETS, " +
-                "$expectedOptionsStr, true, 'CAMERA_ONLY', 20); if (typeof map !== 'undefined' " +
-                "&& map.telemetry) { map.telemetry.registerModule('maptiler-sdk-android', " +
-                "'${MTConfig.VERSION}'); }"
-        assertEquals(expected, command.toJS())
-    }
 }

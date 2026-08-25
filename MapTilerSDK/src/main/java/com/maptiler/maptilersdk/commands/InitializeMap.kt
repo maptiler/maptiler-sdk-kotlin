@@ -15,8 +15,6 @@ import com.maptiler.maptilersdk.map.MTMapOptions
 import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
 import com.maptiler.maptilersdk.map.style.MTMapStyleVariant
 import com.maptiler.maptilersdk.map.types.MTLanguage
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.put
 
 internal data class InitializeMap(
     val apiKey: String,
@@ -50,21 +48,7 @@ internal data class InitializeMap(
         var optionsString: JSString = ""
 
         if (options != null) {
-            val jsonElement = JsonConfig.json.encodeToJsonElement(MTMapOptions.serializer(), options)
-            val jsonMap = jsonElement.jsonObject.toMutableMap()
-
-            if (options.navigationControlShowCompass != null) {
-                jsonMap["navigationControl"] =
-                    kotlinx.serialization.json.buildJsonObject {
-                        put("showCompass", options.navigationControlShowCompass!!)
-                    }
-            }
-
-            optionsString =
-                JsonConfig.json.encodeToString(
-                    kotlinx.serialization.json.JsonObject.serializer(),
-                    kotlinx.serialization.json.JsonObject(jsonMap),
-                )
+            optionsString = JsonConfig.json.encodeToString(options)
         } else {
             optionsString = "null"
         }
