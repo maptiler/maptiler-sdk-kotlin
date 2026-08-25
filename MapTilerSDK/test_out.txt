@@ -1,0 +1,1 @@
+REPLACED: {"navigationControl": {"showCompass": true}, "navigationControlShowCompass": true}

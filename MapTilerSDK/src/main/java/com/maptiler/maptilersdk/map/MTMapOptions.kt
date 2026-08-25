@@ -359,6 +359,14 @@ class MTMapOptions {
         private set
 
     /**
+     * navigationControl showCompass property adds compass visibility.
+     * Backed by navigationControl showCompass to toggle compass visibility.
+     */
+    @kotlinx.serialization.Transient
+    var navigationControlShowCompass: Boolean? = null
+        private set
+
+    /**
      * Boolean indicating whether projection control is added directly to the map.
      */
     @SerialName("projectionControl")
@@ -552,6 +560,7 @@ class MTMapOptions {
         attributionControlIsVisible: Boolean? = null,
         geolocateControlIsVisible: Boolean? = false,
         navigationControlIsVisible: Boolean? = false,
+        navigationControlShowCompass: Boolean? = null,
         projectionControlIsVisible: Boolean? = false,
         scaleControlIsVisible: Boolean? = false,
         terrainControlIsVisible: Boolean? = false,
@@ -604,6 +613,7 @@ class MTMapOptions {
         this.attributionControlIsVisible = attributionControlIsVisible
         this.geolocateControlIsVisible = geolocateControlIsVisible
         this.navigationControlIsVisible = navigationControlIsVisible
+        this.navigationControlShowCompass = navigationControlShowCompass
         this.projectionControlIsVisible = projectionControlIsVisible
         this.scaleControlIsVisible = scaleControlIsVisible
         this.terrainControlIsVisible = terrainControlIsVisible
