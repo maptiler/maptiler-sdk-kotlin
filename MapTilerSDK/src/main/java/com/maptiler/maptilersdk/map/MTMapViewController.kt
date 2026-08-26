@@ -480,6 +480,29 @@ class MTMapViewController(
         }
 
     /**
+     * Adds the attribution control to the map.
+     *
+     * @param compact If `true`, forces the compact attribution.
+     * @param customAttribution A string to be added to the end of the attribution.
+     * @param position The position of the control.
+     */
+    fun addAttributionControl(
+        compact: Boolean? = null,
+        customAttribution: String? = null,
+        position: MTMapCorner = MTMapCorner.BOTTOM_RIGHT,
+    ) {
+        coroutineScope?.launch {
+            bridge?.execute(
+                com.maptiler.maptilersdk.commands.misc.AddAttributionControl(
+                    compact,
+                    customAttribution,
+                    position,
+                ),
+            )
+        }
+    }
+
+    /**
      * Adds the MapTiler navigation control to the map.
      *
      * @param position The position of the control.
