@@ -64,6 +64,7 @@ import com.maptiler.maptilersdk.map.types.MTLanguage
 import com.maptiler.maptilersdk.map.types.MTMapCorner
 import com.maptiler.maptilersdk.map.types.MTPoint
 import com.maptiler.maptilersdk.map.types.MTProjectionType
+import com.maptiler.maptilersdk.map.types.MTScaleUnit
 import com.maptiler.maptilersdk.map.workers.navigable.MTNavigable
 import com.maptiler.maptilersdk.map.workers.navigable.NavigableWorker
 import com.maptiler.maptilersdk.map.workers.zoomable.MTZoomable
@@ -496,6 +497,29 @@ class MTMapViewController(
                 com.maptiler.maptilersdk.commands.misc.AddAttributionControl(
                     compact,
                     customAttribution,
+                    position,
+                ),
+            )
+        }
+    }
+
+    /**
+     * Adds a scale control to the map.
+     *
+     * @param maxWidth The maximum length of the scale control in pixels.
+     * @param unit Unit of the distance.
+     * @param position The position of the control.
+     */
+    fun addScaleControl(
+        maxWidth: Int? = null,
+        unit: MTScaleUnit? = null,
+        position: MTMapCorner = MTMapCorner.BOTTOM_LEFT,
+    ) {
+        coroutineScope?.launch {
+            bridge?.execute(
+                com.maptiler.maptilersdk.commands.misc.AddScaleControl(
+                    maxWidth,
+                    unit,
                     position,
                 ),
             )
