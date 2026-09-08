@@ -51,6 +51,11 @@ class MTTextPopup(
     var subpixelPositioning: Boolean? = null
 
     /**
+     * Boolean indicating whether the popup has a close button.
+     */
+    var closeButton: Boolean? = null
+
+    /**
      * Boolean indicating whether the popup is currently displayed on the map.
      */
     var isOpen: Boolean = false
@@ -168,6 +173,18 @@ class MTTextPopup(
         this.subpixelPositioning = subpixelPositioning
 
         mapViewController.setSubpixelPositioningToTextPopup(this, subpixelPositioning)
+    }
+
+    /**
+     * Shows or hides the close button on the popup.
+     */
+    fun setCloseButton(
+        closeButton: Boolean,
+        mapViewController: MTMapViewController,
+    ) {
+        this.closeButton = closeButton
+
+        mapViewController.setCloseButtonToTextPopup(this, closeButton)
     }
 
     /**

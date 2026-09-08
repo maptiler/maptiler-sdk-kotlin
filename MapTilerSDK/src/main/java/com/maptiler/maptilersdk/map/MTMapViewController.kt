@@ -25,6 +25,7 @@ import com.maptiler.maptilersdk.commands.annotations.OpenTextPopup
 import com.maptiler.maptilersdk.commands.annotations.RemoveMarker
 import com.maptiler.maptilersdk.commands.annotations.RemoveTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetAnchorToTextPopup
+import com.maptiler.maptilersdk.commands.annotations.SetCloseButtonToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetCoordinatesToMarker
 import com.maptiler.maptilersdk.commands.annotations.SetCoordinatesToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetMarkerDraggable
@@ -684,6 +685,17 @@ class MTMapViewController(
         coroutineScope?.launch {
             bridge?.execute(
                 SetSubpixelPositioningToTextPopup(popup, subpixelPositioning),
+            )
+        }
+    }
+
+    internal fun setCloseButtonToTextPopup(
+        popup: MTTextPopup,
+        closeButton: Boolean,
+    ) {
+        coroutineScope?.launch {
+            bridge?.execute(
+                SetCloseButtonToTextPopup(popup, closeButton),
             )
         }
     }

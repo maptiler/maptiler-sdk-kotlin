@@ -57,6 +57,8 @@ internal data class AddMarker(
                         0.0
                     }
 
+                val closeButton = popup.closeButton?.let { ", closeButton: $it" } ?: ""
+
                 val textJson = JsonConfig.json.encodeToString(popup.text)
                 val maxWidth = popup.maxWidth?.let { JsonConfig.json.encodeToString("${it}px") }
                 val setMaxWidth =
@@ -67,7 +69,7 @@ internal data class AddMarker(
                     }
 
                 """
-                const ${popup.identifier} = new maptilersdk.Popup({ offset: $offset });
+                const ${popup.identifier} = new maptilersdk.Popup({ offset: $offset$closeButton });
 
                 // Attach open/close event forwarding for marker's popup
                 const handle${popup.identifier}Event = (eventName) => () => {
