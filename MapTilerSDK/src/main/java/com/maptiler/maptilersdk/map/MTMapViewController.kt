@@ -26,6 +26,7 @@ import com.maptiler.maptilersdk.commands.annotations.RemoveMarker
 import com.maptiler.maptilersdk.commands.annotations.RemoveTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetAnchorToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetCloseButtonToTextPopup
+import com.maptiler.maptilersdk.commands.annotations.SetCoordinatesToMarker
 import com.maptiler.maptilersdk.commands.annotations.SetCoordinatesToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetMarkerDraggable
 import com.maptiler.maptilersdk.commands.annotations.SetMarkerOffset
@@ -681,8 +682,8 @@ class MTMapViewController(
         popup: MTTextPopup,
         subpixelPositioning: Boolean,
     ) {
-        scope.launch {
-            bridge.execute(
+        coroutineScope?.launch {
+            bridge?.execute(
                 SetSubpixelPositioningToTextPopup(popup, subpixelPositioning),
             )
         }
@@ -692,8 +693,8 @@ class MTMapViewController(
         popup: MTTextPopup,
         closeButton: Boolean,
     ) {
-        scope.launch {
-            bridge.execute(
+        coroutineScope?.launch {
+            bridge?.execute(
                 SetCloseButtonToTextPopup(popup, closeButton),
             )
         }
