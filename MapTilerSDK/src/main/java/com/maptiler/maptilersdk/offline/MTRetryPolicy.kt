@@ -31,7 +31,7 @@ internal interface MTRetryPolicy {
  * Implements exponential backoff with jitter and handles HTTP 429 (Too Many Requests).
  */
 internal class MTNetworkRetryPolicy(
-    private val maxAttempts: Int = 3,
+    private val maxAttempts: Int = 5,
     private val baseDelayMillis: Long = 1000L,
     private val maxDelayMillis: Long = 60000L,
 ) : MTRetryPolicy {
@@ -56,11 +56,11 @@ internal class MTNetworkRetryPolicy(
         return when (e) {
             is MTOfflineError.BadResponse -> {
                 when (e.statusCode) {
-                    429 -> true // Too Many Requests
                     in 500..599 -> true // Server errors
                     else -> false
                 }
             }
+            is MTOfflineError.RateLimitExceeded -> true
             is MTOfflineError.NetworkError -> true
             is IOException -> true
             else -> false
@@ -71,8 +71,10 @@ internal class MTNetworkRetryPolicy(
         e: Exception,
         attempt: Int,
     ): Long {
-        // Handle 429 Retry-After if we were to pass it in the exception,
-        // but for now let's use exponential backoff.
+        if (e is MTOfflineError.RateLimitExceeded && e.retryAfterSeconds != null) {
+            val requestedDelayMillis = e.retryAfterSeconds * 1000L
+            return min(requestedDelayMillis, maxDelayMillis)
+        }
 
         val exponentialDelay = baseDelayMillis * 2.0.pow(attempt - 1).toLong()
         val maxAllowedDelay = min(exponentialDelay, maxDelayMillis)

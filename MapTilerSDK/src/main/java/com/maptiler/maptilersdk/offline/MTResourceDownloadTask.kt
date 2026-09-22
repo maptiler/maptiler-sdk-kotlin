@@ -37,7 +37,7 @@ internal class MTResourceDownloadTask(
         }
 
     override suspend fun execute() {
-        val retryPolicy = MTNetworkRetryPolicy(maxAttempts = 3)
+        val retryPolicy = MTNetworkRetryPolicy(maxAttempts = 5)
 
         try {
             retryPolicy.execute {
@@ -105,7 +105,27 @@ internal class MTResourceDownloadTask(
                         // Update metadata
                         updateMetadata(response, destFile)
                     }
-                    429 -> throw MTOfflineError.BadResponse(429)
+                    429 -> {
+                        val retryAfterStr = response.header("Retry-After")
+                        var retryAfterSeconds: Long? = null
+                        if (retryAfterStr != null) {
+                            val seconds = retryAfterStr.toLongOrNull()
+                            if (seconds != null) {
+                                retryAfterSeconds = seconds
+                            } else {
+                                try {
+                                    val date = synchronized(rfc1123Formatter) { rfc1123Formatter.parse(retryAfterStr) }
+                                    if (date != null) {
+                                        val delay = (date.time - System.currentTimeMillis()) / 1000
+                                        retryAfterSeconds = if (delay > 0) delay else 0
+                                    }
+                                } catch (e: Exception) {
+                                    // Ignore parse errors
+                                }
+                            }
+                        }
+                        throw MTOfflineError.RateLimitExceeded(retryAfterSeconds)
+                    }
                     in 500..599 -> throw MTOfflineError.BadResponse(statusCode)
                     else -> throw MTOfflineError.BadResponse(statusCode)
                 }

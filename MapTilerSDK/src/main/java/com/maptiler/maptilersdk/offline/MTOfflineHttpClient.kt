@@ -36,7 +36,14 @@ internal object MTOfflineHttpClient {
      * Features optimized connection pooling for many small files and appropriate timeouts.
      */
     val client: OkHttpClient by lazy {
+        val dispatcher =
+            okhttp3.Dispatcher().apply {
+                maxRequests = 10
+                maxRequestsPerHost = 5
+            }
+
         OkHttpClient.Builder()
+            .dispatcher(dispatcher)
             .connectionPool(ConnectionPool(10, 5, TimeUnit.MINUTES))
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(15, TimeUnit.SECONDS)

@@ -158,6 +158,11 @@ class MTMapViewController(
      */
     private val contentDelegates: MutableSet<MTMapViewContentDelegate> = mutableSetOf()
 
+    /**
+     * Map of registered modules.
+     */
+    private val modules = mutableMapOf<String, MTMapModule>()
+
     // Map container layout (in parent coordinates, pixels). Used by Compose overlays to align.
     @Volatile
     internal var mapContainerOriginXPx: Int = 0
@@ -302,6 +307,30 @@ class MTMapViewController(
         initializeWorkers()
 
         webViewExecutor?.addJSInterface(jsInterface)
+    }
+
+    /**
+     * Registers a module to the map view.
+     *
+     * @param module The module to be registered.
+     */
+    fun registerModule(module: MTMapModule) {
+        modules[module.id] = module
+        module.onAttach(this)
+
+        // If the map is already initialized, notify the module immediately
+        if (style != null && bridge != null) {
+            module.onMapReady()
+        }
+    }
+
+    /**
+     * Executes a module bundle directly on the WebView.
+     *
+     * @param bundleString The raw JS content to evaluate.
+     */
+    suspend fun loadModuleBundle(bundleString: String) {
+        bridge?.execute(com.maptiler.maptilersdk.commands.misc.LoadModuleBundle(bundleString))
     }
 
     fun destroy() {
@@ -833,6 +862,14 @@ class MTMapViewController(
         data: MTData?,
     ) {
         eventProcessor.registerEvent(event, data)
+    }
+
+    override fun onModuleEvent(
+        moduleId: String,
+        event: String,
+        data: String,
+    ) {
+        modules[moduleId]?.onMessageReceived(event, data.takeIf { it.isNotBlank() })
     }
 
     // ZOOMABLE
@@ -1474,6 +1511,7 @@ class MTMapViewController(
             }
 
             if (event == MTEvent.ON_READY) {
+                modules.values.forEach { it.onMapReady() }
                 delegate?.onMapViewInitialized()
             }
 

@@ -22,6 +22,12 @@ internal interface MTJavascriptDelegate {
         event: MTEvent,
         data: MTData?,
     )
+
+    fun onModuleEvent(
+        moduleId: String,
+        event: String,
+        data: String,
+    )
 }
 
 internal class MTJavaScriptInterface(
@@ -54,5 +60,14 @@ internal class MTJavaScriptInterface(
             }
 
         delegate?.onEvent(eventObject, eventData)
+    }
+
+    @JavascriptInterface
+    fun onModuleEvent(
+        moduleId: String,
+        event: String,
+        data: String,
+    ) {
+        delegate?.onModuleEvent(moduleId, event, data)
     }
 }
