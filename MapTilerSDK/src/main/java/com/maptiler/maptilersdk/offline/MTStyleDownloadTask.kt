@@ -7,12 +7,15 @@
 package com.maptiler.maptilersdk.offline
 
 import android.content.Context
+import com.maptiler.maptilersdk.helpers.MTConnectivity
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import okhttp3.Request
 import java.io.File
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 
 /**
  * A concrete download task that fetches the map style.
@@ -27,25 +30,26 @@ internal class MTStyleDownloadTask(
     override val destinationFile: File?
         get() = MTOfflineStoragePaths.getAbsoluteFile(context, packId, resource.destinationPath)
 
-    override suspend fun execute() {
-        val maxAttempts = 3
-        var currentAttempt = 0
-        var lastError: Exception? = null
-
-        while (currentAttempt < maxAttempts) {
-            try {
-                performDownload()
-                return // Success
-            } catch (e: Exception) {
-                currentAttempt++
-                lastError = e
-                if (currentAttempt < maxAttempts) {
-                    delay(1000L * currentAttempt)
-                }
-            }
+    private val rfc1123Formatter =
+        SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.US).apply {
+            timeZone = TimeZone.getTimeZone("GMT")
         }
 
-        throw lastError ?: MTOfflineError.DownloadFailed(Exception("Unknown error"))
+    override suspend fun execute() {
+        val retryPolicy = MTNetworkRetryPolicy(maxAttempts = 5)
+
+        try {
+            retryPolicy.execute {
+                MTConnectivity.suspendUntilNetworkAvailable(context)
+                performDownload()
+            }
+        } catch (e: MTOfflineError) {
+            throw e
+        } catch (e: IOException) {
+            throw MTOfflineError.NetworkError(e)
+        } catch (e: Exception) {
+            throw MTOfflineError.DownloadFailed(e)
+        }
     }
 
     private suspend fun performDownload() =
@@ -68,6 +72,28 @@ internal class MTStyleDownloadTask(
                         val destFile = destinationFile ?: return@withContext
                         MTOfflineStorage.write(data, destFile)
                     }
+                    429 -> {
+                        val retryAfterStr = response.header("Retry-After")
+                        var retryAfterSeconds: Long? = null
+                        if (retryAfterStr != null) {
+                            val seconds = retryAfterStr.toLongOrNull()
+                            if (seconds != null) {
+                                retryAfterSeconds = seconds
+                            } else {
+                                try {
+                                    val date = synchronized(rfc1123Formatter) { rfc1123Formatter.parse(retryAfterStr) }
+                                    if (date != null) {
+                                        val delay = (date.time - System.currentTimeMillis()) / 1000
+                                        retryAfterSeconds = if (delay > 0) delay else 0
+                                    }
+                                } catch (e: Exception) {
+                                    // Ignore parse errors
+                                }
+                            }
+                        }
+                        throw MTOfflineError.RateLimitExceeded(retryAfterSeconds)
+                    }
+                    in 500..599 -> throw MTOfflineError.BadResponse(statusCode)
                     else -> throw MTOfflineError.BadResponse(statusCode)
                 }
             }

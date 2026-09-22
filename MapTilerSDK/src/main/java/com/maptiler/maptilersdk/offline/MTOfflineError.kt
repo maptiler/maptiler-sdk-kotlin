@@ -62,6 +62,13 @@ public sealed class MTOfflineError : Exception() {
     }
 
     /**
+     * The server returned a 429 Too Many Requests response, indicating rate limiting.
+     */
+    public data class RateLimitExceeded(val retryAfterSeconds: Long? = null) : MTOfflineError() {
+        override val message: String get() = "Rate limit exceeded. Please retry later."
+    }
+
+    /**
      * A general network connectivity issue occurred.
      */
     public data class NetworkError(override val cause: Throwable) : MTOfflineError() {
