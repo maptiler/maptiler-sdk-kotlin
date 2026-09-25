@@ -101,6 +101,11 @@ class MTMapViewController(
     MTNavigable {
     private var coroutineScope: CoroutineScope? = null
 
+    /**
+     * Coroutine scope bound to the controller's lifecycle.
+     */
+    val scope: CoroutineScope? get() = coroutineScope
+
     private var bridge: MTBridge? = null
     private var eventProcessor: EventProcessor =
         EventProcessor().apply {
@@ -332,6 +337,15 @@ class MTMapViewController(
     suspend fun loadModuleBundle(bundleString: String) {
         bridge?.execute(com.maptiler.maptilersdk.commands.misc.LoadModuleBundle(bundleString))
     }
+
+    /**
+     * Executes a command on the bridge.
+     *
+     * @param command The command to execute.
+     * @return The result of the command execution.
+     */
+    suspend fun execute(command: com.maptiler.maptilersdk.bridge.MTCommand): com.maptiler.maptilersdk.bridge.MTBridgeReturnType? =
+        bridge?.execute(command)
 
     fun destroy() {
         webViewExecutor?.destroy()
