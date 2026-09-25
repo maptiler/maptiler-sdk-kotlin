@@ -6,14 +6,17 @@
 
 package com.maptiler.maptilersdk.bridge
 
-internal typealias JSString = String
+typealias JSString = String
 
-internal interface MTCommand {
+/**
+ * Protocol for all types of commands.
+ */
+interface MTCommand {
     val isPrimitiveReturnType: Boolean
 
     fun toJS(): JSString
 }
 
-internal interface MTCommandExecutable {
+interface MTCommandExecutable {
     suspend fun execute(command: MTCommand): MTBridgeReturnType
 }

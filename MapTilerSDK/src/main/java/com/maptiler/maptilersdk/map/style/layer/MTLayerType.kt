@@ -67,4 +67,10 @@ enum class MTLayerType {
      */
     @SerialName("background")
     BACKGROUND,
+
+    /**
+     * A weather layer.
+     */
+    @SerialName("weather")
+    WEATHER,
 }

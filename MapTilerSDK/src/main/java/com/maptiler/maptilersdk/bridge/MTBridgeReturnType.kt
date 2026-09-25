@@ -6,7 +6,7 @@
 
 package com.maptiler.maptilersdk.bridge
 
-internal sealed class MTBridgeReturnType {
+sealed class MTBridgeReturnType {
     data class StringValue(
         val value: String,
     ) : MTBridgeReturnType()

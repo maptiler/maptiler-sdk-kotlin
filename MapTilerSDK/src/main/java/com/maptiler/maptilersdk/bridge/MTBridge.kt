@@ -11,7 +11,7 @@ package com.maptiler.maptilersdk.bridge
  *
  * It uses abstract executor as mediator object allowing outside executor implementations
  */
-internal class MTBridge(
+class MTBridge(
     private val executor: MTCommandExecutable?,
 ) {
     companion object {
