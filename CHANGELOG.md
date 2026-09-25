@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.2.1](https://github.com/maptiler/maptiler-sdk-kotlin/releases/tag/2.2.1)
+Released on 2026-09-25.
+### Fixed
+- Updated bridge API to support custom layer types.
+
 ## [2.2.0](https://github.com/maptiler/maptiler-sdk-kotlin/releases/tag/2.2.0)
 Released on 2026-09-22.
 ### Added
