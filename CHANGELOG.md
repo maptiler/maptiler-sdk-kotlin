@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.2.2](https://github.com/maptiler/maptiler-sdk-kotlin/releases/tag/2.2.2)
+Released on 2026-10-19.
+### Fixed
+- Fill layer opacity serilazation updated to properly handle alpha values.
+
 ## [2.2.1](https://github.com/maptiler/maptiler-sdk-kotlin/releases/tag/2.2.1)
 Released on 2026-09-25.
 ### Fixed
