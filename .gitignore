@@ -34,7 +34,6 @@ replay_pid*
 jniLibs
 build
 local.properties
-local.defaults.properties
 reports
 
 *.iml

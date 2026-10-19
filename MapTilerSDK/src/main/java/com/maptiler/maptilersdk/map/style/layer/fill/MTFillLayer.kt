@@ -263,12 +263,33 @@ object ColorAsHexSerializer : KSerializer<Int> {
         encoder: Encoder,
         value: Int,
     ) {
-        encoder.encodeString(value.toHexString())
+        encoder.encodeString(value.toHexString(withAlpha = true))
     }
 
     override fun deserialize(decoder: Decoder): Int {
         val hex = decoder.decodeString()
-
-        return hex.removePrefix("#").toInt(16)
+        if (hex.startsWith("rgba")) {
+            return try {
+                val parts = hex.substringAfter("rgba(").substringBefore(")").split(",")
+                val r = parts[0].trim().toInt()
+                val g = parts[1].trim().toInt()
+                val b = parts[2].trim().toInt()
+                val a = (parts[3].trim().toFloat() * 255).toInt()
+                (a shl 24) or (r shl 16) or (g shl 8) or b
+            } catch (_: Exception) {
+                0
+            }
+        }
+        val cleanHex = hex.removePrefix("#")
+        return when (cleanHex.length) {
+            8 -> cleanHex.toLong(16).toInt()
+            6 -> (0xFF shl 24) or cleanHex.toInt(16)
+            else ->
+                try {
+                    cleanHex.toInt(16)
+                } catch (_: Exception) {
+                    0
+                }
+        }
     }
 }
