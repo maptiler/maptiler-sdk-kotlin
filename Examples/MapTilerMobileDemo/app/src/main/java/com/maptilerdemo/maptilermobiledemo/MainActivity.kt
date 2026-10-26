@@ -19,6 +19,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         MTConfig.apiKey = BuildConfig.MAPTILER_API_KEY
+        MTConfig.useEuEndpoints = true
         MTConfig.logLevel = MTLogLevel.Debug(true)
 
         MTConfig.setApplicationIdentifier("com.maptilerdemo.app")

@@ -46,11 +46,11 @@ internal object MTURLNormalizer {
             val originalHost = uri.host ?: ""
             val originalPath = uri.path ?: ""
 
-            // Map maptiler://<host>/<path> to https://api.maptiler.com/<host>/<path>
+            // Map maptiler://<host>/<path> to https://<MTConfig.apiHost>/<host>/<path>
             val builder =
                 Uri.Builder()
                     .scheme("https")
-                    .authority("api.maptiler.com")
+                    .authority(MTConfig.apiHost)
 
             var newPath = "/$originalHost"
             if (originalPath.isNotEmpty()) {

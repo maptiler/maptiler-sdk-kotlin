@@ -6,6 +6,7 @@
 
 package com.maptiler.maptilersdk.map.style
 
+import com.maptiler.maptilersdk.MTConfig
 import java.net.URL
 
 /**
@@ -220,7 +221,7 @@ sealed class MTMapReferenceStyle {
 
         val mapId = getMapTilerCloudId(variant)
         return try {
-            URL("https://api.maptiler.com/maps/$mapId/style.json?key=$apiKey")
+            URL("${MTConfig.apiURL}maps/$mapId/style.json?key=$apiKey")
         } catch (e: Exception) {
             null
         }

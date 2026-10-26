@@ -196,6 +196,10 @@ public class MTOfflinePack internal constructor(
                                 isUsingBackground = true
                             }
 
+                            if (workInfo.state == WorkInfo.State.RUNNING) {
+                                applyBackgroundProgress(workInfo)
+                            }
+
                             // If we're already in a foreground download, and receive a DOWNLOADING state from background,
                             // we just let it be. But if we receive a terminal state, we accept it.
                             if (_stateFlow.value == MTOfflinePackState.DOWNLOADING &&
@@ -228,6 +232,24 @@ public class MTOfflinePack internal constructor(
                         }
                     }
             }
+    }
+
+    private fun applyBackgroundProgress(workInfo: WorkInfo) {
+        val data = workInfo.progress
+        val total = data.getInt(MTOfflineDownloadWorker.KEY_TOTAL_RESOURCES, 0)
+        if (total <= 0) return
+
+        internalProgress =
+            internalProgress.copy(
+                totalResources = total,
+                downloadedResources = data.getInt(MTOfflineDownloadWorker.KEY_DOWNLOADED_RESOURCES, 0),
+                totalTileResources =
+                    data.getInt(
+                        MTOfflineDownloadWorker.KEY_TOTAL_TILE_RESOURCES,
+                        internalProgress.totalTileResources,
+                    ),
+            )
+        _progressFlow.value = internalProgress
     }
 
     private fun changeState(newState: MTOfflinePackState) {

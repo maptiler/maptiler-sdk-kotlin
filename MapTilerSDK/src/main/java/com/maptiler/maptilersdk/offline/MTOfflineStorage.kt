@@ -15,6 +15,7 @@ import java.io.File
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
+import java.util.UUID
 
 internal object MTOfflineStorage {
     suspend fun saveMetadata(
@@ -143,6 +144,10 @@ internal object MTOfflineStorage {
                         file.delete()
                     }
                 }
+
+                packDir.walkTopDown()
+                    .filter { it.isFile && it.name.endsWith(".tmp") }
+                    .forEach { it.delete() }
             } else {
                 val tempDir = MTOfflineStoragePaths.getTempDirectory(context)
                 if (tempDir.exists()) {
@@ -273,7 +278,7 @@ internal object MTOfflineStorage {
         file: File,
         data: ByteArray,
     ) {
-        val tempFile = File(file.parent, "${file.name}.tmp")
+        val tempFile = File(file.parent, "${file.name}.${UUID.randomUUID()}.tmp")
         secureCreateDirectory(file.parentFile ?: return)
 
         try {

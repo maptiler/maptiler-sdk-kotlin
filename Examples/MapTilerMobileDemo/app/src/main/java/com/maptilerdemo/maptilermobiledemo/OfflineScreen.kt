@@ -255,7 +255,7 @@ class OfflineViewModel(private val context: Context) : ViewModel() {
         val packs = listOf(_unterageriPack.value, _brnoPack.value, _yellowstonePack.value, _routePack.value)
         
         // Find pack matching active name, or just the first completed one
-        var packToShow = packs.firstOrNull { getPackName(it!!) == "$active Offline" } 
+        var packToShow = packs.firstOrNull { it != null && getPackName(it) == "$active Offline" } 
         if (packToShow == null || packToShow.state != MTOfflinePackState.COMPLETED) {
             packToShow = packs.firstOrNull { it?.state == MTOfflinePackState.COMPLETED }
         }
@@ -436,12 +436,17 @@ class OfflineViewModel(private val context: Context) : ViewModel() {
                     progress.downloadedResources.toFloat() / progress.totalResources
                 } else 0f
                 _downloadProgress.value = percentage
-                _downloadState.value = "Downloading... (${progress.downloadedResources}/${progress.totalResources})"
+                // Progress can still be emitted after completion (e.g. final sync from disk); don't
+                // let it overwrite the "ready" label.
+                if (pack.state == MTOfflinePackState.DOWNLOADING) {
+                    _downloadState.value = "Downloading... (${progress.downloadedResources}/${progress.totalResources})"
+                }
             }
         }
         viewModelScope.launch {
             pack.stateFlow.collect { state ->
                 if (state == MTOfflinePackState.COMPLETED) {
+                    _downloadState.value = OfflineConstants.DownloadStateLabel.IDLE
                     refreshPacks()
                 } else if (state == MTOfflinePackState.FAILED) {
                     _downloadState.value = "Download Failed!"
@@ -461,7 +466,10 @@ class OfflineViewModel(private val context: Context) : ViewModel() {
                 OfflineConstants.ActiveCityName.ROUTE -> _routePack.value
                 else -> null
             }
+
             pack?.remove()
+            refreshPacks()
+
             when (name) {
                 OfflineConstants.ActiveCityName.UNTERAGERI -> downloadUnterageri()
                 OfflineConstants.ActiveCityName.BRNO -> downloadBrno()

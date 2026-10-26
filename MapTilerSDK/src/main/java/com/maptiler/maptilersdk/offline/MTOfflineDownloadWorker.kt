@@ -9,6 +9,7 @@ package com.maptiler.maptilersdk.offline
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import com.maptiler.maptilersdk.logging.MTLogType
 import com.maptiler.maptilersdk.logging.MTLogger
 import kotlinx.coroutines.Dispatchers
@@ -56,6 +57,15 @@ public class MTOfflineDownloadWorker(
                         lastSaveTime = now
                         metadata.size = MTOfflineStorage.calculatePackSize(applicationContext, packId)
                         MTOfflineStorage.saveMetadata(applicationContext, packId, metadata)
+
+                        // Publish progress so observers of the WorkInfo receive updates while the work is running.
+                        setProgress(
+                            workDataOf(
+                                KEY_DOWNLOADED_RESOURCES to currentDownloaded,
+                                KEY_TOTAL_RESOURCES to metadata.totalResources,
+                                KEY_TOTAL_TILE_RESOURCES to metadata.totalTileResources,
+                            ),
+                        )
                     }
                 }
 
@@ -79,6 +89,12 @@ public class MTOfflineDownloadWorker(
                 Result.retry()
             }
         }
+
+    internal companion object {
+        const val KEY_DOWNLOADED_RESOURCES = "downloadedResources"
+        const val KEY_TOTAL_RESOURCES = "totalResources"
+        const val KEY_TOTAL_TILE_RESOURCES = "totalTileResources"
+    }
 
     private fun buildTasks(
         from: MTManifest,
