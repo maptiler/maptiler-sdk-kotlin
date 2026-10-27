@@ -11,6 +11,7 @@ import com.maptiler.maptilersdk.bridge.MTBridgeReturnType
 import com.maptiler.maptilersdk.bridge.MTCommandExecutable
 import com.maptiler.maptilersdk.commands.annotations.AddTextPopup
 import com.maptiler.maptilersdk.commands.annotations.CloseTextPopup
+import com.maptiler.maptilersdk.commands.annotations.GetTextPopupAnchor
 import com.maptiler.maptilersdk.commands.annotations.GetTextPopupLngLat
 import com.maptiler.maptilersdk.commands.annotations.IsTextPopupOpen
 import com.maptiler.maptilersdk.commands.annotations.OpenTextPopup
@@ -50,6 +51,23 @@ class MTPopupTest {
             assertEquals(LngLat(3.0, 4.0), result)
             assertEquals(result, popup.coordinates)
             coVerify { executor.execute(match { it is GetTextPopupLngLat }) }
+        }
+
+    @Test
+    fun getAnchorReturnsBridgeValue() =
+        runBlocking {
+            val popup = MTTextPopup(identifier = "popupAnchorGet", _coordinates = LngLat(0.0, 0.0))
+            val executor = mockk<MTCommandExecutable>()
+            coEvery { executor.execute(any()) } returns MTBridgeReturnType.StringValue("\"bottom-left\"")
+
+            val bridge = MTBridge(executor)
+            popup.bindBridge(bridge)
+
+            val result = popup.getAnchor()
+
+            assertEquals(MTAnchor.BOTTOM_LEFT, result)
+            assertEquals(MTAnchor.BOTTOM_LEFT, popup.anchor)
+            coVerify { executor.execute(match { it is GetTextPopupAnchor }) }
         }
 
     @Test
@@ -161,6 +179,15 @@ class MTPopupTest {
         val js = SetAnchorToTextPopup(popup, MTAnchor.TOP_LEFT).toJS()
 
         assertEquals("popupAnchor.setAnchor(\"top-left\");", js)
+    }
+
+    @Test
+    fun getAnchorCommandToJSMatchesSignature() {
+        val popup = MTTextPopup(identifier = "popupAnchorGetCmd", _coordinates = LngLat(0.0, 0.0))
+
+        val js = GetTextPopupAnchor(popup).toJS()
+
+        assertEquals("popupAnchorGetCmd.options.anchor;", js)
     }
 
     @Test
