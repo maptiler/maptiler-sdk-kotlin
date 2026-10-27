@@ -27,6 +27,7 @@ internal data class AddTextPopup(
         val anchorStr = popup.anchor?.let { ", anchor: '${it.value}'" } ?: ""
         val closeButton = popup.closeButton?.let { ", closeButton: $it" } ?: ""
         val closeOnClick = popup.closeOnClick?.let { ", closeOnClick: $it" } ?: ""
+        val closeOnMove = popup.closeOnMove?.let { ", closeOnMove: $it" } ?: ""
 
         val maxWidth = popup.maxWidth?.let { JsonConfig.json.encodeToString("${it}px") }
         val textJson = JsonConfig.json.encodeToString(popup.text)
@@ -38,7 +39,7 @@ internal data class AddTextPopup(
                 ""
             }
 
-        val popupOptions = "{ offset: $offset$subpixelPositioning$anchorStr$closeButton$closeOnClick }"
+        val popupOptions = "{ offset: $offset$subpixelPositioning$anchorStr$closeButton$closeOnClick$closeOnMove }"
 
         val js = """
             const ${popup.identifier} = new maptilersdk.Popup($popupOptions);
