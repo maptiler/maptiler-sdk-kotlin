@@ -8,6 +8,7 @@ package com.maptiler.maptilersdk.annotations
 
 import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTBridgeReturnType
+import com.maptiler.maptilersdk.commands.annotations.GetTextPopupAnchor
 import com.maptiler.maptilersdk.commands.annotations.GetTextPopupLngLat
 import com.maptiler.maptilersdk.commands.annotations.IsTextPopupOpen
 import com.maptiler.maptilersdk.helpers.JsonConfig
@@ -289,12 +290,35 @@ class MTTextPopup(
         return parsed
     }
 
+    /**
+     * Returns the anchor alignment of the popup.
+     */
+    suspend fun getAnchor(): MTAnchor? {
+        val bridge = boundBridge ?: return anchor
+
+        val returnTypeValue = bridge.execute(GetTextPopupAnchor(this))
+        val parsed = parseAnchor(returnTypeValue) ?: anchor
+
+        anchor = parsed
+        return parsed
+    }
+
     internal fun bindBridge(bridge: MTBridge) {
         boundBridge = bridge
     }
 
     internal fun setOpenState(isOpen: Boolean) {
         this.isOpen = isOpen
+    }
+
+    private fun parseAnchor(returnTypeValue: MTBridgeReturnType?): MTAnchor? {
+        if (returnTypeValue !is MTBridgeReturnType.StringValue) {
+            return null
+        }
+
+        val normalized = returnTypeValue.value.trim('"').trim().lowercase()
+
+        return MTAnchor.values().firstOrNull { it.value == normalized }
     }
 
     private fun parseBooleanValue(
