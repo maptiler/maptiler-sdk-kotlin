@@ -18,6 +18,7 @@ import com.maptiler.maptilersdk.commands.annotations.RemoveTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetAnchorToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetCloseButtonToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetCloseOnClickToTextPopup
+import com.maptiler.maptilersdk.commands.annotations.SetCloseOnMoveToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetMaxWidthToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetOffsetToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.SetSubpixelPositioningToTextPopup
@@ -123,6 +124,16 @@ class MTPopupTest {
     }
 
     @Test
+    fun addTextPopupIncludesCloseOnMoveWhenProvided() {
+        val popup = MTTextPopup(identifier = "popupCloseOnMoveInit", _coordinates = LngLat(1.0, 1.0))
+        popup.closeOnMove = true
+
+        val js = AddTextPopup(popup).toJS()
+
+        assertTrue(js.contains("closeOnMove: true"))
+    }
+
+    @Test
     fun addTextPopupAttachesOpenCloseEventHandlers() {
         val popup = MTTextPopup(identifier = "popupEvents", _coordinates = LngLat(2.0, 3.0))
         val js = AddTextPopup(popup).toJS()
@@ -195,6 +206,15 @@ class MTPopupTest {
         val js = SetCloseOnClickToTextPopup(popup, false).toJS()
 
         assertEquals("popupCloseOnClick.setCloseOnClick(false);", js)
+    }
+
+    @Test
+    fun setCloseOnMoveCommandToJSMatchesSignature() {
+        val popup = MTTextPopup(identifier = "popupCloseOnMove", _coordinates = LngLat(0.0, 0.0))
+
+        val js = SetCloseOnMoveToTextPopup(popup, true).toJS()
+
+        assertEquals("popupCloseOnMove.setCloseOnMove(true);", js)
     }
 
     @Test
