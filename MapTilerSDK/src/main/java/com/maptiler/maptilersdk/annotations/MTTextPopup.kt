@@ -56,6 +56,11 @@ class MTTextPopup(
     var closeButton: Boolean? = null
 
     /**
+     * Boolean indicating whether the popup closes when the map is clicked.
+     */
+    var closeOnClick: Boolean? = null
+
+    /**
      * Boolean indicating whether the popup is currently displayed on the map.
      */
     var isOpen: Boolean = false
@@ -185,6 +190,18 @@ class MTTextPopup(
         this.closeButton = closeButton
 
         mapViewController.setCloseButtonToTextPopup(this, closeButton)
+    }
+
+    /**
+     * Enables or disables closing the popup when the map is clicked.
+     */
+    fun setCloseOnClick(
+        closeOnClick: Boolean,
+        mapViewController: MTMapViewController,
+    ) {
+        this.closeOnClick = closeOnClick
+
+        mapViewController.setCloseOnClickToTextPopup(this, closeOnClick)
     }
 
     /**
