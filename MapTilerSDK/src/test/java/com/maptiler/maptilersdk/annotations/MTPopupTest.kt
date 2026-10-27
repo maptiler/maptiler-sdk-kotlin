@@ -134,6 +134,16 @@ class MTPopupTest {
     }
 
     @Test
+    fun addTextPopupIncludesFocusAfterOpenWhenProvided() {
+        val popup = MTTextPopup(identifier = "popupFocusAfterOpenInit", _coordinates = LngLat(1.0, 1.0))
+        popup.focusAfterOpen = false
+
+        val js = AddTextPopup(popup).toJS()
+
+        assertTrue(js.contains("focusAfterOpen: false"))
+    }
+
+    @Test
     fun addTextPopupAttachesOpenCloseEventHandlers() {
         val popup = MTTextPopup(identifier = "popupEvents", _coordinates = LngLat(2.0, 3.0))
         val js = AddTextPopup(popup).toJS()

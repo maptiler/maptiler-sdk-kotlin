@@ -66,6 +66,11 @@ class MTTextPopup(
     var closeOnMove: Boolean? = null
 
     /**
+     * Boolean indicating whether to focus the popup when it is opened.
+     */
+    var focusAfterOpen: Boolean? = null
+
+    /**
      * Boolean indicating whether the popup is currently displayed on the map.
      */
     var isOpen: Boolean = false
