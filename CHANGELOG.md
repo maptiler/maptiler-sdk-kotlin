@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.3.0](https://github.com/maptiler/maptiler-sdk-kotlin/releases/tag/2.3.0)
+Released on 2026-10-27.
+### Added
+- Users now have option to set EU endpoint for the API in addition to the default one.
+
 ## [2.2.2](https://github.com/maptiler/maptiler-sdk-kotlin/releases/tag/2.2.2)
 Released on 2026-10-19.
 ### Fixed
