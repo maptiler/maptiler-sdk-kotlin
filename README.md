@@ -73,6 +73,15 @@ Make sure to set your MapTiler Cloud API key first:
 MTConfig.apiKey = "YOUR_API_KEY"
 ```
 
+To send MapTiler API requests to the EU-based `api.maptiler.eu` host instead of the default `api.maptiler.com`, enable EU endpoints before the map is initialized:
+
+```kotlin
+MTConfig.useEuEndpoints = true
+
+MTConfig.apiHost // "api.maptiler.eu"
+MTConfig.apiURL  // "https://api.maptiler.eu/"
+```
+
 ### Jetpack Compose
 
 Instantiate controller (with or without delegate) and the map view:
@@ -160,7 +169,7 @@ For detailed guides, API reference, and advanced examples, visit our comprehensi
 Sources and layers can be added to the map view style object as soon as the map is initialized. Setting the style after adding layers resets them to default, so make sure the style has finished loading first.
 
 ```kotlin
-val sourceURL = URL("https://api.maptiler.com/tiles/v3-openmaptiles/tiles.json?key=$YOUR_API_KEY")
+val sourceURL = URL("${MTConfig.apiURL}tiles/v3-openmaptiles/tiles.json?key=$YOUR_API_KEY")
 val source = MTVectorTileSource("openmapsource", sourceURL)
 controller.style?.addSource(source)
 ```

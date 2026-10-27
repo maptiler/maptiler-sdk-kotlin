@@ -38,7 +38,7 @@ fun HillshadeExample() {
                 override fun onMapViewInitialized() {
                     val apiKey = MTConfig.apiKey
                     // Raster DEM source (Terrain RGB v2 TileJSON)
-                    val demUrl = URL("https://api.maptiler.com/tiles/terrain-rgb-v2/tiles.json?key=$apiKey")
+                    val demUrl = URL("${MTConfig.apiURL}tiles/terrain-rgb-v2/tiles.json?key=$apiKey")
                     val demSourceId = "terrain-rgb-v2"
 
                     // Add or reuse the raster-dem source

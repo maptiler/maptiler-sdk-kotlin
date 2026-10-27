@@ -215,7 +215,7 @@ fun HomeScreen(
                         }
                     } else if (type == MTLayerType.RASTER) {
                         val mapTilerAPIKey = MTConfig.apiKey
-                        val rasterUrl = URL("https://api.maptiler.com/tiles/satellite/tiles.json?key=$mapTilerAPIKey")
+                        val rasterUrl = URL("${MTConfig.apiURL}tiles/satellite/tiles.json?key=$mapTilerAPIKey")
                         val rasterSourceId = "satellitesource"
 
                         // Add or reuse the raster source
@@ -351,7 +351,7 @@ class MapController(
         val brnoMarker = MTMarker(brnoCoordinates, brnoPopup)
         controller.style?.addMarker(brnoMarker)
 
-        val sourceURL = URL("https://api.maptiler.com/tiles/v3-openmaptiles/tiles.json?key=$mapTilerAPIKey")
+        val sourceURL = URL("${MTConfig.apiURL}tiles/v3-openmaptiles/tiles.json?key=$mapTilerAPIKey")
         val source = MTVectorTileSource("openmapsource", sourceURL)
         controller.style?.addSource(source)
     }

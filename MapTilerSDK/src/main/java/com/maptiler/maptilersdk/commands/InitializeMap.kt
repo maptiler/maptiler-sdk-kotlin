@@ -22,6 +22,7 @@ internal data class InitializeMap(
     val referenceStyle: MTMapReferenceStyle,
     val styleVariant: MTMapStyleVariant?,
     val isSessionLogicEnabled: Any?,
+    val useEuEndpoints: Boolean = false,
 ) : MTCommand {
     override val isPrimitiveReturnType: Boolean = false
 
@@ -58,7 +59,9 @@ internal data class InitializeMap(
         val eventLevel = options?.eventLevel?.toString() ?: "ESSENTIAL"
         val throttleMs = options?.highFrequencyEventThrottleMs ?: 0
         val prewarmCall = if (options?.prewarm == true) "${MTBridge.SDK_OBJECT}.prewarm(); " else ""
-        val initCall = "initializeMap('$apiKey', $styleString, $optionsString, $isSessionLogicEnabled, '$eventLevel', $throttleMs);"
+        val initCall =
+            "initializeMap('$apiKey', $styleString, $optionsString, $isSessionLogicEnabled, " +
+                "'$eventLevel', $throttleMs, $useEuEndpoints);"
         val telemetry =
             "if (typeof map !== 'undefined' && map.telemetry) { " +
                 "map.telemetry.registerModule('maptiler-sdk-android', '${MTConfig.VERSION}'); " +

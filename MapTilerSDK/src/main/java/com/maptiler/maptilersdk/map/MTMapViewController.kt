@@ -219,6 +219,7 @@ class MTMapViewController(
                 currentStyle.referenceStyle,
                 currentStyle.styleVariant,
                 isSessionLogicEnabled,
+                MTConfig.useEuEndpoints,
             ),
         )
     }
@@ -398,6 +399,23 @@ class MTMapViewController(
     fun redraw() {
         coroutineScope?.launch {
             bridge?.execute(Redraw())
+        }
+    }
+
+    /**
+     * Switch between the default `api.maptiler.com` host and the EU-based `api.maptiler.eu` host
+     * for this map and update [MTConfig.useEuEndpoints].
+     * Set to `false` to switch back to the default.
+     *
+     * Prefer setting [MTConfig.useEuEndpoints] before the map is initialized, so the style is resolved
+     * against the selected host. Changing it afterwards only affects subsequent requests.
+     *
+     * @param useEuEndpoints Boolean indicating whether the EU-based host should be used.
+     */
+    fun setUseEuEndpoints(useEuEndpoints: Boolean) {
+        MTConfig.useEuEndpoints = useEuEndpoints
+        coroutineScope?.launch {
+            bridge?.execute(com.maptiler.maptilersdk.commands.misc.SetUseEuEndpoints(useEuEndpoints))
         }
     }
 

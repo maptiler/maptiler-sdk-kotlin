@@ -73,7 +73,7 @@ internal class MTLocalPlanner : MTOfflinePlanner {
                     MTStyleSource(
                         id = "maptiler-terrain",
                         type = "raster-dem",
-                        url = "https://api.maptiler.com/tiles/terrain-rgb-v2/tiles.json?key=$apiKey",
+                        url = "${MTConfig.apiURL}tiles/terrain-rgb-v2/tiles.json?key=$apiKey",
                     )
                 (dependencies.sources as MutableList).add(terrainSource)
             }

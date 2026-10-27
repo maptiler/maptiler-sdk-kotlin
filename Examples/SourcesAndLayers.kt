@@ -36,7 +36,7 @@ fun SourcesAndLayers() {
                 override fun onMapViewInitialized() {
                     // Vector tile source (contours) using tile template URL
                     val contoursUrl =
-                        URL("https://api.maptiler.com/tiles/contours-v2/{z}/{x}/{y}.pbf?key=${MTConfig.apiKey}")
+                        URL("${MTConfig.apiURL}tiles/contours-v2/{z}/{x}/{y}.pbf?key=${MTConfig.apiKey}")
                     val source = MTVectorTileSource(identifier = "contours-source", url = contoursUrl)
                     controller.style?.addSource(source)
 

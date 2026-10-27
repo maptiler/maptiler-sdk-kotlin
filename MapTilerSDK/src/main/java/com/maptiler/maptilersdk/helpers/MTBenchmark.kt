@@ -242,7 +242,7 @@ class MTBenchmark(
             val apiKey = MTConfig.apiKey
             val url =
                 URL(
-                    "https://api.maptiler.com/tiles/v3/tiles.json" +
+                    "${MTConfig.apiURL}tiles/v3/tiles.json" +
                         (if (apiKey.isNotEmpty()) "?key=$apiKey" else ""),
                 )
             val sourceId = "planet-source"
@@ -456,13 +456,13 @@ class MTBenchmark(
         val alpha02 = 0.2f
         val sources =
             listOf(
-                Src("contour", "https://api.maptiler.com/tiles/contours-v2/{z}/{x}/{y}.pbf$key", withAlpha(Color.RED, alpha02)),
-                Src("administrative", "https://api.maptiler.com/tiles/countries/{z}/{x}/{y}.pbf$key", withAlpha(Color.WHITE, alpha02)),
-                Src("land", "https://api.maptiler.com/tiles/land/{z}/{x}/{y}.pbf$key", withAlpha(Color.BLUE, alpha02)),
-                Src("contour", "https://api.maptiler.com/tiles/ocean/{z}/{x}/{y}.pbf$key", withAlpha(Color.GREEN, alpha02)),
-                Src("ski", "https://api.maptiler.com/tiles/outdoor/{z}/{x}/{y}.pbf$key", withAlpha(Color.parseColor("#FFA500"), alpha02)),
-                Src("batiments", "https://api.maptiler.com/tiles/fr-cadastre/{z}/{x}/{y}.pbf$key", withAlpha(Color.BLACK, alpha02)),
-                Src("building", "https://api.maptiler.com/tiles/ch-swisstopo-lbm/{z}/{x}/{y}.pbf$key", withAlpha(Color.LTGRAY, alpha02)),
+                Src("contour", "${MTConfig.apiURL}tiles/contours-v2/{z}/{x}/{y}.pbf$key", withAlpha(Color.RED, alpha02)),
+                Src("administrative", "${MTConfig.apiURL}tiles/countries/{z}/{x}/{y}.pbf$key", withAlpha(Color.WHITE, alpha02)),
+                Src("land", "${MTConfig.apiURL}tiles/land/{z}/{x}/{y}.pbf$key", withAlpha(Color.BLUE, alpha02)),
+                Src("contour", "${MTConfig.apiURL}tiles/ocean/{z}/{x}/{y}.pbf$key", withAlpha(Color.GREEN, alpha02)),
+                Src("ski", "${MTConfig.apiURL}tiles/outdoor/{z}/{x}/{y}.pbf$key", withAlpha(Color.parseColor("#FFA500"), alpha02)),
+                Src("batiments", "${MTConfig.apiURL}tiles/fr-cadastre/{z}/{x}/{y}.pbf$key", withAlpha(Color.BLACK, alpha02)),
+                Src("building", "${MTConfig.apiURL}tiles/ch-swisstopo-lbm/{z}/{x}/{y}.pbf$key", withAlpha(Color.LTGRAY, alpha02)),
             )
 
         val openMapTilesLayers =
@@ -533,7 +533,7 @@ class MTBenchmark(
             val start = System.nanoTime()
             val srcId = "source-$layerName"
             try {
-                val url = URL("https://api.maptiler.com/tiles/v3-openmaptiles/{z}/{x}/{y}.pbf$key")
+                val url = URL("${MTConfig.apiURL}tiles/v3-openmaptiles/{z}/{x}/{y}.pbf$key")
                 style.addSource(MTVectorTileSource(srcId, url))
                 val layer = MTFillLayer("layer-$layerName", srcId)
                 layer.color = color
@@ -551,7 +551,7 @@ class MTBenchmark(
             val start = System.nanoTime()
             val srcId = "source-$layerName"
             try {
-                val url = URL("https://api.maptiler.com/tiles/uk-openzoomstack/{z}/{x}/{y}.pbf$key")
+                val url = URL("${MTConfig.apiURL}tiles/uk-openzoomstack/{z}/{x}/{y}.pbf$key")
                 style.addSource(MTVectorTileSource(srcId, url))
                 val layer = MTFillLayer("layer-$layerName", srcId)
                 layer.color = color

@@ -69,6 +69,39 @@ object MTConfig {
     var isTelemetryEnabled: Boolean = true
 
     /**
+     * Default MapTiler API host.
+     */
+    const val DEFAULT_API_HOST = "api.maptiler.com"
+
+    /**
+     * EU-based MapTiler API host.
+     */
+    const val EU_API_HOST = "api.maptiler.eu"
+
+    /**
+     * Switch between the default `api.maptiler.com` host and the EU-based `api.maptiler.eu` host.
+     * Set to `false` to switch back to the default.
+     *
+     * Must be set before MTMapView is initialized and before offline downloads are started.
+     * Defaults to false.
+     */
+    @Volatile
+    var useEuEndpoints: Boolean = false
+
+    /**
+     * The host currently used for the MapTiler API requests (`api.maptiler.com` or `api.maptiler.eu`).
+     */
+    val apiHost: String
+        get() = if (useEuEndpoints) EU_API_HOST else DEFAULT_API_HOST
+
+    /**
+     * The base URL currently used for the MapTiler API requests
+     * (`https://api.maptiler.com/` or `https://api.maptiler.eu/`).
+     */
+    val apiURL: String
+        get() = "https://$apiHost/"
+
+    /**
      * Sets a custom application identifier to be prepended to the SDK's User-Agent string.
      * This allows you to restrict your MapTiler API key to specific applications.
      *
