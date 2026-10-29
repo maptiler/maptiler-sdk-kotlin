@@ -129,7 +129,12 @@ internal object MTOfflineHTTPServer {
 
             val resolved = router.resolve(path)
             if (resolved == null) {
-                sendResponse(socket, 404, "Not Found".toByteArray(), "text/plain")
+                if (router.isGlyphRequest(path)) {
+                    // Glyph ranges that were not downloaded are answered with an empty glyph set.
+                    sendResponse(socket, 200, ByteArray(0), "application/x-protobuf")
+                } else {
+                    sendResponse(socket, 404, "Not Found".toByteArray(), "text/plain")
+                }
                 return
             }
 

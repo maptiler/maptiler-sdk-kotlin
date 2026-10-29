@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.0"
 }
 
 android {
@@ -54,6 +55,7 @@ dependencies {
     implementation(project(":MapTilerSDK"))
     implementation(libs.androidx.navigation.runtime.android)
     implementation(libs.androidx.navigation.compose)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

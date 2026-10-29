@@ -6,6 +6,7 @@
 
 package com.maptilerdemo.maptilermobiledemo
 
+import com.maptilerdemo.maptilermobiledemo.packtools.PackToolsScreen
 import android.content.Context
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -31,6 +32,7 @@ fun MainScreen(context: Context) {
             composable("home") { HomeScreen(navController, context) }
             composable("offline") { OfflineScreen(navController) }
             composable("benchmark") { BenchmarkScreen(context, navController) }
+            composable("packtools") { PackToolsScreen(onClose = { navController.popBackStack() }) }
         }
     }
 }

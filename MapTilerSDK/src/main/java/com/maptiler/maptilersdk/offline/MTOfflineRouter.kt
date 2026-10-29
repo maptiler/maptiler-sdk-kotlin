@@ -27,7 +27,9 @@ internal class MTOfflineRouter(internal val context: Context) {
      * @param path The virtual path, expected to start with "/offline/".
      * @return The resolved resource, or null if not found or invalid.
      */
-    fun resolve(path: String): ResolvedResource? {
+    fun resolve(rawPath: String): ResolvedResource? {
+        // Request paths are percent-encoded (e.g. font stacks with spaces); files are stored under decoded names.
+        val path = decodePath(rawPath)
         if (!path.startsWith("/offline/")) {
             return null
         }
@@ -88,6 +90,24 @@ internal class MTOfflineRouter(internal val context: Context) {
         }
     }
 
+    /**
+     * Whether the path requests a glyph range of a pack. Ranges that were not downloaded are answered with an
+     * empty glyph set, so the map renders the characters it has instead of failing the request.
+     */
+    fun isGlyphRequest(rawPath: String): Boolean {
+        val components = decodePath(rawPath).split("/")
+        // "", "offline", <packID>, "glyphs", <fontstack>, <range>.pbf
+        return components.size == 6 && components[1] == "offline" && components[3] == "glyphs" &&
+            components[5].endsWith(".pbf")
+    }
+
+    private fun decodePath(path: String): String =
+        try {
+            java.net.URLDecoder.decode(path.replace("+", "%2B"), "UTF-8")
+        } catch (e: IllegalArgumentException) {
+            path
+        }
+
     private fun resolveGlyphs(
         packDir: File,
         glyphPath: String,
@@ -99,8 +119,8 @@ internal class MTOfflineRouter(internal val context: Context) {
         val fontstack = components[0]
         val rangePbf = components[1]
 
-        // Handle fontstack lists by picking the first available font directory.
-        val fonts = fontstack.split(",").map { it.trim() }
+        // Packs store glyphs under the whole font stack; fall back to the individual fonts of the stack.
+        val fonts = listOf(fontstack) + fontstack.split(",").map { it.trim() }
         val glyphsDir = File(packDir, "glyphs")
 
         for (font in fonts) {
