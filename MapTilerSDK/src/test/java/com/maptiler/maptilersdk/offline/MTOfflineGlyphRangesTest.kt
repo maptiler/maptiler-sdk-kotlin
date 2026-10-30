@@ -19,6 +19,7 @@ import kotlinx.serialization.json.jsonObject
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -94,10 +95,13 @@ class MTOfflineGlyphRangesTest {
     }
 
     @Test
-    fun testGlyphRequestDetection() {
-        val router = MTOfflineRouter(mockk<Context>(relaxed = true))
-        assertTrue(router.isGlyphRequest("/offline/pack/glyphs/Roboto%20Regular,Noto%20Sans%20Regular/19968-20223.pbf"))
-        assertFalse(router.isGlyphRequest("/offline/pack/tiles/v/1/2/3.pbf"))
-        assertFalse(router.isGlyphRequest("/other/pack/glyphs/A/0-255.pbf"))
+    fun testMissingGlyphRangeResolvesToEmptyResponse() {
+        val context = mockk<Context>(relaxed = true)
+        every { context.filesDir } returns java.nio.file.Files.createTempDirectory("router").toFile()
+        val router = MTOfflineRouter(context)
+        val glyphs = router.resolve("/offline/pack/glyphs/Roboto%20Regular,Noto%20Sans%20Regular/19968-20223.pbf")
+        assertEquals(MTOfflineRouter.ResolvedResource(null, "application/x-protobuf"), glyphs)
+        assertNull(router.resolve("/offline/pack/tiles/v/1/2/3.pbf"))
+        assertNull(router.resolve("/other/pack/glyphs/A/0-255.pbf"))
     }
 }

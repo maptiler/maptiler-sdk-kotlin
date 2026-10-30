@@ -539,18 +539,6 @@ public class MTOfflinePack internal constructor(
         }
 
         /**
-         * Estimates the pack size for a given region definition without any network requests.
-         *
-         * @param region The definition of the region to estimate.
-         * @param styleMetadata Previously resolved metadata of the region's style.
-         * @return An [MTPackStats] object containing the estimates.
-         */
-        public fun estimateSize(
-            region: MTOfflineRegionDefinition,
-            styleMetadata: MTOfflineStyleMetadata,
-        ): MTPackStats = MTOfflineEstimator().estimatePack(region, styleMetadata)
-
-        /**
          * Retrieves all offline packs currently stored on disk.
          * The packs are stably sorted by their creation date (oldest first).
          *

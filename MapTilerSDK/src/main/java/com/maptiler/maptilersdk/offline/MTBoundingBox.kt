@@ -180,7 +180,7 @@ data class MTBoundingBox(
      * @param zoomRange The min and max zoom levels.
      * @return The total tile count.
      */
-    fun estimatedTileCount(zoomRange: MTOfflineZoomRange): Int = MTTileMath.estimateTileCount(this, zoomRange)
+    fun estimatedTileCount(zoomRange: MTOfflineZoomRange): Int = estimatedTileCountPerZoom(zoomRange).values.sum()
 
     /**
      * Estimates the number of tiles required per zoom level for this bounding box.
@@ -188,7 +188,10 @@ data class MTBoundingBox(
      * @param zoomRange The min and max zoom levels.
      * @return A map each zoom level to its tile count.
      */
-    fun estimatedTileCountPerZoom(zoomRange: MTOfflineZoomRange): Map<Int, Int> = MTTileMath.estimateTileCountPerZoom(this, zoomRange)
+    fun estimatedTileCountPerZoom(zoomRange: MTOfflineZoomRange): Map<Int, Int> =
+        (zoomRange.minZoom..zoomRange.maxZoom).associateWith { zoom ->
+            MTTileCoverage.make(MTOfflineRegionGeometry.BoundingBox(this), zoom, null).tileCount.toInt()
+        }
 
     companion object {
         /**

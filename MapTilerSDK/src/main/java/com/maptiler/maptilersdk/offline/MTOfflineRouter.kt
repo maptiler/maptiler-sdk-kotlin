@@ -15,9 +15,12 @@ import java.io.File
 internal class MTOfflineRouter(internal val context: Context) {
     /**
      * Represents a resolved offline resource.
+     *
+     * [file] is null for an empty response: glyph ranges a pack did not download are answered with an empty
+     * glyph set, so the map renders the characters it has instead of failing the request.
      */
     data class ResolvedResource(
-        val file: File,
+        val file: File?,
         val mimeType: String,
     )
 
@@ -90,17 +93,6 @@ internal class MTOfflineRouter(internal val context: Context) {
         }
     }
 
-    /**
-     * Whether the path requests a glyph range of a pack. Ranges that were not downloaded are answered with an
-     * empty glyph set, so the map renders the characters it has instead of failing the request.
-     */
-    fun isGlyphRequest(rawPath: String): Boolean {
-        val components = decodePath(rawPath).split("/")
-        // "", "offline", <packID>, "glyphs", <fontstack>, <range>.pbf
-        return components.size == 6 && components[1] == "offline" && components[3] == "glyphs" &&
-            components[5].endsWith(".pbf")
-    }
-
     private fun decodePath(path: String): String =
         try {
             java.net.URLDecoder.decode(path.replace("+", "%2B"), "UTF-8")
@@ -131,7 +123,7 @@ internal class MTOfflineRouter(internal val context: Context) {
             }
         }
 
-        return null
+        return if (rangePbf.endsWith(".pbf")) ResolvedResource(null, "application/x-protobuf") else null
     }
 
     private fun resolveTiles(
