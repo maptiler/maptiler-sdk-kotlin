@@ -6,6 +6,9 @@
 
 package com.maptilerdemo.maptilermobiledemo
 
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
@@ -47,7 +50,21 @@ fun BottomNavigationBar(navController: NavController) {
             NavigationBarItem(
                 selected = currentRoute == item.route,
                 onClick = { navController.navigate(item.route) },
-                icon = { Icon(item.icon, contentDescription = item.label) },
+                icon = {
+                    // Long-pressing the Offline tab opens the hidden pack estimator tools.
+                    val gestures =
+                        if (item.route == "offline") {
+                            Modifier.pointerInput(Unit) {
+                                detectTapGestures(
+                                    onTap = { navController.navigate(item.route) },
+                                    onLongPress = { navController.navigate("packtools") },
+                                )
+                            }
+                        } else {
+                            Modifier
+                        }
+                    Icon(item.icon, contentDescription = item.label, modifier = gestures)
+                },
                 label = { Text(item.label) },
                 colors =
                     NavigationBarItemDefaults.colors(

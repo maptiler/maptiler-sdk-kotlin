@@ -69,7 +69,7 @@ fun HomeScreen(
     navController: NavController,
     context: Context,
 ) {
-    val mapController = MapController(context)
+    val mapController = remember(context) { MapController(context) }
     val locationManager = remember(context) { MTLocationManager(context) }
     val userMarker: MutableState<MTMarker?> = remember { mutableStateOf(null) }
     val isTerrainEnabled = remember { mutableStateOf(false) }

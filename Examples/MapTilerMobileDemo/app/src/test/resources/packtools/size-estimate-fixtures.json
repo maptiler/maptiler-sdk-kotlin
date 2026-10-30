@@ -1,0 +1,165 @@
+{
+ "description": "Size estimates computed by the iOS demo app (PackSizeEstimator) with calibration/output/size-model.json, snapshot.json and data/population-z10.u32. The web estimator must reproduce them. Regenerate when the model is rebuilt.",
+ "cases": [
+  {
+   "name": "size-zurich-streets",
+   "request": {
+    "id": "size-zurich-streets",
+    "styleKey": "streets/default",
+    "bbox": [
+     8.52,
+     47.36,
+     8.56,
+     47.39
+    ],
+    "minZoom": 0,
+    "maxZoom": 15
+   },
+   "expected": {
+    "overheadAllocated": 11907072,
+    "resourceCount": 313,
+    "tileCount": 197,
+    "tileError": 0.4336488619257842,
+    "tilesAllocated": 30932974.102758873,
+    "tilesBytes": 30470759.137006186,
+    "totalAllocated": 42901486.10275887
+   }
+  },
+  {
+   "name": "size-moravia-satellite",
+   "request": {
+    "id": "size-moravia-satellite",
+    "styleKey": "satellite/default",
+    "bbox": [
+     17.15,
+     49.58,
+     17.2,
+     49.61
+    ],
+    "minZoom": 10,
+    "maxZoom": 17
+   },
+   "expected": {
+    "overheadAllocated": 3842048,
+    "resourceCount": 824,
+    "tileCount": 786,
+    "tileError": 0.21072692145541222,
+    "tilesAllocated": 20426120.149492923,
+    "tilesBytes": 17298189.36674935,
+    "totalAllocated": 24423816.149492923
+   }
+  },
+  {
+   "name": "size-tokyo-streets-terrain",
+   "request": {
+    "id": "size-tokyo-streets-terrain",
+    "styleKey": "streets/default",
+    "bbox": [
+     139.65,
+     35.62,
+     139.8,
+     35.72
+    ],
+    "minZoom": 8,
+    "maxZoom": 15,
+    "terrain": true
+   },
+   "expected": {
+    "overheadAllocated": 11907072,
+    "resourceCount": 738,
+    "tileCount": 622,
+    "tileError": 0.388515423758513,
+    "tilesAllocated": 5133764.758855321,
+    "tilesBytes": 3287276.620579637,
+    "totalAllocated": 17180100.75885532
+   }
+  },
+  {
+   "name": "size-switzerland-outdoor",
+   "request": {
+    "id": "size-switzerland-outdoor",
+    "styleKey": "outdoor/default",
+    "bbox": [
+     5.95,
+     45.81,
+     10.5,
+     47.81
+    ],
+    "minZoom": 0,
+    "maxZoom": 10
+   },
+   "expected": {
+    "overheadAllocated": 10149888,
+    "resourceCount": 1724,
+    "tileCount": 1627,
+    "tileError": 0.542432848435978,
+    "tilesAllocated": 136326658.43129674,
+    "tilesBytes": 134155550.40019503,
+    "totalAllocated": 146800130.43129674
+   }
+  },
+  {
+   "name": "size-atlantic-satellite",
+   "request": {
+    "id": "size-atlantic-satellite",
+    "styleKey": "satellite/default",
+    "bbox": [
+     -40,
+     30,
+     -35,
+     35
+    ],
+    "minZoom": 3,
+    "maxZoom": 9
+   },
+   "expected": {
+    "overheadAllocated": 3842048,
+    "resourceCount": 518,
+    "tileCount": 480,
+    "tileError": 0.3583989245291077,
+    "tilesAllocated": 14558456.566517869,
+    "tilesBytes": 11955000.603041263,
+    "totalAllocated": 18498808.566517867
+   }
+  },
+  {
+   "name": "size-prague-polygon-outdoor",
+   "request": {
+    "id": "size-prague-polygon-outdoor",
+    "styleKey": "outdoor/default",
+    "geometry": "{\"polygon\": {\"_0\": [[14.32, 50.12], [14.55, 50.12], [14.55, 50.0], [14.42, 50.03], [14.32, 50.0]]}}",
+    "minZoom": 8,
+    "maxZoom": 14
+   },
+   "expected": {
+    "overheadAllocated": 10149888,
+    "resourceCount": 1823,
+    "tileCount": 1726,
+    "tileError": 0.4980580052352549,
+    "tilesAllocated": 71036084.94386311,
+    "tilesBytes": 63461529.338281676,
+    "totalAllocated": 81530036.94386311
+   }
+  },
+  {
+   "name": "size-alps-route-streets",
+   "request": {
+    "id": "size-alps-route-streets",
+    "styleKey": "streets/default",
+    "geometry": "{\"route\": {\"_0\": [[8.558, 47.112], [8.58, 47.135], [8.592, 47.168], [8.71, 47.25]]}}",
+    "minZoom": 10,
+    "maxZoom": 15,
+    "padding": 500
+   },
+   "expected": {
+    "overheadAllocated": 11907072,
+    "resourceCount": 365,
+    "tileCount": 249,
+    "tileError": 0.433648861925784,
+    "tilesAllocated": 9338246.935733177,
+    "tilesBytes": 5743290.776938614,
+    "totalAllocated": 21314950.935733177
+   }
+  }
+ ]
+}

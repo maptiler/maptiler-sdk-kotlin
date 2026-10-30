@@ -59,6 +59,10 @@ data class MTOfflineRegionDefinition(
      * Set to true to include terrain (3D elevation) data in the offline pack download.
      */
     val isTerrainEnabled: Boolean = false,
+    /**
+     * The Unicode ranges of label glyphs to download for each font. Defaults to Latin, Greek and Cyrillic.
+     */
+    val glyphRanges: MTOfflineGlyphRanges = MTOfflineGlyphRanges.LatinGreekCyrillic,
 ) {
     /**
      * The bounding box of the region.
@@ -79,6 +83,7 @@ data class MTOfflineRegionDefinition(
         maxTileCount: Int? = null,
         padding: Double? = null,
         isTerrainEnabled: Boolean = false,
+        glyphRanges: MTOfflineGlyphRanges = MTOfflineGlyphRanges.LatinGreekCyrillic,
     ) : this(
         geometry = MTOfflineRegionGeometry.BoundingBox(bbox),
         minZoom = minZoom,
@@ -89,6 +94,7 @@ data class MTOfflineRegionDefinition(
         maxTileCount = maxTileCount,
         padding = padding,
         isTerrainEnabled = isTerrainEnabled,
+        glyphRanges = glyphRanges,
     )
 }
 
@@ -111,6 +117,7 @@ internal object MTOfflineRegionDefinitionSerializer : KSerializer<MTOfflineRegio
                 maxTileCount = value.maxTileCount,
                 padding = value.padding,
                 isTerrainEnabled = value.isTerrainEnabled,
+                glyphRanges = value.glyphRanges,
             )
         encoder.encodeSerializableValue(DefinitionSurrogate.serializer(), surrogate)
     }
@@ -132,6 +139,8 @@ internal object MTOfflineRegionDefinitionSerializer : KSerializer<MTOfflineRegio
             maxTileCount = surrogate.maxTileCount,
             padding = surrogate.padding,
             isTerrainEnabled = surrogate.isTerrainEnabled ?: false,
+            // Packs created before glyph ranges existed downloaded every range; keep that when they are refreshed.
+            glyphRanges = surrogate.glyphRanges ?: MTOfflineGlyphRanges.All,
         )
     }
 
@@ -149,6 +158,7 @@ internal object MTOfflineRegionDefinitionSerializer : KSerializer<MTOfflineRegio
         val maxTileCount: Int? = null,
         val padding: Double? = null,
         val isTerrainEnabled: Boolean? = false,
+        val glyphRanges: MTOfflineGlyphRanges? = null,
     )
 }
 

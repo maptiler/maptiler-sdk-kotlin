@@ -18,6 +18,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import java.io.BufferedOutputStream
 import java.io.BufferedReader
+import java.io.File
 import java.io.InputStreamReader
 import java.net.ServerSocket
 import java.net.Socket
@@ -133,8 +134,13 @@ internal object MTOfflineHTTPServer {
                 return
             }
 
+            if (resolved.file == null) {
+                sendResponse(socket, 200, ByteArray(0), resolved.mimeType)
+                return
+            }
+
             if (resolved.file.name == "style.json") {
-                handleStyleJSON(socket, resolved, router.context)
+                handleStyleJSON(socket, resolved.file, router.context)
                 return
             }
 
@@ -155,14 +161,14 @@ internal object MTOfflineHTTPServer {
 
     private fun handleStyleJSON(
         socket: Socket,
-        resolved: MTOfflineRouter.ResolvedResource,
+        file: File,
         context: Context,
     ) {
         try {
-            val fileData = resolved.file.readText()
+            val fileData = file.readText()
             val jsonObject = com.maptiler.maptilersdk.helpers.JsonConfig.json.decodeFromString<JsonObject>(fileData)
 
-            val pathParts = resolved.file.parentFile?.name ?: ""
+            val pathParts = file.parentFile?.name ?: ""
             val packId = pathParts
 
             var downloadedMaxZoom: Int? = null

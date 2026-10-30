@@ -13,8 +13,11 @@ package com.maptiler.maptilersdk.offline
  */
 internal class MTServerPlanner : MTOfflinePlanner {
     override suspend fun estimate(definition: MTOfflineRegionDefinition): MTTileEstimate {
-        val zoomRange = MTOfflineZoomRange(definition.minZoom, definition.maxZoom)
-        val tileCount = MTTileMath.estimateTileCount(definition.geometry, zoomRange, definition.padding)
+        val tileCount =
+            (definition.minZoom..definition.maxZoom)
+                .sumOf { MTTileCoverage.make(definition.geometry, it, definition.effectivePaddingMeters).tileCount }
+                .coerceAtMost(Int.MAX_VALUE.toLong())
+                .toInt()
 
         val globalLimit = MTOfflineConfiguration.effectiveGlobalLimit
         val packLimit = definition.maxTileCount ?: Int.MAX_VALUE
