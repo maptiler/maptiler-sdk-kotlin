@@ -74,6 +74,10 @@ class MTMapViewClassic(
         } else {
             warningTextView.visibility = View.GONE
         }
+        _controller.onInvalidAPIKey = {
+            warningTextView.text = MTMapViewController.INVALID_API_KEY_MESSAGE
+            warningTextView.visibility = View.VISIBLE
+        }
 
         // Configure settings only (clients + loading are handled by the executor).
         webView.apply {

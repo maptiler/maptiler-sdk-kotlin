@@ -6,7 +6,11 @@
 function setUpMapEvents(map) {
     // BRIDGE - Error event propagation
     map.on('error', function(errorEvent) {
-        Android.onError(errorEvent?.error?.message);
+        Android.onError(
+            errorEvent?.error?.message,
+            errorEvent?.error?.status || 0,
+            errorEvent?.error?.url || ''
+        );
     });
 
     // BRIDGE - WebGL event propagation
@@ -150,7 +154,11 @@ function setUpMapEvents(map) {
 function setUpMapEventsWithLevel(map, level, throttleMs) {
     // Always wire critical error pathways
     map.on('error', function(errorEvent) {
-        Android.onError(errorEvent?.error?.message);
+        Android.onError(
+            errorEvent?.error?.message,
+            errorEvent?.error?.status || 0,
+            errorEvent?.error?.url || ''
+        );
     });
     map.on('webglcontextlost', function() {
         Android.onWebGLContextLost()

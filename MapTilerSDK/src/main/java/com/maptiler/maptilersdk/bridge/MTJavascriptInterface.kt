@@ -14,7 +14,11 @@ import com.maptiler.maptilersdk.map.types.MTData
 import kotlinx.serialization.SerializationException
 
 internal interface MTJavascriptDelegate {
-    fun onError(message: String)
+    fun onError(
+        message: String,
+        status: Int,
+        url: String,
+    )
 
     fun onWebGLContextLost()
 
@@ -36,8 +40,12 @@ internal class MTJavaScriptInterface(
     var delegate: MTJavascriptDelegate? = null
 
     @JavascriptInterface
-    fun onError(message: String) {
-        delegate?.onError(message)
+    fun onError(
+        message: String,
+        status: Int,
+        url: String,
+    ) {
+        delegate?.onError(message, status, url)
     }
 
     @JavascriptInterface

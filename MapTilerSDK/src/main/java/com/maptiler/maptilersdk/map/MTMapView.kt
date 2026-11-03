@@ -14,9 +14,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,8 +47,10 @@ fun MTMapView(
 ) {
     val scope = rememberCoroutineScope()
     val webView = remember { controller.getAttachableWebView() }
+    var isAPIKeyInvalid by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
+        controller.onInvalidAPIKey = { isAPIKeyInvalid = true }
         controller.bind(scope)
         controller.options = options
 
@@ -77,9 +82,15 @@ fun MTMapView(
             )
 
             val apiKey = MTConfig.apiKey
-            if (apiKey.isEmpty() || apiKey == "YOUR_API_KEY") {
+            val isAPIKeyMissing = apiKey.isEmpty() || apiKey == "YOUR_API_KEY"
+            if (isAPIKeyMissing || isAPIKeyInvalid) {
                 Text(
-                    text = "Map Init Failed - API key not set! Set MTConfig.apiKey first.",
+                    text =
+                        if (isAPIKeyMissing) {
+                            "Map Init Failed - API key not set! Set MTConfig.apiKey first."
+                        } else {
+                            MTMapViewController.INVALID_API_KEY_MESSAGE
+                        },
                     color = Color.Black,
                     textAlign = TextAlign.Center,
                     modifier =
