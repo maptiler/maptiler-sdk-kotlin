@@ -73,7 +73,7 @@ Make sure to set your MapTiler Cloud API key first:
 MTConfig.apiKey = "YOUR_API_KEY"
 ```
 
-> [!NOTE]
+> [!WARNING]
 > Do not set **HTTP Origins** restrictions on API keys used in this SDK. Requests from the mobile SDK do not carry a matching origin, so the map fails to load. Use a separate key for your mobile apps instead.
 
 To send MapTiler API requests to the EU-based `api.maptiler.eu` host instead of the default `api.maptiler.com`, enable EU endpoints before the map is initialized:
