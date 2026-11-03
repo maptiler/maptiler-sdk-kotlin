@@ -50,6 +50,7 @@ import com.maptiler.maptilersdk.commands.style.SetSecondaryLanguage
 import com.maptiler.maptilersdk.events.EventProcessor
 import com.maptiler.maptilersdk.events.EventProcessorDelegate
 import com.maptiler.maptilersdk.events.MTEvent
+import com.maptiler.maptilersdk.helpers.redactUrlSecrets
 import com.maptiler.maptilersdk.logging.MTLogType
 import com.maptiler.maptilersdk.logging.MTLogger
 import com.maptiler.maptilersdk.map.gestures.MTGestureService
@@ -182,6 +183,9 @@ class MTMapViewController(
 
     @Volatile
     internal var mapContainerHeightPx: Int = 0
+
+    // Invoked on the main thread when MapTiler API rejects the API key (HTTP 401/403).
+    internal var onInvalidAPIKey: (() -> Unit)? = null
 
     init {
         bridge = MTBridge(webViewExecutor)
@@ -901,9 +905,21 @@ class MTMapViewController(
      * Map error handler.
      *
      * @param message Error message.
+     * @param status HTTP status of the failed request, 0 if not applicable.
+     * @param url URL of the failed request, empty if not applicable.
      */
-    override fun onError(message: String) {
-        MTLogger.log("Map error. Make sure your API Key and/or Style JSON are correct.", MTLogType.ERROR)
+    override fun onError(
+        message: String,
+        status: Int,
+        url: String,
+    ) {
+        MTLogger.log("Map error: ${redactUrlSecrets(message)}", MTLogType.ERROR)
+
+        val host = runCatching { URL(url).host }.getOrNull().orEmpty()
+        if ((status == 401 || status == 403) && host.startsWith("api.maptiler.")) {
+            MTLogger.log(INVALID_API_KEY_MESSAGE, MTLogType.CRITICAL_ERROR)
+            coroutineScope?.launch(Dispatchers.Main) { onInvalidAPIKey?.invoke() }
+        }
     }
 
     /**
@@ -1601,5 +1617,10 @@ class MTMapViewController(
         mapContainerOriginYPx = originY
         mapContainerWidthPx = width
         mapContainerHeightPx = height
+    }
+
+    internal companion object {
+        const val INVALID_API_KEY_MESSAGE =
+            "Map Init Failed - API key is invalid or not authorized! Check MTConfig.apiKey."
     }
 }
