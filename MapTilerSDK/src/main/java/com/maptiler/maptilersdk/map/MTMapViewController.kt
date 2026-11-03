@@ -50,6 +50,7 @@ import com.maptiler.maptilersdk.commands.style.SetSecondaryLanguage
 import com.maptiler.maptilersdk.events.EventProcessor
 import com.maptiler.maptilersdk.events.EventProcessorDelegate
 import com.maptiler.maptilersdk.events.MTEvent
+import com.maptiler.maptilersdk.helpers.redactUrlSecrets
 import com.maptiler.maptilersdk.logging.MTLogType
 import com.maptiler.maptilersdk.logging.MTLogger
 import com.maptiler.maptilersdk.map.gestures.MTGestureService
@@ -912,7 +913,7 @@ class MTMapViewController(
         status: Int,
         url: String,
     ) {
-        MTLogger.log("Map error. Make sure your API Key and/or Style JSON are correct.", MTLogType.ERROR)
+        MTLogger.log("Map error: ${redactUrlSecrets(message)}", MTLogType.ERROR)
 
         val host = runCatching { URL(url).host }.getOrNull().orEmpty()
         if ((status == 401 || status == 403) && host.startsWith("api.maptiler.")) {

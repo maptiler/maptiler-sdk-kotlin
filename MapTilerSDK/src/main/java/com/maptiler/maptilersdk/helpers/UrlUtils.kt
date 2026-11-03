@@ -16,3 +16,8 @@ internal fun formatUrlForJs(url: URL): String {
         url.toString()
     }
 }
+
+private val secretQueryParamRegex = Regex("""([?&](?:key|mtsid)=)[^&#\s"')]*""", RegexOption.IGNORE_CASE)
+
+// Replaces API key and session id query values in any URLs inside the text, so it is safe to log.
+internal fun redactUrlSecrets(text: String): String = text.replace(secretQueryParamRegex, "$1REDACTED")
