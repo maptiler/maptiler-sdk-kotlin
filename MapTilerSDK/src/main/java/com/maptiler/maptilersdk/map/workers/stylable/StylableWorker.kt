@@ -40,13 +40,16 @@ import com.maptiler.maptilersdk.commands.style.EnableMercatorProjection
 import com.maptiler.maptilersdk.commands.style.EnableTerrain
 import com.maptiler.maptilersdk.commands.style.GetIdForReferenceStyle
 import com.maptiler.maptilersdk.commands.style.GetIdForStyleVariant
+import com.maptiler.maptilersdk.commands.style.GetLayerProperty
 import com.maptiler.maptilersdk.commands.style.GetNameForReferenceStyle
 import com.maptiler.maptilersdk.commands.style.GetNameForStyleVariant
 import com.maptiler.maptilersdk.commands.style.GetProjection
+import com.maptiler.maptilersdk.commands.style.GetStyleLayers
 import com.maptiler.maptilersdk.commands.style.HasTerrain
 import com.maptiler.maptilersdk.commands.style.IsGlobeProjection
 import com.maptiler.maptilersdk.commands.style.IsSourceLoaded
 import com.maptiler.maptilersdk.commands.style.IsStyleLoaded
+import com.maptiler.maptilersdk.commands.style.LayerPropertyKind
 import com.maptiler.maptilersdk.commands.style.MoveLayer
 import com.maptiler.maptilersdk.commands.style.PlayVideoSourceById
 import com.maptiler.maptilersdk.commands.style.RemoveImage
@@ -66,6 +69,7 @@ import com.maptiler.maptilersdk.commands.style.SetLayerZoomRange
 import com.maptiler.maptilersdk.commands.style.SetLayoutProperty
 import com.maptiler.maptilersdk.commands.style.SetLight
 import com.maptiler.maptilersdk.commands.style.SetPaintProperty
+import com.maptiler.maptilersdk.commands.style.SetPropertyForLayers
 import com.maptiler.maptilersdk.commands.style.SetRenderWorldCopies
 import com.maptiler.maptilersdk.commands.style.SetSecondaryLanguage
 import com.maptiler.maptilersdk.commands.style.SetSky
@@ -77,6 +81,7 @@ import com.maptiler.maptilersdk.commands.style.SetUrlToSource
 import com.maptiler.maptilersdk.commands.style.StopVideoSourceById
 import com.maptiler.maptilersdk.commands.style.UpdateImage
 import com.maptiler.maptilersdk.commands.style.UpdateImageSource
+import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.helpers.MTHeatmapLayerOptions
 import com.maptiler.maptilersdk.helpers.MTPointLayerOptions
 import com.maptiler.maptilersdk.helpers.MTPolygonLayerOptions
@@ -86,6 +91,8 @@ import com.maptiler.maptilersdk.map.options.MTSky
 import com.maptiler.maptilersdk.map.options.MTSpace
 import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
 import com.maptiler.maptilersdk.map.style.MTMapStyleVariant
+import com.maptiler.maptilersdk.map.style.MTStyleLayerInfo
+import com.maptiler.maptilersdk.map.style.MTStyleLayerInfoSurrogate
 import com.maptiler.maptilersdk.map.style.dsl.PropertyValue
 import com.maptiler.maptilersdk.map.style.image.MTAddImageOptions
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
@@ -96,6 +103,8 @@ import com.maptiler.maptilersdk.map.types.MTLanguage
 import com.maptiler.maptilersdk.map.types.MTProjectionType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
 import java.net.URL
 
 internal class StylableWorker(
@@ -455,6 +464,38 @@ internal class StylableWorker(
         value: PropertyValue,
     ) {
         bridge.execute(SetPaintProperty(layerId, name, value))
+    }
+
+    suspend fun getStyleLayers(): List<MTStyleLayerInfo> {
+        val returnTypeValue = bridge.execute(GetStyleLayers)
+        val json = (returnTypeValue as? MTBridgeReturnType.StringValue)?.value ?: return emptyList()
+
+        return runCatching {
+            JsonConfig.json.decodeFromString<List<MTStyleLayerInfoSurrogate>>(json).map { it.toInfo() }
+        }.getOrDefault(emptyList())
+    }
+
+    suspend fun getLayerProperty(
+        layerId: String,
+        name: String,
+        kind: LayerPropertyKind,
+    ): JsonElement? {
+        val returnTypeValue = bridge.execute(GetLayerProperty(layerId, name, kind))
+        val json = (returnTypeValue as? MTBridgeReturnType.StringValue)?.value ?: return null
+
+        return runCatching { JsonConfig.json.parseToJsonElement(json) }
+            .getOrNull()
+            ?.takeUnless { it is JsonNull }
+    }
+
+    suspend fun setPropertyForLayers(
+        layerIds: List<String>,
+        name: String,
+        value: PropertyValue,
+        kind: LayerPropertyKind,
+    ) {
+        if (layerIds.isEmpty()) return
+        bridge.execute(SetPropertyForLayers(layerIds, name, value, kind))
     }
 
     fun setUrlToSource(

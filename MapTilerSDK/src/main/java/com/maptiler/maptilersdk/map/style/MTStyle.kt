@@ -15,6 +15,7 @@ import com.maptiler.maptilersdk.colorramp.MTArrayColorRampStop
 import com.maptiler.maptilersdk.colorramp.MTColorRamp
 import com.maptiler.maptilersdk.colorramp.MTColorRampCollection
 import com.maptiler.maptilersdk.colorramp.MTColorRampOptions
+import com.maptiler.maptilersdk.commands.style.LayerPropertyKind
 import com.maptiler.maptilersdk.helpers.MTHeatmapLayerHelper
 import com.maptiler.maptilersdk.helpers.MTHeatmapLayerOptions
 import com.maptiler.maptilersdk.helpers.MTPointLayerHelper
@@ -35,6 +36,7 @@ import com.maptiler.maptilersdk.map.workers.stylable.MTStylable
 import com.maptiler.maptilersdk.map.workers.stylable.StylableWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.JsonElement
 import java.lang.ref.WeakReference
 import java.net.URL
 
@@ -647,6 +649,148 @@ class MTStyle(
         name: String,
         value: PropertyValue,
     ) = stylableWorker.setPaintPropertyAwait(layerId, name, value)
+
+    // Layer queries
+
+    /**
+     * Returns the layers of the current style in rendering order, including the built-in MapTiler style layers.
+     *
+     * The result is a fresh snapshot each call; it reflects style changes and visibility toggles.
+     *
+     * @param query Optional filter. When `null`, all layers are returned.
+     */
+    suspend fun getStyleLayers(query: MTLayerQuery? = null): List<MTStyleLayerInfo> {
+        val layers = stylableWorker.getStyleLayers()
+        return if (query == null) layers else layers.filter { query.matches(it) }
+    }
+
+    /**
+     * Returns the raw JSON value of a layout property, or `null` if the layer does not exist or the property is unset.
+     */
+    suspend fun getLayoutProperty(
+        layerId: String,
+        name: String,
+    ): JsonElement? = stylableWorker.getLayerProperty(layerId, name, LayerPropertyKind.LAYOUT)
+
+    /**
+     * Returns the raw JSON value of a paint property, or `null` if the layer does not exist or the property is unset.
+     */
+    suspend fun getPaintProperty(
+        layerId: String,
+        name: String,
+    ): JsonElement? = stylableWorker.getLayerProperty(layerId, name, LayerPropertyKind.PAINT)
+
+    /**
+     * Sets a layout property on every layer matching [query] in a single bridge call.
+     *
+     * @return Identifiers of the affected layers.
+     */
+    suspend fun setLayoutProperty(
+        query: MTLayerQuery,
+        name: String,
+        value: PropertyValue,
+    ): List<String> {
+        val ids = getStyleLayers(query).map { it.id }
+        stylableWorker.setPropertyForLayers(ids, name, value, LayerPropertyKind.LAYOUT)
+        return ids
+    }
+
+    /**
+     * Sets a paint property on every layer matching [query] in a single bridge call.
+     *
+     * @return Identifiers of the affected layers.
+     */
+    suspend fun setPaintProperty(
+        query: MTLayerQuery,
+        name: String,
+        value: PropertyValue,
+    ): List<String> {
+        val ids = getStyleLayers(query).map { it.id }
+        stylableWorker.setPropertyForLayers(ids, name, value, LayerPropertyKind.PAINT)
+        return ids
+    }
+
+    /**
+     * Shows or hides every layer matching [query].
+     *
+     * Visibility is part of the style, so it is reset when the style changes (see [setStyle]).
+     *
+     * @return Identifiers of the affected layers.
+     */
+    suspend fun setVisibility(
+        query: MTLayerQuery,
+        visible: Boolean,
+    ): List<String> = setLayoutProperty(query, VISIBILITY, visibilityValue(visible))
+
+    /**
+     * Shows or hides every layer of the given [category] in the current style.
+     *
+     * @return Identifiers of the affected layers.
+     */
+    suspend fun setVisibility(
+        category: MTLayerCategory,
+        visible: Boolean,
+    ): List<String> = setVisibility(MTLayerQuery.of(category), visible)
+
+    /**
+     * Toggles the layers matching [query]: hides them all if any is visible, otherwise shows them all.
+     *
+     * @return The new visibility, or `null` if no layer matched.
+     */
+    suspend fun toggleVisibility(query: MTLayerQuery): Boolean? {
+        val layers = getStyleLayers(query)
+        if (layers.isEmpty()) return null
+
+        val visible = layers.none { it.isVisible }
+        stylableWorker.setPropertyForLayers(
+            layers.map { it.id },
+            VISIBILITY,
+            visibilityValue(visible),
+            LayerPropertyKind.LAYOUT,
+        )
+        return visible
+    }
+
+    /**
+     * Toggles every layer of the given [category]. See [toggleVisibility].
+     */
+    suspend fun toggleVisibility(category: MTLayerCategory): Boolean? = toggleVisibility(MTLayerQuery.of(category))
+
+    /**
+     * Builds legend entries for the given categories, skipping categories with no layers in the current style.
+     *
+     * Each entry carries the layer ids (for toggling), the current visibility and a representative color taken from
+     * the style's paint properties.
+     *
+     * @param categories Categories to include, in the order they should appear.
+     */
+    suspend fun getLegend(categories: List<MTLayerCategory> = MTLayerCategory.entries): List<MTLegendItem> {
+        val layers = stylableWorker.getStyleLayers()
+
+        return categories.mapNotNull { category ->
+            val matching = layers.filter { category.matches(it) }
+            if (matching.isEmpty()) return@mapNotNull null
+
+            val color =
+                MTLegendColorResolver.swatchSource(category, matching)?.let { (layer, property) ->
+                    MTLegendColorResolver.firstColor(getPaintProperty(layer.id, property))
+                }
+
+            MTLegendItem(
+                category = category,
+                name = category.defaultName,
+                layerIds = matching.map { it.id },
+                isVisible = matching.any { it.isVisible },
+                color = color,
+            )
+        }
+    }
+
+    private fun visibilityValue(visible: Boolean): PropertyValue = PropertyValue.Str(if (visible) "visible" else "none")
+
+    private companion object {
+        const val VISIBILITY = "visibility"
+    }
 }
 
 internal class StyleTask(
