@@ -74,6 +74,8 @@ fun HomeScreen(
     val userMarker: MutableState<MTMarker?> = remember { mutableStateOf(null) }
     val isTerrainEnabled = remember { mutableStateOf(false) }
     val isGlobeEnabled = remember { mutableStateOf(false) }
+    val isLegendVisible = remember { mutableStateOf(false) }
+    val buildingDimmer = remember { BuildingDimmer() }
 
     // Initialize projection toggle state
     LaunchedEffect(Unit) {
@@ -147,6 +149,18 @@ fun HomeScreen(
                 Modifier
                     .fillMaxSize(),
         )
+
+        if (isLegendVisible.value) {
+            LegendSheet(
+                controller = mapController.controller,
+                buildingDimmer = buildingDimmer,
+                onDismiss = { isLegendVisible.value = false },
+                onOpenShowcase = {
+                    isLegendVisible.value = false
+                    navController.navigate("layers")
+                },
+            )
+        }
 
         // Long press on CustomViewControl reveals the Benchmark button
         val showBenchmark = remember { mutableStateOf(false) }
@@ -299,6 +313,13 @@ fun HomeScreen(
                         )
                     }
                 },
+                modifier =
+                    Modifier
+                        .padding(10.dp),
+            )
+
+            LegendControl(
+                onClick = { isLegendVisible.value = true },
                 modifier =
                     Modifier
                         .padding(10.dp),
