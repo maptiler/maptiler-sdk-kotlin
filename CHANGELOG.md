@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.5.0](https://github.com/maptiler/maptiler-sdk-kotlin/releases/tag/2.5.0)
+Released on 2026-11-06.
+### Added
+- New `MTLayerQuery` class introduced allowing simple layer querying and legend creation.
+
 ## [2.4.0](https://github.com/maptiler/maptiler-sdk-kotlin/releases/tag/2.4.0)
 Released on 2026-10-30.
 ### Added
