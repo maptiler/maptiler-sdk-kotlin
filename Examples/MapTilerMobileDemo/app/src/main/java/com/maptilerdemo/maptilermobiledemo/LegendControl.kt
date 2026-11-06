@@ -52,9 +52,12 @@ import com.maptiler.maptilersdk.map.MTMapViewController
 import com.maptiler.maptilersdk.map.style.MTLayerCategory
 import com.maptiler.maptilersdk.map.style.MTLayerQuery
 import com.maptiler.maptilersdk.map.style.MTLegendItem
+import com.maptiler.maptilersdk.map.style.MTStyle
 import com.maptiler.maptilersdk.map.style.dsl.PropertyValue
 import com.maptiler.maptilersdk.map.style.layer.MTLayerType
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /**
  * Round button opening the legend sheet.
@@ -82,6 +85,61 @@ fun LegendControl(
 
 private val labelsQuery = MTLayerQuery(types = setOf(MTLayerType.SYMBOL))
 private val legendQuery = MTLayerQuery(categories = MTLayerCategory.entries.toSet())
+private val buildingsQuery =
+    MTLayerQuery(
+        types = setOf(MTLayerType.FILL, MTLayerType.FILL_EXTRUSION),
+        categories = setOf(MTLayerCategory.BUILDINGS),
+    )
+
+/**
+ * Dims building layers and restores the style's own opacities afterwards.
+ *
+ * Keep one per map, so the switch stays in sync across sheet openings and style changes.
+ * Calls run one at a time, so fast toggling always ends in the last requested state.
+ */
+class BuildingDimmer {
+    private val mutex = Mutex()
+
+    // Opacity property and its original value as JSON, by layer id. Empty while not dimmed.
+    private val originals = mutableMapOf<String, Pair<String, String>>()
+
+    suspend fun isDimmed(style: MTStyle): Boolean = mutex.withLock { currentlyDimmed(style) }
+
+    suspend fun setDimmed(
+        style: MTStyle,
+        dimmed: Boolean,
+    ) = mutex.withLock {
+        if (dimmed == currentlyDimmed(style)) return@withLock
+
+        if (dimmed) {
+            style.getStyleLayers(buildingsQuery).forEach { layer ->
+                val property = if (layer.type == MTLayerType.FILL_EXTRUSION) "fill-extrusion-opacity" else "fill-opacity"
+                originals[layer.id] = property to (style.getPaintProperty(layer.id, property)?.toString() ?: "null")
+                style.setPaintPropertyAwait(layer.id, property, PropertyValue.Num(DIMMED_OPACITY))
+            }
+        } else {
+            // `null` resets a property the style left unset to its default.
+            originals.forEach { (id, original) ->
+                style.setPaintPropertyAwait(id, original.first, PropertyValue.RawJs(original.second))
+            }
+            originals.clear()
+        }
+    }
+
+    private suspend fun currentlyDimmed(style: MTStyle): Boolean {
+        val dimmed =
+            originals.any { (id, original) ->
+                style.getPaintProperty(id, original.first)?.toString()?.toDoubleOrNull() == DIMMED_OPACITY
+            }
+        // Nothing is dimmed anymore (e.g. the style was reloaded), so the stored values are stale.
+        if (!dimmed) originals.clear()
+        return dimmed
+    }
+
+    private companion object {
+        const val DIMMED_OPACITY = 0.1
+    }
+}
 
 /**
  * Demonstrates `MTStyle.getLegend()`, category visibility toggles and query based property updates.
@@ -90,7 +148,9 @@ private val legendQuery = MTLayerQuery(categories = MTLayerCategory.entries.toSe
 @Composable
 fun LegendSheet(
     controller: MTMapViewController,
+    buildingDimmer: BuildingDimmer,
     onDismiss: () -> Unit,
+    onOpenShowcase: (() -> Unit)? = null,
 ) {
     val scope = rememberCoroutineScope()
     var items by remember { mutableStateOf<List<MTLegendItem>>(emptyList()) }
@@ -103,11 +163,12 @@ fun LegendSheet(
         isLoading = true
         items = style.getLegend()
         labelsVisible = style.getStyleLayers(labelsQuery).any { it.isVisible }
+        buildingsDimmed = buildingDimmer.isDimmed(style)
         isLoading = false
     }
 
     // Runs a style change, then reloads the legend.
-    fun run(action: suspend (com.maptiler.maptilersdk.map.style.MTStyle) -> Unit) {
+    fun run(action: suspend (MTStyle) -> Unit) {
         val style = controller.style ?: return
         scope.launch {
             action(style)
@@ -122,6 +183,7 @@ fun LegendSheet(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("Layers", color = Color.Black, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
                 Spacer(Modifier.weight(1f))
+                onOpenShowcase?.let { TextButton(onClick = it) { Text("Showcase") } }
                 TextButton(onClick = { run { it.setVisibility(legendQuery, true) } }) { Text("Show all") }
                 TextButton(onClick = { run { it.setVisibility(legendQuery, false) } }) { Text("Hide all") }
             }
@@ -152,22 +214,7 @@ fun LegendSheet(
                     }
                     SwitchRow("Dim buildings", buildingsDimmed) { dimmed ->
                         buildingsDimmed = dimmed
-                        val opacity = PropertyValue.Num(if (dimmed) 0.25 else 1.0)
-                        run {
-                            it.setPaintProperty(
-                                MTLayerQuery(types = setOf(MTLayerType.FILL), categories = setOf(MTLayerCategory.BUILDINGS)),
-                                "fill-opacity",
-                                opacity,
-                            )
-                            it.setPaintProperty(
-                                MTLayerQuery(
-                                    types = setOf(MTLayerType.FILL_EXTRUSION),
-                                    categories = setOf(MTLayerCategory.BUILDINGS),
-                                ),
-                                "fill-extrusion-opacity",
-                                opacity,
-                            )
-                        }
+                        run { buildingDimmer.setDimmed(it, dimmed) }
                     }
                 }
             }

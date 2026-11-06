@@ -75,6 +75,7 @@ fun HomeScreen(
     val isTerrainEnabled = remember { mutableStateOf(false) }
     val isGlobeEnabled = remember { mutableStateOf(false) }
     val isLegendVisible = remember { mutableStateOf(false) }
+    val buildingDimmer = remember { BuildingDimmer() }
 
     // Initialize projection toggle state
     LaunchedEffect(Unit) {
@@ -152,7 +153,12 @@ fun HomeScreen(
         if (isLegendVisible.value) {
             LegendSheet(
                 controller = mapController.controller,
+                buildingDimmer = buildingDimmer,
                 onDismiss = { isLegendVisible.value = false },
+                onOpenShowcase = {
+                    isLegendVisible.value = false
+                    navController.navigate("layers")
+                },
             )
         }
 
