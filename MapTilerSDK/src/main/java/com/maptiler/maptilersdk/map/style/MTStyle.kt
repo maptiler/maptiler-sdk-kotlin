@@ -65,13 +65,13 @@ class MTStyle(
      * Current reference style of the map object.
      */
     var referenceStyle: MTMapReferenceStyle = MTMapReferenceStyle.STREETS
-        private set
+        internal set
 
     /**
      * Current style variant of the map object.
      */
     var styleVariant: MTMapStyleVariant? = null
-        private set
+        internal set
 
     init {
         referenceStyle = reference
