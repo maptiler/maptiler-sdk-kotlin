@@ -51,6 +51,7 @@ import com.maptiler.maptilersdk.events.EventProcessor
 import com.maptiler.maptilersdk.events.EventProcessorDelegate
 import com.maptiler.maptilersdk.events.MTEvent
 import com.maptiler.maptilersdk.helpers.redactUrlSecrets
+import com.maptiler.maptilersdk.logging.MTLogLevel
 import com.maptiler.maptilersdk.logging.MTLogType
 import com.maptiler.maptilersdk.logging.MTLogger
 import com.maptiler.maptilersdk.map.gestures.MTGestureService
@@ -76,11 +77,14 @@ import com.maptiler.maptilersdk.map.workers.zoomable.ZoomableWorker
 import com.maptiler.maptilersdk.offline.MTOfflineHTTPServer
 import com.maptiler.maptilersdk.offline.MTOfflinePack
 import com.maptiler.maptilersdk.offline.MTOfflinePackState
+import com.maptiler.maptilersdk.offline.MTOfflineRegionDefinition
+import com.maptiler.maptilersdk.offline.MTOfflineStorage
 import com.maptiler.maptilersdk.offline.MTOfflineStoragePaths
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.net.URL
+import java.util.concurrent.atomic.AtomicBoolean
 
 interface MTMapViewDelegate {
     fun onMapViewInitialized()
@@ -187,6 +191,13 @@ class MTMapViewController(
     // Invoked on the main thread when MapTiler API rejects the API key (HTTP 401/403).
     internal var onInvalidAPIKey: (() -> Unit)? = null
 
+    private val offlinePackLoadState = OfflinePackLoadState()
+
+    @Volatile
+    private var isMapReady = false
+
+    private val hasLoggedMissingOfflinePackHint = AtomicBoolean(false)
+
     init {
         bridge = MTBridge(webViewExecutor)
     }
@@ -209,6 +220,15 @@ class MTMapViewController(
 
         val currentStyle = style ?: return
 
+        isMapReady = false
+
+        // Start directly with the offline style if a pack was loaded before the map was initialized.
+        val pendingOfflinePack = offlinePackLoadState.onMapInitialized()
+        if (pendingOfflinePack != null) {
+            currentStyle.referenceStyle = pendingOfflinePack.referenceStyle
+            currentStyle.styleVariant = null
+        }
+
         // Apply device-aware lean defaults only where the developer left fields unset.
         // This keeps behavior non-breaking and favors responsiveness on low/mid devices.
         val effectiveOptions =
@@ -228,10 +248,16 @@ class MTMapViewController(
                 MTConfig.useEuEndpoints,
             ),
         )
+
+        pendingOfflinePack?.region?.let { applyOfflineRegionLimits(it) }
     }
 
     /**
      * Loads an offline pack onto the map view.
+     *
+     * Without a loaded pack the map requests its style from MapTiler Cloud, so while the device is offline
+     * the style never loads and [MTEvent.ON_READY] is not triggered. Call this method without waiting for
+     * [MTEvent.ON_READY]. If the map is not initialized yet, the pack is applied during initialization.
      *
      * NOTE: This method requires cleartext traffic to be enabled for `127.0.0.1`.
      * The SDK includes a default `networkSecurityConfig` for this.
@@ -261,18 +287,22 @@ class MTMapViewController(
 
         val styleUrl = URL(localStyleURL)
         val referenceStyle = MTMapReferenceStyle.CUSTOM(styleUrl)
+        val region = if (limitToRegion) pack.region else null
+
+        val isQueued = offlinePackLoadState.loadPack(OfflinePackLoadState.PendingOfflinePack(referenceStyle, region))
+        if (isQueued) {
+            MTLogger.log(
+                "Map is not initialized yet, offline pack ${pack.id} will be applied on initialization.",
+                MTLogType.INFO,
+            )
+            return
+        }
 
         val currentStyle = style ?: MTStyle(referenceStyle, null)
         style = currentStyle
         currentStyle.setStyle(referenceStyle, null)
 
-        if (limitToRegion) {
-            val region = pack.region
-            val paddedBbox = region.bbox
-            setMaxBounds(paddedBbox.toBounds())
-            setMinZoom(region.minZoom.toDouble())
-            setMaxZoom(region.maxZoom.toDouble())
-        }
+        region?.let { applyOfflineRegionLimits(it) }
 
         // Nudge camera to force fresh tile requests
         kotlinx.coroutines.delay(150)
@@ -292,6 +322,8 @@ class MTMapViewController(
         fallbackVariant: MTMapStyleVariant? = null,
         resetCameraLimits: Boolean = true,
     ) {
+        offlinePackLoadState.unloadPack()
+
         val currentStyle = style ?: return
         currentStyle.setStyle(fallbackStyle, fallbackVariant)
 
@@ -305,6 +337,37 @@ class MTMapViewController(
         kotlinx.coroutines.delay(150)
         panBy(MTPoint(1.0, 1.0))
         panBy(MTPoint(-1.0, -1.0))
+    }
+
+    private fun applyOfflineRegionLimits(region: MTOfflineRegionDefinition) {
+        setMaxBounds(region.bbox.toBounds())
+        setMinZoom(region.minZoom.toDouble())
+        setMaxZoom(region.maxZoom.toDouble())
+    }
+
+    /**
+     * Logs a debug hint when the map fails to load while completed offline packs exist but none is loaded.
+     * This is the typical symptom of displaying the map offline without calling [loadOfflinePack].
+     */
+    private fun logMissingOfflinePackHintIfNeeded() {
+        if (MTConfig.logLevel !is MTLogLevel.Debug || isMapReady || offlinePackLoadState.isPackLoaded) return
+        if (!hasLoggedMissingOfflinePackHint.compareAndSet(false, true)) return
+
+        coroutineScope?.launch(Dispatchers.IO) {
+            val completedPacksCount =
+                runCatching { MTOfflineStorage.listMetadata(context) }
+                    .getOrDefault(emptyList())
+                    .count { it.state == MTOfflinePackState.COMPLETED }
+
+            if (completedPacksCount > 0) {
+                MTLogger.log(
+                    "Map failed to load and no offline pack is loaded, while $completedPacksCount completed " +
+                        "offline pack(s) are available. If the device is offline, call " +
+                        "MTMapViewController.loadOfflinePack(pack) to display the map from a downloaded pack.",
+                    MTLogType.WARNING,
+                )
+            }
+        }
     }
 
     private fun initializeWorkers() {
@@ -920,6 +983,8 @@ class MTMapViewController(
             MTLogger.log(INVALID_API_KEY_MESSAGE, MTLogType.CRITICAL_ERROR)
             coroutineScope?.launch(Dispatchers.Main) { onInvalidAPIKey?.invoke() }
         }
+
+        logMissingOfflinePackHintIfNeeded()
     }
 
     /**
@@ -1563,6 +1628,10 @@ class MTMapViewController(
         data: MTData?,
     ) {
         MTLogger.log("MTEvent triggered: $event", MTLogType.EVENT)
+
+        if (event == MTEvent.ON_READY) {
+            isMapReady = true
+        }
 
         // Skip dispatch work when there are no observers and the event isn't required for internal processing.
         val hasObservers = (delegate != null) || contentDelegates.isNotEmpty()
