@@ -14,8 +14,13 @@ import com.maptiler.maptilersdk.helpers.ImageHelper
 import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.helpers.toHexString
 
+/**
+ * @param sharedIconVar Name of a variable holding an already loaded `Image` whose `src` is reused as the
+ * marker element. Used by [AddMarkers] so a single icon is encoded only once for the whole batch.
+ */
 internal data class AddMarker(
     val marker: MTMarker,
+    val sharedIconVar: String? = null,
 ) : MTCommand {
     override val isPrimitiveReturnType: Boolean = false
 
@@ -102,7 +107,14 @@ internal data class AddMarker(
                 ""
             }
 
-        if (marker.icon != null) {
+        if (sharedIconVar != null) {
+            iconInit = """
+            var icon${marker.identifier} = document.createElement('img');
+            icon${marker.identifier}.src = $sharedIconVar.src;
+        """
+
+            iconData = "element: icon${marker.identifier}"
+        } else if (marker.icon != null) {
             val encoded = ImageHelper.encodeImageWithMime(marker.icon!!)
             iconInit = """
             var icon${marker.identifier} = new Image();

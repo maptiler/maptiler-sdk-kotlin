@@ -27,6 +27,7 @@ import com.maptiler.maptilersdk.helpers.MTPolylineLayerOptions
 import com.maptiler.maptilersdk.map.style.dsl.PropertyValue
 import com.maptiler.maptilersdk.map.style.image.MTAddImageOptions
 import com.maptiler.maptilersdk.map.style.layer.MTLayer
+import com.maptiler.maptilersdk.map.style.layer.MTLayerType
 import com.maptiler.maptilersdk.map.style.source.MTImageSource
 import com.maptiler.maptilersdk.map.style.source.MTSource
 import com.maptiler.maptilersdk.map.style.source.MTVideoSource
@@ -125,6 +126,34 @@ class MTStyle(
     override fun removeMarker(marker: MTMarker) {
         mapMarkers.remove(marker.identifier)
         stylableWorker.removeMarker(marker)
+    }
+
+    /**
+     * Adds multiple markers to the map.
+     *
+     * Batch adding is the preferred way of adding multiple markers to the map.
+     *
+     * @param markers Markers to add.
+     * @param withSingleIcon Optional single image to use for all markers.
+     */
+    override fun addMarkers(
+        markers: List<MTMarker>,
+        withSingleIcon: Bitmap?,
+    ) {
+        markers.forEach { mapMarkers[it.identifier] = it }
+        stylableWorker.addMarkers(markers, withSingleIcon)
+    }
+
+    /**
+     * Removes multiple markers from the map.
+     *
+     * Batch removing is the preferred way of removing multiple markers from the map.
+     *
+     * @param markers Markers to remove.
+     */
+    override fun removeMarkers(markers: List<MTMarker>) {
+        markers.forEach { mapMarkers.remove(it.identifier) }
+        stylableWorker.removeMarkers(markers)
     }
 
     internal fun findMarker(identifier: String): MTMarker? = mapMarkers[identifier]
@@ -305,6 +334,77 @@ class MTStyle(
 
         mapLayers.remove(layer.identifier)
         stylableWorker.removeLayer(layer)
+    }
+
+    /**
+     * Adds multiple layers to the map.
+     *
+     * Batch adding is the preferred way of adding multiple layers to the map. Layers whose sources are
+     * not loaded yet are queued and added once the sources load.
+     *
+     * @param layers Layers to be added.
+     * @throws MTStyleError.LayerAlreadyExists if a layer with the same id is already added to the map.
+     * @throws MTError.MissingParent if a layer references a source that was not added to the map.
+     */
+    fun addLayers(layers: List<MTLayer>) {
+        if (layers.any { mapLayers.containsKey(it.identifier) }) {
+            throw MTStyleError.LayerAlreadyExists
+        }
+
+        if (layers.any { it.type != MTLayerType.BACKGROUND && !mapSources.containsKey(it.sourceIdentifier) }) {
+            throw MTError.MissingParent
+        }
+
+        layers.forEach { mapLayers[it.identifier] = WeakReference(it) }
+
+        coroutineScope?.launch {
+            val sourceLoaded = mutableMapOf<String, Boolean>()
+            val readyLayers = mutableListOf<MTLayer>()
+
+            for (layer in layers) {
+                // Background layers are source-less and image/video sources never report loaded
+                // until a layer references them, so we add those immediately.
+                val isImmediateAdd =
+                    layer.type == MTLayerType.BACKGROUND ||
+                        when (mapSources[layer.sourceIdentifier]?.get()) {
+                            is MTImageSource, is MTVideoSource -> true
+                            else -> false
+                        }
+
+                val isReady =
+                    isImmediateAdd ||
+                        sourceLoaded.getOrPut(layer.sourceIdentifier) { isSourceLoaded(layer.sourceIdentifier) }
+
+                if (isReady) {
+                    readyLayers.add(layer)
+                } else {
+                    queue.add(
+                        StyleTask(layer.identifier) {
+                            stylableWorker.addLayer(layer)
+                        },
+                    )
+                }
+            }
+
+            if (readyLayers.isNotEmpty()) {
+                stylableWorker.addLayers(readyLayers)
+            }
+        }
+    }
+
+    /**
+     * Removes multiple layers from the map.
+     *
+     * @param layers Layers to be removed.
+     * @throws MTStyleError.LayerNotFound if any of the layers does not exist on the map.
+     */
+    fun removeLayers(layers: List<MTLayer>) {
+        if (layers.any { !mapLayers.containsKey(it.identifier) }) {
+            throw MTStyleError.LayerNotFound
+        }
+
+        layers.forEach { mapLayers.remove(it.identifier) }
+        stylableWorker.removeLayers(layers)
     }
 
     /**
