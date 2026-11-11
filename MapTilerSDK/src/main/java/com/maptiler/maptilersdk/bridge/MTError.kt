@@ -68,6 +68,20 @@ sealed class MTError : Exception() {
     }
 
     /**
+     * Promise was rejected in JS execution.
+     *
+     * @param description Debug description of the error.
+     */
+    data class PromiseRejected(val description: String) : MTError()
+
+    /**
+     * Promise execution timed out.
+     *
+     * @param description Debug description of the timeout.
+     */
+    data class Timeout(val description: String) : MTError()
+
+    /**
      * Numerical code of the exception.
      */
     val code: Int
@@ -79,6 +93,8 @@ sealed class MTError : Exception() {
                 is Unknown -> 92
                 BridgeNotLoaded -> 93
                 MissingParent -> 95
+                is PromiseRejected -> 96
+                is Timeout -> 97
             }
 
     /**
@@ -93,5 +109,7 @@ sealed class MTError : Exception() {
                 is Unknown -> description
                 BridgeNotLoaded -> "Bridge and/or Map are not loaded."
                 MissingParent -> "Missing parent entity."
+                is PromiseRejected -> description
+                is Timeout -> description
             }
 }

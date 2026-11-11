@@ -13,6 +13,8 @@ typealias JSString = String
  */
 interface MTCommand {
     val isPrimitiveReturnType: Boolean
+    val isPromiseReturnType: Boolean
+        get() = false
 
     fun toJS(): JSString
 }

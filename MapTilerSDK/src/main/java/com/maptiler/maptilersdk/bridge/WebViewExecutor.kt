@@ -21,7 +21,11 @@ import com.maptiler.maptilersdk.logging.MTLogType
 import com.maptiler.maptilersdk.logging.MTLogger
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
+import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 
 internal interface WebViewExecutorDelegate {
     fun onNavigationFinished(url: String)
@@ -58,6 +62,7 @@ internal class WebViewExecutor(
     private var hasLoadedContent: Boolean = false
     private var jsInterfaceAdded: Boolean = false
     private var assetLoader: Any? = null
+    private val promiseRegistry = ConcurrentHashMap<String, CompletableDeferred<MTBridgeReturnType>>()
     internal val webView: WebView
         get() {
             if (_webView == null) {
@@ -190,7 +195,31 @@ internal class WebViewExecutor(
 
             val deferred = CompletableDeferred<MTBridgeReturnType>()
 
-            if (command.isPrimitiveReturnType) {
+            if (command.isPromiseReturnType) {
+                val requestId = UUID.randomUUID().toString()
+                promiseRegistry[requestId] = deferred
+
+                val asyncWrapper =
+                    """
+                    (async () => {
+                        try {
+                            const result = await (${command.toJS()});
+                            Android.onPromiseResult('$requestId', JSON.stringify(result), null);
+                        } catch (e) {
+                            Android.onPromiseResult('$requestId', null, e.message || String(e));
+                        }
+                    })();
+                    """.trimIndent()
+
+                webView.evaluateJavascript(asyncWrapper, null)
+
+                try {
+                    return@withContext withTimeout(10000) { deferred.await() }
+                } catch (e: TimeoutCancellationException) {
+                    promiseRegistry.remove(requestId)
+                    throw MTError.Timeout("Command ${command.javaClass.simpleName} timed out after 10000ms")
+                }
+            } else if (command.isPrimitiveReturnType) {
                 webView.evaluateJavascript(command.toJS()) { result ->
                     try {
                         if (result == null || result == "null") {
@@ -222,6 +251,28 @@ internal class WebViewExecutor(
 
             return@withContext deferred.await()
         }
+
+    internal fun onPromiseResult(
+        requestId: String,
+        result: String?,
+        error: String?,
+    ) {
+        val deferred = promiseRegistry.remove(requestId) ?: return
+        if (error != null) {
+            deferred.completeExceptionally(MTError.PromiseRejected(error))
+        } else {
+            try {
+                if (result == null || result == "null") {
+                    deferred.complete(MTBridgeReturnType.UnsupportedType)
+                } else {
+                    val parsedResult = MTBridgeReturnType.from(result)
+                    deferred.complete(parsedResult)
+                }
+            } catch (e: Exception) {
+                deferred.completeExceptionally(MTError.InvalidResultType(result ?: "null"))
+            }
+        }
+    }
 
     internal fun destroy() {
         _webView?.destroy()
