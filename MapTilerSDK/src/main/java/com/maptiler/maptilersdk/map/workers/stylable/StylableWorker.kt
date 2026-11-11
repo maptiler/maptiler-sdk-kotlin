@@ -16,8 +16,10 @@ import com.maptiler.maptilersdk.colorramp.MTBuiltinColorRamp
 import com.maptiler.maptilersdk.colorramp.MTColorRamp
 import com.maptiler.maptilersdk.colorramp.MTColorRampOptions
 import com.maptiler.maptilersdk.commands.annotations.AddMarker
+import com.maptiler.maptilersdk.commands.annotations.AddMarkers
 import com.maptiler.maptilersdk.commands.annotations.AddTextPopup
 import com.maptiler.maptilersdk.commands.annotations.RemoveMarker
+import com.maptiler.maptilersdk.commands.annotations.RemoveMarkers
 import com.maptiler.maptilersdk.commands.annotations.RemoveTextPopup
 import com.maptiler.maptilersdk.commands.colorramp.CreateColorRamp
 import com.maptiler.maptilersdk.commands.colorramp.CreateColorRampFromArrayDefinition
@@ -28,6 +30,7 @@ import com.maptiler.maptilersdk.commands.helpers.AddPolylineLayer
 import com.maptiler.maptilersdk.commands.misc.AddLogoControl
 import com.maptiler.maptilersdk.commands.style.AddImage
 import com.maptiler.maptilersdk.commands.style.AddLayer
+import com.maptiler.maptilersdk.commands.style.AddLayers
 import com.maptiler.maptilersdk.commands.style.AddSource
 import com.maptiler.maptilersdk.commands.style.AddSprite
 import com.maptiler.maptilersdk.commands.style.DisableHalo
@@ -55,6 +58,7 @@ import com.maptiler.maptilersdk.commands.style.PlayVideoSourceById
 import com.maptiler.maptilersdk.commands.style.RemoveImage
 import com.maptiler.maptilersdk.commands.style.RemoveLayer
 import com.maptiler.maptilersdk.commands.style.RemoveLayerById
+import com.maptiler.maptilersdk.commands.style.RemoveLayers
 import com.maptiler.maptilersdk.commands.style.RemoveSource
 import com.maptiler.maptilersdk.commands.style.RemoveSourceById
 import com.maptiler.maptilersdk.commands.style.RemoveSprite
@@ -118,6 +122,22 @@ internal class StylableWorker(
         scope.launch {
             bridge.execute(
                 AddMarker(marker),
+            )
+        }
+    }
+
+    override fun addMarkers(
+        markers: List<MTMarker>,
+        withSingleIcon: Bitmap?,
+    ) {
+        markers.forEach {
+            it.bindBridge(bridge)
+            it.popup?.bindBridge(bridge)
+            it.popup?.setOpenState(false)
+        }
+        scope.launch {
+            bridge.execute(
+                AddMarkers(markers, withSingleIcon),
             )
         }
     }
@@ -249,6 +269,14 @@ internal class StylableWorker(
         }
     }
 
+    override fun removeMarkers(markers: List<MTMarker>) {
+        scope.launch {
+            bridge.execute(
+                RemoveMarkers(markers),
+            )
+        }
+    }
+
     override fun addTextPopup(popup: MTTextPopup) {
         popup.bindBridge(bridge)
         popup.setOpenState(true)
@@ -272,6 +300,14 @@ internal class StylableWorker(
         scope.launch {
             bridge.execute(
                 AddLayer(layer),
+            )
+        }
+    }
+
+    fun addLayers(layers: List<MTLayer>) {
+        scope.launch {
+            bridge.execute(
+                AddLayers(layers),
             )
         }
     }
@@ -362,6 +398,14 @@ internal class StylableWorker(
         scope.launch {
             bridge.execute(
                 RemoveLayer(layer),
+            )
+        }
+    }
+
+    fun removeLayers(layers: List<MTLayer>) {
+        scope.launch {
+            bridge.execute(
+                RemoveLayers(layers),
             )
         }
     }

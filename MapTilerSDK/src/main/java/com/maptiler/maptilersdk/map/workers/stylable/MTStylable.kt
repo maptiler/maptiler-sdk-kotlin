@@ -6,6 +6,7 @@
 
 package com.maptiler.maptilersdk.map.workers.stylable
 
+import android.graphics.Bitmap
 import com.maptiler.maptilersdk.annotations.MTMarker
 import com.maptiler.maptilersdk.annotations.MTTextPopup
 
@@ -26,6 +27,28 @@ interface MTStylable {
      * @param marker Marker to remove.
      */
     fun removeMarker(marker: MTMarker)
+
+    /**
+     * Adds multiple markers to the map.
+     *
+     * Batch adding is the preferred way of adding multiple markers to the map.
+     *
+     * @param markers Markers to add.
+     * @param withSingleIcon Optional single image to use for all markers.
+     */
+    fun addMarkers(
+        markers: List<MTMarker>,
+        withSingleIcon: Bitmap? = null,
+    )
+
+    /**
+     * Removes multiple markers from the map.
+     *
+     * Batch removing is the preferred way of removing multiple markers from the map.
+     *
+     * @param markers Markers to remove.
+     */
+    fun removeMarkers(markers: List<MTMarker>)
 
     /**
      * Adds a text popup to the map.
