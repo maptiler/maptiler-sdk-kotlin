@@ -4,7 +4,7 @@
 
 The MapTiler SDK Kotlin is a native SDK written in Kotlin, designed to work with the well-established MapTiler Cloud service, which provides all the data required to fuel a complete mobile mapping experience: vector tiles, GeoJSON, map interaction, custom styles, data visualization and more.
 
-[![](https://img.shields.io/badge/Kotlin-2.0.0-f2f6ff?style=for-the-badge&labelColor=D3DBEC&logo=kotlin&logoColor=333359)](./settings.gradle.kts) [![](https://img.shields.io/badge/Platforms-Android-f2f6ff?style=for-the-badge&labelColor=D3DBEC&logo=android&logoColor=333359)](https://developer.android.com)
+[![](https://img.shields.io/maven-central/v/com.maptiler/maptiler-sdk-kotlin?style=for-the-badge&labelColor=D3DBEC&color=f2f6ff&label=Maven%20Central)](https://central.sonatype.com/artifact/com.maptiler/maptiler-sdk-kotlin) [![](https://img.shields.io/badge/Kotlin-2.0.0-f2f6ff?style=for-the-badge&labelColor=D3DBEC&logo=kotlin&logoColor=333359)](./settings.gradle.kts) [![](https://img.shields.io/badge/Platforms-Android-f2f6ff?style=for-the-badge&labelColor=D3DBEC&logo=android&logoColor=333359)](https://developer.android.com)
 
 ---
 
@@ -43,14 +43,14 @@ MapTiler Kotlin SDK is a Kotlin library and can be added as a dependency in your
 
 ```kotlin
 dependencies {
-  implementation("com.maptiler:maptiler-sdk-kotlin:1.3.0")
+  implementation("com.maptiler:maptiler-sdk-kotlin:2.5.0")
 }
 ```
 
 Or, use Version Catalog instead, add following to the libs.versions.toml:
 
 ```kotlin
-maptilerSdkKotlin = "1.3.0"
+maptilerSdkKotlin = "2.5.0"
 
 maptiler-sdk-kotlin = { module = "com.maptiler:maptiler-sdk-kotlin", version.ref = "maptilerSdkKotlin" }
 ```
@@ -60,6 +60,8 @@ Then add following implementation in your build.gradle:
 ```kotlin
 implementation(libs.maptiler.sdk.kotlin)
 ```
+
+Requires Android minSdk 26.
 
 For latest version visit https://central.sonatype.com/artifact/com.maptiler/maptiler-sdk-kotlin.
 

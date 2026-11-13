@@ -388,3 +388,53 @@ tasks.register("centralDropRepository") {
         }
     }
 }
+
+// Fails the build if README.md install snippets, MTConfig.VERSION or the latest CHANGELOG.md entry
+// don't match the library version
+tasks.register("verifyVersionConsistency") {
+    group = "verification"
+    description = "Checks README install snippets, MTConfig.VERSION and the latest CHANGELOG entry against the library version."
+
+    val expected = version.toString()
+    val readme = file("../README.md")
+    val changelog = file("../CHANGELOG.md")
+    val config = file("src/main/java/com/maptiler/maptilersdk/MTConfig.kt")
+    inputs.files(readme, changelog, config)
+
+    doLast {
+        if (expected.endsWith("SNAPSHOT")) {
+            println("Snapshot version detected; version consistency check skipped.")
+            return@doLast
+        }
+
+        val errors = mutableListOf<String>()
+        val readmeText = readme.readText()
+        val readmeVersions =
+            listOf(
+                Regex("""com\.maptiler:maptiler-sdk-kotlin:([^"\s)]+)"""),
+                Regex("""maptilerSdkKotlin\s*=\s*"([^"]+)""""),
+            ).flatMap { regex -> regex.findAll(readmeText).map { it.groupValues[1] } }
+
+        if (readmeVersions.isEmpty()) errors += "README.md: no version found in install snippets"
+        readmeVersions.filter { it != expected }.forEach { errors += "README.md: found $it" }
+
+        val configVersion =
+            Regex("""const val VERSION = "([^"]+)"""")
+                .find(config.readText())
+                ?.groupValues
+                ?.get(1)
+        if (configVersion != expected) errors += "MTConfig.VERSION: found $configVersion"
+
+        val changelogVersion =
+            Regex("""^## \[([^\]]+)\]""", RegexOption.MULTILINE)
+                .find(changelog.readText())
+                ?.groupValues
+                ?.get(1)
+        if (changelogVersion != expected) errors += "CHANGELOG.md latest entry: found $changelogVersion"
+
+        if (errors.isNotEmpty()) {
+            throw GradleException("Version mismatch, expected $expected:\n" + errors.joinToString("\n"))
+        }
+        println("Version consistency OK: $expected")
+    }
+}
