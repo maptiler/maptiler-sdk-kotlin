@@ -1009,6 +1009,14 @@ class MTMapViewController(
         modules[moduleId]?.onMessageReceived(event, data.takeIf { it.isNotBlank() })
     }
 
+    override fun onPromiseResult(
+        requestId: String,
+        result: String?,
+        error: String?,
+    ) {
+        webViewExecutor?.onPromiseResult(requestId, result, error)
+    }
+
     // ZOOMABLE
 
     /**

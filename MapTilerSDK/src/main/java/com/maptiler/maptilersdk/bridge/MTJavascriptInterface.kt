@@ -32,6 +32,12 @@ internal interface MTJavascriptDelegate {
         event: String,
         data: String,
     )
+
+    fun onPromiseResult(
+        requestId: String,
+        result: String?,
+        error: String?,
+    )
 }
 
 internal class MTJavaScriptInterface(
@@ -77,5 +83,14 @@ internal class MTJavaScriptInterface(
         data: String,
     ) {
         delegate?.onModuleEvent(moduleId, event, data)
+    }
+
+    @JavascriptInterface
+    fun onPromiseResult(
+        requestId: String,
+        result: String?,
+        error: String?,
+    ) {
+        delegate?.onPromiseResult(requestId, result, error)
     }
 }

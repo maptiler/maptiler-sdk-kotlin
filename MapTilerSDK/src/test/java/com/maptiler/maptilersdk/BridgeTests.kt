@@ -31,4 +31,14 @@ class BridgeTests {
 
             assertEquals(expectedReturnType, result)
         }
+
+    @Test fun command_PromiseReturnType_DefaultsToFalse() {
+        val command =
+            object : MTCommand {
+                override val isPrimitiveReturnType: Boolean = true
+
+                override fun toJS(): String = "test"
+            }
+        assertEquals(false, command.isPromiseReturnType)
+    }
 }
