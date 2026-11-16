@@ -16,6 +16,7 @@ import com.maptiler.maptilersdk.map.types.MTLanguage
 import com.maptiler.maptilersdk.map.types.MTLanguageSerializer
 import com.maptiler.maptilersdk.map.types.MTMapCorner
 import com.maptiler.maptilersdk.map.types.MTProjectionType
+import com.maptiler.maptilersdk.map.types.MTSize
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -403,6 +404,18 @@ class MTMapOptions {
         private set
 
     /**
+     * A map of strings to override the default UI strings of built-in controls.
+     */
+    var locale: Map<String, String>? = null
+        private set
+
+    /**
+     * Limits the WebGL canvas size in pixels.
+     */
+    var maxCanvasSize: MTSize? = null
+        private set
+
+    /**
      * Boolean indicating whether session logic is enabled.
      *
      * This allows MapTiler to enable session-based billing.
@@ -561,6 +574,8 @@ class MTMapOptions {
         eventLevel: MTEventLevel = MTEventLevel.CAMERA_ONLY,
         highFrequencyEventThrottleMs: Int? = 20,
         prewarm: Boolean? = null,
+        locale: Map<String, String>? = null,
+        maxCanvasSize: MTSize? = null,
     ) {
         this.language = language
         this.center = center
@@ -613,5 +628,7 @@ class MTMapOptions {
         this.eventLevel = eventLevel
         this.highFrequencyEventThrottleMs = highFrequencyEventThrottleMs
         this.prewarm = prewarm
+        this.locale = locale
+        this.maxCanvasSize = maxCanvasSize
     }
 }
