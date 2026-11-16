@@ -148,7 +148,11 @@ fun HomeScreen(
             modifier =
                 Modifier
                     .fillMaxSize(),
-        )
+        ) {
+            // Declarative content: added when the map is ready.
+            val prague = LngLat(14.4378, 50.0755)
+            MTMapMarker(position = prague, color = Color.Red)
+        }
 
         if (isLegendVisible.value) {
             LegendSheet(

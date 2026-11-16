@@ -273,15 +273,20 @@ class MTStyle(
      *
      * @param layer Layer to be added.
      * @throws MTStyleError.LayerAlreadyExists if layer with the same id is already added to the map.
+     * @throws MTError.MissingParent if the layer references a source that was not added to the map.
      */
     fun addLayer(layer: MTLayer) {
         if (mapLayers.containsKey(layer.identifier)) {
             throw MTStyleError.LayerAlreadyExists
         }
 
-        coroutineScope?.launch {
-            mapLayers[layer.identifier] = WeakReference(layer)
+        if (layer.type != MTLayerType.BACKGROUND && !mapSources.containsKey(layer.sourceIdentifier)) {
+            throw MTError.MissingParent
+        }
 
+        mapLayers[layer.identifier] = WeakReference(layer)
+
+        coroutineScope?.launch {
             // Background layers are source-less; add them immediately.
             if (layer.type == com.maptiler.maptilersdk.map.style.layer.MTLayerType.BACKGROUND) {
                 stylableWorker.addLayer(layer)
@@ -693,7 +698,8 @@ class MTStyle(
 
     /**
      * Sets the current style by reference style and optional variant.
-     * Changing the style resets sources and layers.
+     * Changing the style resets sources and layers, including those declared in
+     * [com.maptiler.maptilersdk.map.MTMapView] content. Markers and popups are kept.
      *
      * @param reference Reference style.
      * @param variant Optional style variant.

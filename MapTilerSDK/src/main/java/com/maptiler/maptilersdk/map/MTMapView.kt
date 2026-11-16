@@ -29,25 +29,47 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.maptiler.maptilersdk.MTConfig
+import com.maptiler.maptilersdk.events.MTEvent
 import com.maptiler.maptilersdk.map.style.MTMapReferenceStyle
 import com.maptiler.maptilersdk.map.style.MTMapStyleVariant
 import com.maptiler.maptilersdk.map.style.MTStyle
+import com.maptiler.maptilersdk.map.types.MTData
 
 /**
  * Object representing the map on the screen.
+ *
+ * Map content such as markers, popups, sources and layers can be declared in [content]:
+ * ```
+ * MTMapView(referenceStyle = MTMapReferenceStyle.STREETS, controller = controller) {
+ *     MTMapMarker(position = LngLat(14.43, 50.07), color = Color.Red)
+ *     MTMapTextPopup(position = LngLat(14.43, 50.07), text = "Hello Prague")
+ * }
+ * ```
+ *
+ * @param referenceStyle Reference style of the map.
+ * @param options Initial options of the map. Defaults to [MTMapOptions] with default values.
+ * @param controller Controller of the map.
+ * @param modifier Modifier applied to the map container.
+ * @param styleVariant Optional variant of the reference style.
+ * @param content Optional declarative map content, added once the map is ready and removed when it
+ * leaves the composition. Sources and layers declared here are not re-added after
+ * [MTStyle.setStyle], see [MTMapScope].
  */
 @Suppress("FunctionName")
 @Composable
 fun MTMapView(
     referenceStyle: MTMapReferenceStyle,
-    options: MTMapOptions,
+    options: MTMapOptions = MTMapOptions(),
     controller: MTMapViewController,
     modifier: Modifier = Modifier,
     styleVariant: MTMapStyleVariant? = null,
+    content: (@Composable MTMapScope.() -> Unit)? = null,
 ) {
     val scope = rememberCoroutineScope()
     val webView = remember { controller.getAttachableWebView() }
     var isAPIKeyInvalid by remember { mutableStateOf(false) }
+    val isMapReady = remember { mutableStateOf(false) }
+    val mapScope = remember(controller) { MTMapScope(controller, isMapReady) }
 
     LaunchedEffect(Unit) {
         controller.onInvalidAPIKey = { isAPIKeyInvalid = true }
@@ -61,6 +83,27 @@ fun MTMapView(
     DisposableEffect(Unit) {
         onDispose {
             controller.destroy()
+        }
+    }
+
+    if (content != null) {
+        DisposableEffect(controller) {
+            val readyDelegate =
+                object : MTMapViewContentDelegate {
+                    override fun onEvent(
+                        event: MTEvent,
+                        data: MTData?,
+                    ) {
+                        if (event == MTEvent.ON_READY) {
+                            isMapReady.value = true
+                        }
+                    }
+                }
+            controller.addContentDelegate(readyDelegate)
+
+            onDispose {
+                controller.removeContentDelegate(readyDelegate)
+            }
         }
     }
 
@@ -80,6 +123,8 @@ fun MTMapView(
                         )
                     },
             )
+
+            content?.invoke(mapScope)
 
             val apiKey = MTConfig.apiKey
             val isAPIKeyMissing = apiKey.isEmpty() || apiKey == "YOUR_API_KEY"
