@@ -21,24 +21,29 @@ class AddNavigationControlTest {
                 showZoom = false,
                 visualizePitch = true,
                 position = MTMapCorner.BOTTOM_LEFT,
+                id = "nav1",
             )
         assertFalse(command.isPrimitiveReturnType)
         assertEquals(
-            "${MTBridge.MAP_OBJECT}.addControl(" +
-                "new ${MTBridge.SDK_OBJECT}.MaptilerNavigationControl(" +
-                "{\"showCompass\":true,\"showZoom\":false,\"visualizePitch\":true}), \"bottom-left\");",
+            """
+            if (!window.mapControls) window.mapControls = {};
+            window.mapControls['nav1'] = new ${MTBridge.SDK_OBJECT}.MaptilerNavigationControl({"showCompass":true,"showZoom":false,"visualizePitch":true});
+            ${MTBridge.MAP_OBJECT}.addControl(window.mapControls['nav1'], "bottom-left");
+            """.trimIndent(),
             command.toJS(),
         )
     }
 
     @Test
     fun testToJS_default() {
-        val command = AddNavigationControl()
+        val command = AddNavigationControl(id = "nav1")
         assertFalse(command.isPrimitiveReturnType)
         assertEquals(
-            "${MTBridge.MAP_OBJECT}.addControl(" +
-                "new ${MTBridge.SDK_OBJECT}.MaptilerNavigationControl(" +
-                "{\"showCompass\":true,\"showZoom\":true,\"visualizePitch\":false}), \"top-right\");",
+            """
+            if (!window.mapControls) window.mapControls = {};
+            window.mapControls['nav1'] = new ${MTBridge.SDK_OBJECT}.MaptilerNavigationControl({"showCompass":true,"showZoom":true,"visualizePitch":false});
+            ${MTBridge.MAP_OBJECT}.addControl(window.mapControls['nav1'], "top-right");
+            """.trimIndent(),
             command.toJS(),
         )
     }

@@ -152,8 +152,15 @@ class StyleAndCommandsTests {
     }
 
     @Test fun addLogoControlToJS_ReturnsValidJSString() {
-        val js = com.maptiler.maptilersdk.commands.misc.AddLogoControl().toJS()
-        assertEquals("${MTBridge.MAP_OBJECT}.addControl(new ${MTBridge.SDK_OBJECT}.MaptilerLogoControl());", js)
+        val js = com.maptiler.maptilersdk.commands.misc.AddLogoControl("logo-id").toJS()
+        assertEquals(
+            """
+            if (!window.mapControls) window.mapControls = {};
+            window.mapControls['logo-id'] = new ${MTBridge.SDK_OBJECT}.MaptilerLogoControl();
+            ${MTBridge.MAP_OBJECT}.addControl(window.mapControls['logo-id']);
+            """.trimIndent(),
+            js,
+        )
     }
 
     @Test fun enableTerrainWithoutExaggerationToJS_ReturnsValidJSString() {

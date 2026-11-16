@@ -18,6 +18,7 @@ internal data class AddNavigationControl(
     val showZoom: Boolean = true,
     val visualizePitch: Boolean = false,
     val position: MTMapCorner = MTMapCorner.TOP_RIGHT,
+    val id: String,
 ) : MTCommand {
     override val isPrimitiveReturnType: Boolean = false
 
@@ -28,7 +29,11 @@ internal data class AddNavigationControl(
                 NavigationControlOptions(showCompass, showZoom, visualizePitch),
             )
         val positionStr = JsonConfig.json.encodeToString(MTMapCorner.serializer(), position)
-        return "${MTBridge.MAP_OBJECT}.addControl(new ${MTBridge.SDK_OBJECT}.MaptilerNavigationControl($options), $positionStr);"
+        return """
+            if (!window.mapControls) window.mapControls = {};
+            window.mapControls['$id'] = new ${MTBridge.SDK_OBJECT}.MaptilerNavigationControl($options);
+            ${MTBridge.MAP_OBJECT}.addControl(window.mapControls['$id'], $positionStr);
+            """.trimIndent()
     }
 }
 

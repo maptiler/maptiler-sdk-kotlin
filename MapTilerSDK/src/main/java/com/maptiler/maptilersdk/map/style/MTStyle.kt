@@ -544,8 +544,10 @@ class MTStyle(
 
     /**
      * Adds the MapTiler logo control to the map.
+     *
+     * @param id The identifier for the control.
      */
-    fun addLogoControl() = stylableWorker.addLogoControl()
+    fun addLogoControl(id: String = java.util.UUID.randomUUID().toString()) = stylableWorker.addLogoControl(id)
 
     // Adds a point visualization layer using the helper with the provided options.
     internal fun addPointLayer(options: MTPointLayerOptions) = stylableWorker.addPointLayer(options)

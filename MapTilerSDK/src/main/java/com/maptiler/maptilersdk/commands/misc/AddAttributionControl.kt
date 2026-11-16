@@ -17,6 +17,7 @@ internal data class AddAttributionControl(
     val compact: Boolean? = null,
     val customAttribution: String? = null,
     val position: MTMapCorner = MTMapCorner.BOTTOM_RIGHT,
+    val id: String,
 ) : MTCommand {
     override val isPrimitiveReturnType: Boolean = false
 
@@ -27,7 +28,11 @@ internal data class AddAttributionControl(
                 AttributionControlOptions(compact, customAttribution),
             )
         val positionStr = JsonConfig.json.encodeToString(MTMapCorner.serializer(), position)
-        return "${MTBridge.MAP_OBJECT}.addControl(new ${MTBridge.SDK_OBJECT}.AttributionControl($options), $positionStr);"
+        return """
+            if (!window.mapControls) window.mapControls = {};
+            window.mapControls['$id'] = new ${MTBridge.SDK_OBJECT}.AttributionControl($options);
+            ${MTBridge.MAP_OBJECT}.addControl(window.mapControls['$id'], $positionStr);
+            """.trimIndent()
     }
 }
 
