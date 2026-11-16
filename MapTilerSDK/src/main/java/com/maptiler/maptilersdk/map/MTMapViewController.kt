@@ -1679,6 +1679,17 @@ class MTMapViewController(
         }
     }
 
+    /**
+     * Sets the request transform rules.
+     *
+     * @param rules List of transform rules or null to clear them.
+     */
+    fun setTransformRequest(rules: List<com.maptiler.maptilersdk.map.options.MTRequestTransformRule>?) {
+        coroutineScope?.launch {
+            bridge?.execute(com.maptiler.maptilersdk.commands.misc.SetTransformRequest(rules))
+        }
+    }
+
     override fun onEventTriggered(
         processor: EventProcessor,
         event: MTEvent,

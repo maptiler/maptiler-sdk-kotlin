@@ -425,6 +425,13 @@ class MTMapOptions {
     var isSessionLogicEnabled: Boolean = true
         private set
 
+    /**
+     * Rules to transform requests for map resources.
+     */
+    @SerialName("transformRequestRules")
+    var transformRequest: List<com.maptiler.maptilersdk.map.options.MTRequestTransformRule>? = null
+        private set
+
     /** Initializes map options with center, zoom, bearing, and pitch. */
     constructor(center: LngLat?, zoom: Double?, bearing: Double?, pitch: Double?) {
         this.center = center
@@ -576,6 +583,7 @@ class MTMapOptions {
         prewarm: Boolean? = null,
         locale: Map<String, String>? = null,
         maxCanvasSize: MTSize? = null,
+        transformRequest: List<com.maptiler.maptilersdk.map.options.MTRequestTransformRule>? = null,
     ) {
         this.language = language
         this.center = center
@@ -630,5 +638,6 @@ class MTMapOptions {
         this.prewarm = prewarm
         this.locale = locale
         this.maxCanvasSize = maxCanvasSize
+        this.transformRequest = transformRequest
     }
 }
