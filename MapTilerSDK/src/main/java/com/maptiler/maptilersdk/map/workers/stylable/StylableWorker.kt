@@ -142,9 +142,9 @@ internal class StylableWorker(
         }
     }
 
-    fun addLogoControl() {
+    fun addLogoControl(id: String = java.util.UUID.randomUUID().toString()) {
         scope.launch {
-            bridge.execute(AddLogoControl())
+            bridge.execute(AddLogoControl(id))
         }
     }
 

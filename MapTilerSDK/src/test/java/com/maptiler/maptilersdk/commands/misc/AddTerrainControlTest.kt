@@ -18,22 +18,29 @@ class AddTerrainControlTest {
         val command =
             AddTerrainControl(
                 position = MTMapCorner.BOTTOM_LEFT,
+                id = "terrain1",
             )
         assertFalse(command.isPrimitiveReturnType)
         assertEquals(
-            "${MTBridge.MAP_OBJECT}.addControl(" +
-                "new ${MTBridge.SDK_OBJECT}.MaptilerTerrainControl(), \"bottom-left\");",
+            """
+            if (!window.mapControls) window.mapControls = {};
+            window.mapControls['terrain1'] = new ${MTBridge.SDK_OBJECT}.MaptilerTerrainControl();
+            ${MTBridge.MAP_OBJECT}.addControl(window.mapControls['terrain1'], "bottom-left");
+            """.trimIndent(),
             command.toJS(),
         )
     }
 
     @Test
     fun testToJS_default() {
-        val command = AddTerrainControl()
+        val command = AddTerrainControl(id = "terrain1")
         assertFalse(command.isPrimitiveReturnType)
         assertEquals(
-            "${MTBridge.MAP_OBJECT}.addControl(" +
-                "new ${MTBridge.SDK_OBJECT}.MaptilerTerrainControl(), \"top-right\");",
+            """
+            if (!window.mapControls) window.mapControls = {};
+            window.mapControls['terrain1'] = new ${MTBridge.SDK_OBJECT}.MaptilerTerrainControl();
+            ${MTBridge.MAP_OBJECT}.addControl(window.mapControls['terrain1'], "top-right");
+            """.trimIndent(),
             command.toJS(),
         )
     }

@@ -16,15 +16,19 @@ import org.junit.Test
 class AddScaleControlTest {
     @Test
     fun testIsPrimitiveReturnType() {
-        val command = AddScaleControl()
+        val command = AddScaleControl(id = "scale1")
         assertFalse(command.isPrimitiveReturnType)
     }
 
     @Test
     fun testToJSWithDefaults() {
-        val command = AddScaleControl()
+        val command = AddScaleControl(id = "scale1")
         val expectedJS =
-            "${MTBridge.MAP_OBJECT}.addControl(new ${MTBridge.SDK_OBJECT}.ScaleControl({}), \"bottom-left\");"
+            """
+            if (!window.mapControls) window.mapControls = {};
+            window.mapControls['scale1'] = new ${MTBridge.SDK_OBJECT}.ScaleControl({});
+            ${MTBridge.MAP_OBJECT}.addControl(window.mapControls['scale1'], "bottom-left");
+            """.trimIndent()
         assertEquals(expectedJS, command.toJS())
     }
 
@@ -35,11 +39,14 @@ class AddScaleControlTest {
                 maxWidth = 150,
                 unit = MTScaleUnit.IMPERIAL,
                 position = MTMapCorner.TOP_RIGHT,
+                id = "scale1",
             )
         val expectedJS =
-            "${MTBridge.MAP_OBJECT}.addControl(" +
-                "new ${MTBridge.SDK_OBJECT}.ScaleControl({\"maxWidth\":150,\"unit\":\"imperial\"}), " +
-                "\"top-right\");"
+            """
+            if (!window.mapControls) window.mapControls = {};
+            window.mapControls['scale1'] = new ${MTBridge.SDK_OBJECT}.ScaleControl({"maxWidth":150,"unit":"imperial"});
+            ${MTBridge.MAP_OBJECT}.addControl(window.mapControls['scale1'], "top-right");
+            """.trimIndent()
         assertEquals(expectedJS, command.toJS())
     }
 }

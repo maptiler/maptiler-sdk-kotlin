@@ -17,6 +17,7 @@ internal data class AddScaleControl(
     val maxWidth: Int? = null,
     val unit: MTScaleUnit? = null,
     val position: MTMapCorner = MTMapCorner.BOTTOM_LEFT,
+    val id: String,
 ) : MTCommand {
     override val isPrimitiveReturnType: Boolean = false
 
@@ -27,7 +28,11 @@ internal data class AddScaleControl(
                 ScaleControlOptions(maxWidth, unit),
             )
         val positionStr = JsonConfig.json.encodeToString(MTMapCorner.serializer(), position)
-        return "${MTBridge.MAP_OBJECT}.addControl(new ${MTBridge.SDK_OBJECT}.ScaleControl($options), $positionStr);"
+        return """
+            if (!window.mapControls) window.mapControls = {};
+            window.mapControls['$id'] = new ${MTBridge.SDK_OBJECT}.ScaleControl($options);
+            ${MTBridge.MAP_OBJECT}.addControl(window.mapControls['$id'], $positionStr);
+            """.trimIndent()
     }
 }
 

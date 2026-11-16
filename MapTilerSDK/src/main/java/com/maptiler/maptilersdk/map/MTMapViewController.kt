@@ -617,11 +617,13 @@ class MTMapViewController(
      * @param compact If `true`, forces the compact attribution.
      * @param customAttribution A string to be added to the end of the attribution.
      * @param position The position of the control.
+     * @param id The identifier for the control.
      */
     fun addAttributionControl(
         compact: Boolean? = null,
         customAttribution: String? = null,
         position: MTMapCorner = MTMapCorner.BOTTOM_RIGHT,
+        id: String = java.util.UUID.randomUUID().toString(),
     ) {
         coroutineScope?.launch {
             bridge?.execute(
@@ -629,6 +631,7 @@ class MTMapViewController(
                     compact,
                     customAttribution,
                     position,
+                    id,
                 ),
             )
         }
@@ -640,11 +643,13 @@ class MTMapViewController(
      * @param maxWidth The maximum length of the scale control in pixels.
      * @param unit Unit of the distance.
      * @param position The position of the control.
+     * @param id The identifier for the control.
      */
     fun addScaleControl(
         maxWidth: Int? = null,
         unit: MTScaleUnit? = null,
         position: MTMapCorner = MTMapCorner.BOTTOM_LEFT,
+        id: String = java.util.UUID.randomUUID().toString(),
     ) {
         coroutineScope?.launch {
             bridge?.execute(
@@ -652,6 +657,7 @@ class MTMapViewController(
                     maxWidth,
                     unit,
                     position,
+                    id,
                 ),
             )
         }
@@ -664,12 +670,14 @@ class MTMapViewController(
      * @param showCompass Show compass button.
      * @param showZoom Show zoom buttons.
      * @param visualizePitch Visualize pitch on the compass.
+     * @param id The identifier for the control.
      */
     fun addNavigationControl(
         position: MTMapCorner = MTMapCorner.TOP_RIGHT,
         showCompass: Boolean = true,
         showZoom: Boolean = true,
         visualizePitch: Boolean = false,
+        id: String = java.util.UUID.randomUUID().toString(),
     ) {
         _navigationControlShowCompass = showCompass
         _navigationControlShowZoom = showZoom
@@ -681,6 +689,7 @@ class MTMapViewController(
                     showZoom,
                     visualizePitch,
                     position,
+                    id,
                 ),
             )
         }
@@ -690,12 +699,52 @@ class MTMapViewController(
      * Adds the MapTiler terrain control to the map.
      *
      * @param position The position of the control.
+     * @param id The identifier for the control.
      */
-    fun addTerrainControl(position: MTMapCorner = MTMapCorner.TOP_RIGHT) {
+    fun addTerrainControl(
+        position: MTMapCorner = MTMapCorner.TOP_RIGHT,
+        id: String = java.util.UUID.randomUUID().toString(),
+    ) {
         coroutineScope?.launch {
             bridge?.execute(
-                com.maptiler.maptilersdk.commands.misc.AddTerrainControl(position),
+                com.maptiler.maptilersdk.commands.misc.AddTerrainControl(position, id),
             )
+        }
+    }
+
+    /**
+     * Removes a control by its identifier.
+     *
+     * @param id The identifier of the control.
+     */
+    fun removeControl(id: String) {
+        coroutineScope?.launch {
+            bridge?.execute(
+                com.maptiler.maptilersdk.commands.misc.RemoveControl(id),
+            )
+        }
+    }
+
+    /**
+     * Checks if a control is on the map.
+     *
+     * @param id The identifier of the control.
+     * @return true if the control is present, false otherwise.
+     */
+    suspend fun hasControl(id: String): Boolean {
+        val returnTypeValue = bridge?.execute(com.maptiler.maptilersdk.commands.misc.HasControl(id))
+        return when (returnTypeValue) {
+            is com.maptiler.maptilersdk.bridge.MTBridgeReturnType.BoolValue -> returnTypeValue.value
+            is com.maptiler.maptilersdk.bridge.MTBridgeReturnType.DoubleValue -> returnTypeValue.value != 0.0
+            is com.maptiler.maptilersdk.bridge.MTBridgeReturnType.StringValue -> {
+                val normalized = returnTypeValue.value.trim('"').trim().lowercase()
+                when (normalized) {
+                    "true" -> true
+                    "false" -> false
+                    else -> normalized.toDoubleOrNull()?.let { it != 0.0 } ?: false
+                }
+            }
+            else -> false
         }
     }
 

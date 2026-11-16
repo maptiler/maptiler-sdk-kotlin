@@ -13,11 +13,16 @@ import com.maptiler.maptilersdk.map.types.MTMapCorner
 
 internal data class AddTerrainControl(
     val position: MTMapCorner = MTMapCorner.TOP_RIGHT,
+    val id: String,
 ) : MTCommand {
     override val isPrimitiveReturnType: Boolean = false
 
     override fun toJS(): String {
         val positionStr = JsonConfig.json.encodeToString(MTMapCorner.serializer(), position)
-        return "${MTBridge.MAP_OBJECT}.addControl(new ${MTBridge.SDK_OBJECT}.MaptilerTerrainControl(), $positionStr);"
+        return """
+            if (!window.mapControls) window.mapControls = {};
+            window.mapControls['$id'] = new ${MTBridge.SDK_OBJECT}.MaptilerTerrainControl();
+            ${MTBridge.MAP_OBJECT}.addControl(window.mapControls['$id'], $positionStr);
+            """.trimIndent()
     }
 }
