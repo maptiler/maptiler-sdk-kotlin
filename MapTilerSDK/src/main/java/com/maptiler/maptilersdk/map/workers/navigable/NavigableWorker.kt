@@ -35,6 +35,9 @@ import com.maptiler.maptilersdk.commands.misc.PointRound
 import com.maptiler.maptilersdk.commands.misc.PointSub
 import com.maptiler.maptilersdk.commands.misc.PointUnit
 import com.maptiler.maptilersdk.commands.navigation.AreTilesLoaded
+import com.maptiler.maptilersdk.commands.navigation.CalculateCameraOptionsFromCameraLngLatAltRotation
+import com.maptiler.maptilersdk.commands.navigation.CalculateCameraOptionsFromTo
+import com.maptiler.maptilersdk.commands.navigation.CameraForBounds
 import com.maptiler.maptilersdk.commands.navigation.CenterOnIpPoint
 import com.maptiler.maptilersdk.commands.navigation.EaseTo
 import com.maptiler.maptilersdk.commands.navigation.FitBounds
@@ -208,6 +211,56 @@ internal class NavigableWorker(
             bridge.execute(
                 FitBounds(bounds, options),
             )
+        }
+    }
+
+    override suspend fun cameraForBounds(
+        bounds: MTBounds,
+        options: MTFitBoundsOptions?,
+    ): MTCameraOptions? {
+        val returnTypeValue =
+            bridge.execute(
+                CameraForBounds(bounds, options),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> JsonConfig.json.decodeFromString<MTCameraOptions>(returnTypeValue.value)
+            else -> null
+        }
+    }
+
+    override suspend fun calculateCameraOptionsFromTo(
+        from: LngLat,
+        altitudeFrom: Double,
+        to: LngLat,
+        altitudeTo: Double,
+    ): MTCameraOptions? {
+        val returnTypeValue =
+            bridge.execute(
+                CalculateCameraOptionsFromTo(from, altitudeFrom, to, altitudeTo),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> JsonConfig.json.decodeFromString<MTCameraOptions>(returnTypeValue.value)
+            else -> null
+        }
+    }
+
+    override suspend fun calculateCameraOptionsFromCameraLngLatAltRotation(
+        lngLat: LngLat,
+        altitude: Double,
+        bearing: Double,
+        pitch: Double,
+        roll: Double,
+    ): MTCameraOptions? {
+        val returnTypeValue =
+            bridge.execute(
+                CalculateCameraOptionsFromCameraLngLatAltRotation(lngLat, altitude, bearing, pitch, roll),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> JsonConfig.json.decodeFromString<MTCameraOptions>(returnTypeValue.value)
+            else -> null
         }
     }
 
