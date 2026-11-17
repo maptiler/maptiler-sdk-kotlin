@@ -40,6 +40,9 @@ import com.maptiler.maptilersdk.commands.annotations.SetSubpixelPositioningToTex
 import com.maptiler.maptilersdk.commands.annotations.SetTextToTextPopup
 import com.maptiler.maptilersdk.commands.annotations.ToggleMarkerPopup
 import com.maptiler.maptilersdk.commands.annotations.TrackTextPopupPointer
+import com.maptiler.maptilersdk.commands.gestures.CooperativeGesturesDisable
+import com.maptiler.maptilersdk.commands.gestures.CooperativeGesturesEnable
+import com.maptiler.maptilersdk.commands.gestures.IsCooperativeGesturesEnabled
 import com.maptiler.maptilersdk.commands.misc.GetMaptilerSessionId
 import com.maptiler.maptilersdk.commands.misc.GpxToGeoJSON
 import com.maptiler.maptilersdk.commands.misc.KmlToGeoJSON
@@ -1697,6 +1700,34 @@ class MTMapViewController(
      * @return A new MTPoint with the rounded coordinates.
      */
     override suspend fun pointRound(point: MTPoint): MTPoint = navigableWorker.pointRound(point)
+
+    /**
+     * Enables cooperative gestures.
+     * With cooperativeGestures on, panning needs two fingers.
+     */
+    fun enableCooperativeGestures() {
+        coroutineScope?.launch {
+            bridge?.execute(CooperativeGesturesEnable())
+        }
+    }
+
+    /**
+     * Disables cooperative gestures.
+     */
+    fun disableCooperativeGestures() {
+        coroutineScope?.launch {
+            bridge?.execute(CooperativeGesturesDisable())
+        }
+    }
+
+    /**
+     * Returns true if cooperative gestures are enabled.
+     */
+    suspend fun isCooperativeGesturesEnabled(): Boolean {
+        val br = bridge ?: return false
+        val result = br.execute(IsCooperativeGesturesEnabled())
+        return (result as? com.maptiler.maptilersdk.bridge.MTBridgeReturnType.BoolValue)?.value ?: false
+    }
 
     /**
      * Sets the maximum number of images (raster tiles, sprites, icons) to load in parallel.
