@@ -1415,6 +1415,11 @@ class MTMapViewController(
     override suspend fun getCameraTargetElevation(): Double = navigableWorker.getCameraTargetElevation()
 
     /**
+     * Returns a hash of the current camera state.
+     */
+    override suspend fun getCameraHash(): String = navigableWorker.getCameraHash()
+
+    /**
      * Returns the geographical constraints currently applied to the map, if any.
      */
     override suspend fun getMaxBounds(): MTBounds? = navigableWorker.getMaxBounds()

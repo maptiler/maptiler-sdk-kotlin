@@ -291,6 +291,11 @@ interface MTNavigable {
     suspend fun getCameraTargetElevation(): Double
 
     /**
+     * Returns a hash of the current camera state.
+     */
+    suspend fun getCameraHash(): String
+
+    /**
      * Returns the geographical constraints currently applied to the map, if any.
      */
     suspend fun getMaxBounds(): MTBounds?

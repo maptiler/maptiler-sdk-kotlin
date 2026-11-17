@@ -41,7 +41,7 @@ internal data class GetLayerProperty(
             " var m = ${MTBridge.MAP_OBJECT};" +
             " if (!m.getLayer($id)) { return null; }" +
             " var v = m.${kind.jsGetter}($id, $property);" +
-            " return v === undefined ? null : v;" +
+            " return v === undefined ? null : JSON.stringify(v);" +
             " })();"
     }
 }
