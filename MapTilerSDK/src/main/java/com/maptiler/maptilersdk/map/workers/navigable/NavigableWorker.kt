@@ -46,6 +46,7 @@ import com.maptiler.maptilersdk.commands.navigation.FitToIpBounds
 import com.maptiler.maptilersdk.commands.navigation.FlyTo
 import com.maptiler.maptilersdk.commands.navigation.GetBearing
 import com.maptiler.maptilersdk.commands.navigation.GetBounds
+import com.maptiler.maptilersdk.commands.navigation.GetCameraHash
 import com.maptiler.maptilersdk.commands.navigation.GetCameraTargetElevation
 import com.maptiler.maptilersdk.commands.navigation.GetCenter
 import com.maptiler.maptilersdk.commands.navigation.GetCenterClampedToGround
@@ -566,6 +567,18 @@ internal class NavigableWorker(
             is DoubleValue -> returnTypeValue.value
             is StringValue -> returnTypeValue.value.toDoubleOrNull() ?: 0.0
             else -> 0.0
+        }
+    }
+
+    override suspend fun getCameraHash(): String {
+        val returnTypeValue =
+            bridge.execute(
+                GetCameraHash(),
+            )
+
+        return when (returnTypeValue) {
+            is StringValue -> returnTypeValue.value
+            else -> ""
         }
     }
 

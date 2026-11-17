@@ -41,9 +41,13 @@ import com.maptiler.maptilersdk.commands.style.EnableGlobeProjection
 import com.maptiler.maptilersdk.commands.style.EnableHalo
 import com.maptiler.maptilersdk.commands.style.EnableMercatorProjection
 import com.maptiler.maptilersdk.commands.style.EnableTerrain
+import com.maptiler.maptilersdk.commands.style.GetFilter
+import com.maptiler.maptilersdk.commands.style.GetGlyphs
 import com.maptiler.maptilersdk.commands.style.GetIdForReferenceStyle
 import com.maptiler.maptilersdk.commands.style.GetIdForStyleVariant
 import com.maptiler.maptilersdk.commands.style.GetLayerProperty
+import com.maptiler.maptilersdk.commands.style.GetLayersOrder
+import com.maptiler.maptilersdk.commands.style.GetLight
 import com.maptiler.maptilersdk.commands.style.GetNameForReferenceStyle
 import com.maptiler.maptilersdk.commands.style.GetNameForStyleVariant
 import com.maptiler.maptilersdk.commands.style.GetProjection
@@ -508,6 +512,42 @@ internal class StylableWorker(
         value: PropertyValue,
     ) {
         bridge.execute(SetPaintProperty(layerId, name, value))
+    }
+
+    suspend fun getFilter(layerId: String): JsonElement? {
+        val returnTypeValue = bridge.execute(GetFilter(layerId))
+        return if (returnTypeValue is MTBridgeReturnType.StringValue) {
+            runCatching { JsonConfig.json.decodeFromString<JsonElement>(returnTypeValue.value) }.getOrNull()
+        } else {
+            null
+        }
+    }
+
+    suspend fun getGlyphs(): String? {
+        val returnTypeValue = bridge.execute(GetGlyphs())
+        return if (returnTypeValue is MTBridgeReturnType.StringValue) {
+            returnTypeValue.value
+        } else {
+            null
+        }
+    }
+
+    suspend fun getLayersOrder(): List<String> {
+        val returnTypeValue = bridge.execute(GetLayersOrder())
+        return if (returnTypeValue is MTBridgeReturnType.StringValue) {
+            runCatching { JsonConfig.json.decodeFromString<List<String>>(returnTypeValue.value) }.getOrDefault(emptyList())
+        } else {
+            emptyList()
+        }
+    }
+
+    suspend fun getLight(): JsonElement? {
+        val returnTypeValue = bridge.execute(GetLight())
+        return if (returnTypeValue is MTBridgeReturnType.StringValue) {
+            runCatching { JsonConfig.json.decodeFromString<JsonElement>(returnTypeValue.value) }.getOrNull()
+        } else {
+            null
+        }
     }
 
     suspend fun getStyleLayers(): List<MTStyleLayerInfo> {
