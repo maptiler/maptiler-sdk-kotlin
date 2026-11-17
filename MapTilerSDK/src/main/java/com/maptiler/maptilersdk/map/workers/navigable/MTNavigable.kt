@@ -123,6 +123,52 @@ interface MTNavigable {
     )
 
     /**
+     * Calculates the camera options required to fit the given bounds.
+     *
+     * @param bounds The bounds to fit.
+     * @param options Optional configuration to determine padding, offset, bearing, and pitch.
+     * @return The calculated camera options, or null if the map size is zero.
+     */
+    suspend fun cameraForBounds(
+        bounds: MTBounds,
+        options: MTFitBoundsOptions? = null,
+    ): MTCameraOptions?
+
+    /**
+     * Calculates the camera options required to view the map from one position looking at another.
+     *
+     * @param from The position of the camera.
+     * @param altitudeFrom The altitude of the camera in meters.
+     * @param to The position of the target to look at.
+     * @param altitudeTo The altitude of the target in meters.
+     * @return The calculated camera options.
+     */
+    suspend fun calculateCameraOptionsFromTo(
+        from: LngLat,
+        altitudeFrom: Double,
+        to: LngLat,
+        altitudeTo: Double,
+    ): MTCameraOptions?
+
+    /**
+     * Calculates the camera options from a camera position, altitude, bearing, pitch, and roll.
+     *
+     * @param lngLat The position of the camera.
+     * @param altitude The altitude of the camera in meters.
+     * @param bearing The bearing of the camera.
+     * @param pitch The pitch of the camera.
+     * @param roll The roll of the camera.
+     * @return The calculated camera options.
+     */
+    suspend fun calculateCameraOptionsFromCameraLngLatAltRotation(
+        lngLat: LngLat,
+        altitude: Double,
+        bearing: Double,
+        pitch: Double,
+        roll: Double,
+    ): MTCameraOptions?
+
+    /**
      * Returns the geographical bounds currently visible in the viewport.
      */
     suspend fun getBounds(): MTBounds
