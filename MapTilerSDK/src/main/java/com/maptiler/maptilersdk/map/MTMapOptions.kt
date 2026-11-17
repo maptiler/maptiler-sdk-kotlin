@@ -432,6 +432,13 @@ class MTMapOptions {
     var transformRequest: List<com.maptiler.maptilersdk.map.options.MTRequestTransformRule>? = null
         private set
 
+    /**
+     * Boolean indicating whether cooperative gestures are enabled.
+     * When cooperativeGestures is on, panning needs two fingers.
+     */
+    var cooperativeGestures: Boolean? = null
+        private set
+
     /** Initializes map options with center, zoom, bearing, and pitch. */
     constructor(center: LngLat?, zoom: Double?, bearing: Double?, pitch: Double?) {
         this.center = center
@@ -584,6 +591,7 @@ class MTMapOptions {
         locale: Map<String, String>? = null,
         maxCanvasSize: MTSize? = null,
         transformRequest: List<com.maptiler.maptilersdk.map.options.MTRequestTransformRule>? = null,
+        cooperativeGestures: Boolean? = null,
     ) {
         this.language = language
         this.center = center
@@ -639,5 +647,6 @@ class MTMapOptions {
         this.locale = locale
         this.maxCanvasSize = maxCanvasSize
         this.transformRequest = transformRequest
+        this.cooperativeGestures = cooperativeGestures
     }
 }

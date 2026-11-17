@@ -27,4 +27,13 @@ class MTMapOptionsTest {
         assertEquals("{\"en\":\"English\"}", jsonElement["locale"].toString())
         assertEquals("[800,600]", jsonElement["maxCanvasSize"].toString())
     }
+
+    @Test
+    fun `cooperativeGestures serializes with map options`() {
+        val options = MTMapOptions(cooperativeGestures = true)
+
+        val jsonElement = JsonConfig.json.parseToJsonElement(JsonConfig.json.encodeToString(options)).jsonObject
+
+        assertEquals("true", jsonElement["cooperativeGestures"].toString())
+    }
 }
