@@ -51,9 +51,16 @@ import com.maptiler.maptilersdk.commands.style.GetLight
 import com.maptiler.maptilersdk.commands.style.GetNameForReferenceStyle
 import com.maptiler.maptilersdk.commands.style.GetNameForStyleVariant
 import com.maptiler.maptilersdk.commands.style.GetProjection
+import com.maptiler.maptilersdk.commands.style.GetSky
+import com.maptiler.maptilersdk.commands.style.GetSource
+import com.maptiler.maptilersdk.commands.style.GetSprite
+import com.maptiler.maptilersdk.commands.style.GetStyle
 import com.maptiler.maptilersdk.commands.style.GetStyleLayers
+import com.maptiler.maptilersdk.commands.style.GetTerrain
+import com.maptiler.maptilersdk.commands.style.GetTerrainExaggeration
 import com.maptiler.maptilersdk.commands.style.HasTerrain
 import com.maptiler.maptilersdk.commands.style.IsGlobeProjection
+import com.maptiler.maptilersdk.commands.style.IsLanguageUpdated
 import com.maptiler.maptilersdk.commands.style.IsSourceLoaded
 import com.maptiler.maptilersdk.commands.style.IsStyleLoaded
 import com.maptiler.maptilersdk.commands.style.LayerPropertyKind
@@ -770,6 +777,54 @@ internal class StylableWorker(
             is MTBridgeReturnType.StringValue -> if (returnTypeValue.value == "true") true else false
             else -> false
         }
+    }
+
+    suspend fun getSky(): MTSky? {
+        val returnTypeValue = bridge.execute(GetSky())
+        val json = (returnTypeValue as? MTBridgeReturnType.StringValue)?.value ?: return null
+        return runCatching { JsonConfig.json.decodeFromString<MTSky>(json) }.getOrNull()
+    }
+
+    suspend fun getSource(sourceId: String): String? {
+        val returnTypeValue = bridge.execute(GetSource(sourceId))
+        val json = (returnTypeValue as? MTBridgeReturnType.StringValue)?.value ?: return null
+        if (json == "null") return null
+        return json
+    }
+
+    suspend fun getSprite(): String? {
+        val returnTypeValue = bridge.execute(GetSprite())
+        val json = (returnTypeValue as? MTBridgeReturnType.StringValue)?.value ?: return null
+        if (json == "null") return null
+        return json
+    }
+
+    suspend fun getStyle(): String? {
+        val returnTypeValue = bridge.execute(GetStyle())
+        val json = (returnTypeValue as? MTBridgeReturnType.StringValue)?.value ?: return null
+        if (json == "null") return null
+        return json
+    }
+
+    suspend fun getTerrain(): com.maptiler.maptilersdk.map.style.MTTerrainSpecification? {
+        val returnTypeValue = bridge.execute(GetTerrain())
+        val json = (returnTypeValue as? MTBridgeReturnType.StringValue)?.value ?: return null
+        if (json == "null") return null
+        return runCatching { JsonConfig.json.decodeFromString<com.maptiler.maptilersdk.map.style.MTTerrainSpecification>(json) }.getOrNull()
+    }
+
+    suspend fun getTerrainExaggeration(): Double {
+        val returnTypeValue = bridge.execute(GetTerrainExaggeration())
+        return when (returnTypeValue) {
+            is MTBridgeReturnType.DoubleValue -> returnTypeValue.value
+            is MTBridgeReturnType.StringValue -> returnTypeValue.value.toDoubleOrNull() ?: 0.0
+            else -> 0.0
+        }
+    }
+
+    suspend fun isLanguageUpdated(): Boolean {
+        val returnTypeValue = bridge.execute(IsLanguageUpdated())
+        return (returnTypeValue as? MTBridgeReturnType.BoolValue)?.value ?: false
     }
 
     suspend fun createColorRamp(options: MTColorRampOptions = MTColorRampOptions()): MTColorRamp {

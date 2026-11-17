@@ -669,6 +669,41 @@ class MTStyle(
     fun setSky(sky: com.maptiler.maptilersdk.map.options.MTSky) = stylableWorker.setSky(sky)
 
     /**
+     * Returns the sky configuration.
+     */
+    suspend fun getSky(): com.maptiler.maptilersdk.map.options.MTSky? = stylableWorker.getSky()
+
+    /**
+     * Returns the source JSON for a given id.
+     */
+    suspend fun getSource(id: String): String? = stylableWorker.getSource(id)
+
+    /**
+     * Returns the sprite JSON or URL.
+     */
+    suspend fun getSprite(): String? = stylableWorker.getSprite()
+
+    /**
+     * Returns the style JSON.
+     */
+    suspend fun getStyle(): String? = stylableWorker.getStyle()
+
+    /**
+     * Returns the terrain specification.
+     */
+    suspend fun getTerrain(): MTTerrainSpecification? = stylableWorker.getTerrain()
+
+    /**
+     * Returns the terrain exaggeration.
+     */
+    suspend fun getTerrainExaggeration(): Double = stylableWorker.getTerrainExaggeration()
+
+    /**
+     * Returns true if language was updated.
+     */
+    suspend fun isLanguageUpdated(): Boolean = stylableWorker.isLanguageUpdated()
+
+    /**
      * Sets the globe space background (deep space/skybox).
      * Any field not explicitly provided keeps its previous value.
      */
