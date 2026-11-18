@@ -521,6 +521,29 @@ internal class StylableWorker(
         bridge.execute(SetPaintProperty(layerId, name, value))
     }
 
+    fun setFeatureState(
+        feature: com.maptiler.maptilersdk.map.types.MTFeatureIdentifier,
+        stateJson: String,
+    ) {
+        scope.launch { bridge.execute(com.maptiler.maptilersdk.commands.style.SetFeatureState(feature, stateJson)) }
+    }
+
+    suspend fun getFeatureState(feature: com.maptiler.maptilersdk.map.types.MTFeatureIdentifier): JsonElement? {
+        val returnTypeValue = bridge.execute(com.maptiler.maptilersdk.commands.style.GetFeatureState(feature))
+        return if (returnTypeValue is MTBridgeReturnType.StringValue) {
+            runCatching { JsonConfig.json.decodeFromString<JsonElement>(returnTypeValue.value) }.getOrNull()
+        } else {
+            null
+        }
+    }
+
+    fun removeFeatureState(
+        feature: com.maptiler.maptilersdk.map.types.MTFeatureIdentifier,
+        key: String? = null,
+    ) {
+        scope.launch { bridge.execute(com.maptiler.maptilersdk.commands.style.RemoveFeatureState(feature, key)) }
+    }
+
     suspend fun getFilter(layerId: String): JsonElement? {
         val returnTypeValue = bridge.execute(GetFilter(layerId))
         return if (returnTypeValue is MTBridgeReturnType.StringValue) {
