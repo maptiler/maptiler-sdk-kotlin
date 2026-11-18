@@ -251,6 +251,11 @@ interface MTNavigable {
     fun setVerticalFieldOfView(verticalFieldOfView: Double)
 
     /**
+     * Returns the map's vertical field of view.
+     */
+    suspend fun getVerticalFieldOfView(): Double
+
+    /**
      * Returns the map's current center.
      */
     suspend fun getCenter(): LngLat

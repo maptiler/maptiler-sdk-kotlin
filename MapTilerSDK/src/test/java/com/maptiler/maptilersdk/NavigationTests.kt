@@ -17,6 +17,7 @@ import com.maptiler.maptilersdk.commands.navigation.GetMinPitch
 import com.maptiler.maptilersdk.commands.navigation.GetMinZoom
 import com.maptiler.maptilersdk.commands.navigation.GetPixelRatio
 import com.maptiler.maptilersdk.commands.navigation.GetRenderWorldCopies
+import com.maptiler.maptilersdk.commands.navigation.GetVerticalFieldOfView
 import com.maptiler.maptilersdk.commands.navigation.GetZoom
 import com.maptiler.maptilersdk.commands.navigation.PanBy
 import com.maptiler.maptilersdk.commands.navigation.PanTo
@@ -123,6 +124,11 @@ class NavigationTests {
     @Test fun setVerticalFieldOfViewToJS_ReturnsCorrectJSString() {
         val command = SetVerticalFieldOfView(36.87)
         assertEquals("${MTBridge.MAP_OBJECT}.setVerticalFieldOfView(36.87);", command.toJS())
+    }
+
+    @Test fun getVerticalFieldOfViewToJS_ReturnsCorrectJSString() {
+        val command = GetVerticalFieldOfView()
+        assertEquals("${MTBridge.MAP_OBJECT}.getVerticalFieldOfView();", command.toJS())
     }
 
     @Test fun panByToJS_ReturnsCorrectJSString() {

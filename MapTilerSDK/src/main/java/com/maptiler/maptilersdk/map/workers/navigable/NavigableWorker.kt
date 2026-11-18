@@ -59,6 +59,7 @@ import com.maptiler.maptilersdk.commands.navigation.GetPitch
 import com.maptiler.maptilersdk.commands.navigation.GetPixelRatio
 import com.maptiler.maptilersdk.commands.navigation.GetRenderWorldCopies
 import com.maptiler.maptilersdk.commands.navigation.GetRoll
+import com.maptiler.maptilersdk.commands.navigation.GetVerticalFieldOfView
 import com.maptiler.maptilersdk.commands.navigation.IsMoving
 import com.maptiler.maptilersdk.commands.navigation.IsRotating
 import com.maptiler.maptilersdk.commands.navigation.IsZooming
@@ -432,6 +433,19 @@ internal class NavigableWorker(
             bridge.execute(
                 SetVerticalFieldOfView(sanitized),
             )
+        }
+    }
+
+    override suspend fun getVerticalFieldOfView(): Double {
+        val returnTypeValue =
+            bridge.execute(
+                GetVerticalFieldOfView(),
+            )
+
+        return when (returnTypeValue) {
+            is DoubleValue -> returnTypeValue.value
+            is StringValue -> returnTypeValue.value.toDoubleOrNull() ?: 0.0
+            else -> 0.0
         }
     }
 

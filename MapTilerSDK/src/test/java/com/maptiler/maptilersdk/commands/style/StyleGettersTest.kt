@@ -43,4 +43,53 @@ class StyleGettersTest {
         )
         assertTrue(command.isPrimitiveReturnType)
     }
+
+    @Test
+    fun `GetSky emits expected JS`() {
+        val command = GetSky()
+        assertEquals("JSON.stringify(map.getSky());", command.toJS())
+        assertTrue(command.isPrimitiveReturnType)
+    }
+
+    @Test
+    fun `GetSource emits expected JS`() {
+        val command = GetSource("mysource")
+        assertEquals("JSON.stringify(map.getSource(\"mysource\"));", command.toJS())
+        assertTrue(command.isPrimitiveReturnType)
+    }
+
+    @Test
+    fun `GetSprite emits expected JS`() {
+        val command = GetSprite()
+        assertEquals("JSON.stringify(map.getSprite());", command.toJS())
+        assertTrue(command.isPrimitiveReturnType)
+    }
+
+    @Test
+    fun `GetStyle emits expected JS`() {
+        val command = GetStyle()
+        assertEquals("JSON.stringify(map.getStyle());", command.toJS())
+        assertTrue(command.isPrimitiveReturnType)
+    }
+
+    @Test
+    fun `GetTerrain emits expected JS`() {
+        val command = GetTerrain()
+        assertEquals("JSON.stringify(map.getTerrain());", command.toJS())
+        assertTrue(command.isPrimitiveReturnType)
+    }
+
+    @Test
+    fun `GetTerrainExaggeration emits expected JS`() {
+        val command = GetTerrainExaggeration()
+        assertEquals("map.getTerrainExaggeration();", command.toJS())
+        assertTrue(command.isPrimitiveReturnType)
+    }
+
+    @Test
+    fun `IsLanguageUpdated emits expected JS`() {
+        val command = IsLanguageUpdated()
+        assertEquals("map.isLanguageUpdated();", command.toJS())
+        assertTrue(command.isPrimitiveReturnType)
+    }
 }

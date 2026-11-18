@@ -524,6 +524,11 @@ class MTMapViewController(
     }
 
     /**
+     * Returns the map's terrain exaggeration.
+     */
+    suspend fun getTerrainExaggeration(): Double = style?.getTerrainExaggeration() ?: 0.0
+
+    /**
      * Set the map terrain.
      *
      * @param terrain The terrain specification or null to disable terrain.
@@ -535,6 +540,11 @@ class MTMapViewController(
     }
 
     /**
+     * Returns the map's terrain specification.
+     */
+    suspend fun getTerrain(): com.maptiler.maptilersdk.map.style.MTTerrainSpecification? = style?.getTerrain()
+
+    /**
      * Updates the sprite of the map.
      *
      * @param spriteUrl The URL string pointing to the sprite image and JSON.
@@ -544,6 +554,31 @@ class MTMapViewController(
             bridge?.execute(com.maptiler.maptilersdk.commands.style.SetSprite(spriteUrl))
         }
     }
+
+    /**
+     * Returns the map's sprite JSON.
+     */
+    suspend fun getSprite(): String? = style?.getSprite()
+
+    /**
+     * Returns the map's sky configuration.
+     */
+    suspend fun getSky(): com.maptiler.maptilersdk.map.options.MTSky? = style?.getSky()
+
+    /**
+     * Returns the map's source JSON for a given id.
+     */
+    suspend fun getSource(id: String): String? = style?.getSource(id)
+
+    /**
+     * Returns the map's style JSON.
+     */
+    suspend fun getStyle(): String? = style?.getStyle()
+
+    /**
+     * Returns whether the map's language was updated.
+     */
+    suspend fun isLanguageUpdated(): Boolean = style?.isLanguageUpdated() ?: false
 
     /**
      * Sets the secondary map language.
@@ -1373,6 +1408,11 @@ class MTMapViewController(
      * Sets the map's vertical field of view in degrees (defaults to 36.87 degrees).
      */
     override fun setVerticalFieldOfView(verticalFieldOfView: Double) = navigableWorker.setVerticalFieldOfView(verticalFieldOfView)
+
+    /**
+     * Returns the map's vertical field of view in degrees.
+     */
+    override suspend fun getVerticalFieldOfView(): Double = navigableWorker.getVerticalFieldOfView()
 
     /**
      * Returns the map's current center.
