@@ -58,12 +58,14 @@ import com.maptiler.maptilersdk.commands.style.GetStyle
 import com.maptiler.maptilersdk.commands.style.GetStyleLayers
 import com.maptiler.maptilersdk.commands.style.GetTerrain
 import com.maptiler.maptilersdk.commands.style.GetTerrainExaggeration
+import com.maptiler.maptilersdk.commands.style.HasImage
 import com.maptiler.maptilersdk.commands.style.HasTerrain
 import com.maptiler.maptilersdk.commands.style.IsGlobeProjection
 import com.maptiler.maptilersdk.commands.style.IsLanguageUpdated
 import com.maptiler.maptilersdk.commands.style.IsSourceLoaded
 import com.maptiler.maptilersdk.commands.style.IsStyleLoaded
 import com.maptiler.maptilersdk.commands.style.LayerPropertyKind
+import com.maptiler.maptilersdk.commands.style.ListImages
 import com.maptiler.maptilersdk.commands.style.MoveLayer
 import com.maptiler.maptilersdk.commands.style.PlayVideoSourceById
 import com.maptiler.maptilersdk.commands.style.RemoveImage
@@ -344,6 +346,26 @@ internal class StylableWorker(
                 UpdateImage(identifier, image),
             )
         }
+    }
+
+    suspend fun hasImage(identifier: String): Boolean {
+        val result = bridge.execute(HasImage(identifier))
+        if (result is MTBridgeReturnType.BoolValue) return result.value
+        if (result is MTBridgeReturnType.StringValue) return result.value == "true"
+        return false
+    }
+
+    suspend fun listImages(): List<String> {
+        val result = bridge.execute(ListImages())
+        if (result is MTBridgeReturnType.StringArray) return result.value
+        if (result is MTBridgeReturnType.StringValue) {
+            return try {
+                JsonConfig.json.decodeFromString<List<String>>(result.value)
+            } catch (e: Exception) {
+                emptyList()
+            }
+        }
+        return emptyList()
     }
 
     fun removeImage(name: String) {
