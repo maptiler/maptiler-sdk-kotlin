@@ -576,6 +576,41 @@ class MTMapViewController(
     suspend fun getStyle(): String? = style?.getStyle()
 
     /**
+     * Sets the state of a feature.
+     *
+     * @param feature The feature identifier.
+     * @param state Raw JSON object string representing the state.
+     */
+    fun setFeatureState(
+        feature: com.maptiler.maptilersdk.map.types.MTFeatureIdentifier,
+        state: String,
+    ) {
+        style?.setFeatureState(feature, state)
+    }
+
+    /**
+     * Gets the state of a feature.
+     *
+     * @param feature The feature identifier.
+     * @return The state as a JSON element, or null.
+     */
+    suspend fun getFeatureState(feature: com.maptiler.maptilersdk.map.types.MTFeatureIdentifier): kotlinx.serialization.json.JsonElement? =
+        style?.getFeatureState(feature)
+
+    /**
+     * Removes the state of a feature.
+     *
+     * @param feature The feature identifier.
+     * @param key The state key to remove. If null, all states are removed.
+     */
+    fun removeFeatureState(
+        feature: com.maptiler.maptilersdk.map.types.MTFeatureIdentifier,
+        key: String? = null,
+    ) {
+        style?.removeFeatureState(feature, key)
+    }
+
+    /**
      * Returns whether the map's language was updated.
      */
     suspend fun isLanguageUpdated(): Boolean = style?.isLanguageUpdated() ?: false
