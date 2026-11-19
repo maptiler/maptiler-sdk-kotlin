@@ -46,6 +46,9 @@ import com.maptiler.maptilersdk.commands.gestures.IsCooperativeGesturesEnabled
 import com.maptiler.maptilersdk.commands.misc.GetMaptilerSessionId
 import com.maptiler.maptilersdk.commands.misc.GpxToGeoJSON
 import com.maptiler.maptilersdk.commands.misc.KmlToGeoJSON
+import com.maptiler.maptilersdk.commands.misc.MapOnLoadAsync
+import com.maptiler.maptilersdk.commands.misc.MapOnLoadWithTerrainAsync
+import com.maptiler.maptilersdk.commands.misc.MapOnReadyAsync
 import com.maptiler.maptilersdk.commands.misc.Redraw
 import com.maptiler.maptilersdk.commands.misc.Repaint
 import com.maptiler.maptilersdk.commands.misc.TriggerRepaint
@@ -1519,6 +1522,30 @@ class MTMapViewController(
      * Returns true if 3D terrain visualization is enabled.
      */
     suspend fun hasTerrain(): Boolean = style?.hasTerrain() ?: false
+
+    /**
+     * Resolves when the map is fully loaded, including style and tiles.
+     * Resolves immediately if the map has already reached this state.
+     */
+    suspend fun onLoadAsync() {
+        bridge?.execute(MapOnLoadAsync())
+    }
+
+    /**
+     * Resolves when the map is ready to accept style modifications.
+     * Resolves immediately if the map has already reached this state.
+     */
+    suspend fun onReadyAsync() {
+        bridge?.execute(MapOnReadyAsync())
+    }
+
+    /**
+     * Resolves when the map is fully loaded, including style, tiles, and 3D terrain.
+     * Resolves immediately if the map has already reached this state.
+     */
+    suspend fun onLoadWithTerrainAsync() {
+        bridge?.execute(MapOnLoadWithTerrainAsync())
+    }
 
     /**
      * Registers a sprite resource that can be referenced from style layers.
