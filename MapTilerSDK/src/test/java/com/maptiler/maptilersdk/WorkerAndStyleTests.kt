@@ -270,4 +270,52 @@ class WorkerAndStyleTests {
             style.removeLayer(layer)
         }
     }
+
+    @Test fun stylableWorker_hasImage_ParsesReturnType() =
+        runBlocking {
+            val responses =
+                ArrayDeque(
+                    listOf(
+                        MTBridgeReturnType.BoolValue(true),
+                        MTBridgeReturnType.StringValue("true"),
+                        MTBridgeReturnType.BoolValue(false),
+                    ),
+                )
+
+            val exec =
+                object : MTCommandExecutable {
+                    override suspend fun execute(command: MTCommand): MTBridgeReturnType = responses.removeFirst()
+                }
+
+            val bridge = MTBridge(exec)
+            val worker = StylableWorker(bridge, this)
+
+            assertTrue(worker.hasImage("img1"))
+            assertTrue(worker.hasImage("img2"))
+            assertEquals(false, worker.hasImage("img3"))
+        }
+
+    @Test fun stylableWorker_listImages_ParsesReturnType() =
+        runBlocking {
+            val responses =
+                ArrayDeque(
+                    listOf(
+                        MTBridgeReturnType.StringArray(listOf("img1", "img2")),
+                        MTBridgeReturnType.StringValue("[\"img3\"]"),
+                        MTBridgeReturnType.Null,
+                    ),
+                )
+
+            val exec =
+                object : MTCommandExecutable {
+                    override suspend fun execute(command: MTCommand): MTBridgeReturnType = responses.removeFirst()
+                }
+
+            val bridge = MTBridge(exec)
+            val worker = StylableWorker(bridge, this)
+
+            assertEquals(listOf("img1", "img2"), worker.listImages())
+            assertEquals(listOf("img3"), worker.listImages())
+            assertEquals(emptyList<String>(), worker.listImages())
+        }
 }

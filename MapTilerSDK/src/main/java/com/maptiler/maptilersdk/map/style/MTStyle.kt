@@ -197,6 +197,21 @@ class MTStyle(
     ) = stylableWorker.updateImage(identifier, image)
 
     /**
+     * Check whether an image exists.
+     *
+     * @param identifier The identifier of the image.
+     * @return `true` if the image exists, `false` otherwise.
+     */
+    suspend fun hasImage(identifier: String): Boolean = stylableWorker.hasImage(identifier)
+
+    /**
+     * Lists all image identifiers in the style.
+     *
+     * @return A list of image identifiers.
+     */
+    suspend fun listImages(): List<String> = stylableWorker.listImages()
+
+    /**
      * Removes a previously added image by name. Use to clean up icons no longer referenced by layers.
      *
      * @param name The name of the image.

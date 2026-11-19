@@ -23,6 +23,10 @@ sealed class MTBridgeReturnType {
         val value: Map<String, Double>,
     ) : MTBridgeReturnType()
 
+    data class StringArray(
+        val value: List<String>,
+    ) : MTBridgeReturnType()
+
     data object UnsupportedType : MTBridgeReturnType()
 
     data object Null : MTBridgeReturnType()
@@ -41,6 +45,15 @@ sealed class MTBridgeReturnType {
                     if (isValidMap) {
                         @Suppress("UNCHECKED_CAST")
                         StringDoubleDict(value as Map<String, Double>)
+                    } else {
+                        throw MTError.InvalidResultType(description = value.toString())
+                    }
+                }
+                is List<*> -> {
+                    val isValidList = value.all { it is String }
+                    if (isValidList) {
+                        @Suppress("UNCHECKED_CAST")
+                        StringArray(value as List<String>)
                     } else {
                         throw MTError.InvalidResultType(description = value.toString())
                     }
