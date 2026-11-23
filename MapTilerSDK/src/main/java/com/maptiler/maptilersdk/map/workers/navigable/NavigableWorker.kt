@@ -114,10 +114,13 @@ internal class NavigableWorker(
         }
     }
 
-    override fun panTo(coordinates: LngLat) {
+    override fun panTo(
+        coordinates: LngLat,
+        options: MTAnimationOptions?,
+    ) {
         scope.launch {
             bridge.execute(
-                PanTo(coordinates),
+                PanTo(coordinates, options),
             )
         }
     }
@@ -173,10 +176,13 @@ internal class NavigableWorker(
         }
     }
 
-    override fun easeTo(cameraOptions: MTCameraOptions) {
+    override fun easeTo(
+        cameraOptions: MTCameraOptions,
+        options: MTAnimationOptions?,
+    ) {
         scope.launch {
             bridge.execute(
-                EaseTo(cameraOptions),
+                EaseTo(cameraOptions, options),
             )
         }
     }

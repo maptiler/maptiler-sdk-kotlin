@@ -1212,8 +1212,12 @@ class MTMapViewController(
      * Pans the map to the specified location with an animated transition.
      *
      * @param coordinates Coordinates to pan to.
+     * @param options Animation options. Set [MTAnimationOptions.experimentalPreload] to preload tiles along the path.
      */
-    override fun panTo(coordinates: LngLat) = navigableWorker.panTo(coordinates)
+    override fun panTo(
+        coordinates: LngLat,
+        options: MTAnimationOptions?,
+    ) = navigableWorker.panTo(coordinates, options)
 
     /**
      * Stops any animated transition underway.
@@ -1273,7 +1277,28 @@ class MTMapViewController(
     override fun flyTo(
         cameraOptions: MTCameraOptions,
         flyToOptions: MTFlyToOptions?,
-    ) = navigableWorker.flyTo(cameraOptions, flyToOptions)
+    ) {
+        // The JS flyTo skips the animation entirely when a preload is requested without
+        // useExperimentalTilePreloading, so drop the preload request in that case.
+        if (flyToOptions?.experimentalPreload != null && options?.useExperimentalTilePreloading != true) {
+            MTLogger.log(
+                "flyTo: experimentalPreload ignored. Set MTMapOptions.useExperimentalTilePreloading to true.",
+                MTLogType.WARNING,
+            )
+            val options =
+                MTFlyToOptions(
+                    flyToOptions.curve,
+                    flyToOptions.minZoom,
+                    flyToOptions.speed,
+                    flyToOptions.screenSpeed,
+                    flyToOptions.maxDuration,
+                )
+            navigableWorker.flyTo(cameraOptions, options)
+            return
+        }
+
+        navigableWorker.flyTo(cameraOptions, flyToOptions)
+    }
 
     /**
      * Changes any combination of center, zoom, bearing, and pitch, without an animated transition
@@ -1286,8 +1311,12 @@ class MTMapViewController(
      * Changes any combination of center, zoom, bearing and pitch with an animated transition between old and new values.
      *
      * @param cameraOptions Options for controlling the desired location, zoom, bearing, and pitch of the camera.
+     * @param options Animation options. Set [MTAnimationOptions.experimentalPreload] to preload tiles along the path.
      */
-    override fun easeTo(cameraOptions: MTCameraOptions) = navigableWorker.easeTo(cameraOptions)
+    override fun easeTo(
+        cameraOptions: MTCameraOptions,
+        options: MTAnimationOptions?,
+    ) = navigableWorker.easeTo(cameraOptions, options)
 
     /**
      * Rotates the map to a given bearing, with an animated transition.

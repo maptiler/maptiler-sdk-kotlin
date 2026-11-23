@@ -13,6 +13,8 @@ import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.map.LngLat
 import com.maptiler.maptilersdk.map.options.MTCameraOptions
 import com.maptiler.maptilersdk.map.options.MTFlyToOptions
+import com.maptiler.maptilersdk.map.options.MTTilePreloadOptions
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 internal data class FlyTo(
@@ -42,6 +44,7 @@ internal data class FlyTo(
             flyToOptions?.speed,
             flyToOptions?.screenSpeed,
             flyToOptions?.maxDuration,
+            flyToOptions?.experimentalPreload,
         )
 }
 
@@ -56,4 +59,6 @@ private data class FlyToSurrogate(
     val speed: Double?,
     val screenSpeed: Double?,
     val maxDuration: Double?,
+    @SerialName("experimental_preload")
+    val experimentalPreload: MTTilePreloadOptions? = null,
 )
