@@ -49,4 +49,13 @@ class MTVideoSource(
         this.coordinates = coordinates
         mapViewController.style?.setCoordinatesToVideoSource(coordinates, this)
     }
+
+    /**
+     * Returns the source definition JSON.
+     *
+     * @param controller MTMapViewController which holds the source.
+     */
+    suspend fun getSource(controller: MTMapViewController): String? {
+        return controller.style?.getSource(this.identifier)
+    }
 }

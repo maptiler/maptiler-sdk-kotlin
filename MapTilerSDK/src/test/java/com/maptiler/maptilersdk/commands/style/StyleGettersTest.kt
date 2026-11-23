@@ -54,7 +54,7 @@ class StyleGettersTest {
     @Test
     fun `GetSource emits expected JS`() {
         val command = GetSource("mysource")
-        assertEquals("JSON.stringify(map.getSource(\"mysource\"));", command.toJS())
+        assertEquals("JSON.stringify(map.getSource(\"mysource\").serialize());", command.toJS())
         assertTrue(command.isPrimitiveReturnType)
     }
 

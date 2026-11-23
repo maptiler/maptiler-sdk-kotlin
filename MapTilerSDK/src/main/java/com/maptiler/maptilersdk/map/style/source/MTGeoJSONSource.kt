@@ -176,6 +176,15 @@ class MTGeoJSONSource : MTSource {
     ) {
         mapViewController.style?.setDataToSource(data, this)
     }
+
+    /**
+     * Returns the source definition JSON.
+     *
+     * @param controller MTMapViewController which holds the source.
+     */
+    suspend fun getSource(controller: MTMapViewController): String? {
+        return controller.style?.getSource(this.identifier)
+    }
 }
 
 object URLAsStringSerializer : KSerializer<URL> {
