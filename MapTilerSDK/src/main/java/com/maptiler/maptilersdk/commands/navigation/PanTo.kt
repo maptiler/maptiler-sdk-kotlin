@@ -11,10 +11,12 @@ import com.maptiler.maptilersdk.bridge.MTBridge
 import com.maptiler.maptilersdk.bridge.MTCommand
 import com.maptiler.maptilersdk.helpers.JsonConfig
 import com.maptiler.maptilersdk.map.LngLat
+import com.maptiler.maptilersdk.map.options.MTAnimationOptions
 import kotlinx.serialization.json.Json
 
 internal data class PanTo(
     val coordinates: LngLat,
+    val options: MTAnimationOptions? = null,
 ) : MTCommand {
     override val isPrimitiveReturnType: Boolean = false
 
@@ -28,6 +30,8 @@ internal data class PanTo(
             }
         val coordinatesString: JSString = prettyJson.encodeToString(coordinates)
 
-        return "${MTBridge.MAP_OBJECT}.panTo($coordinatesString);"
+        val optionsString = options?.let { ", ${JsonConfig.json.encodeToString(it)}" } ?: ""
+
+        return "${MTBridge.MAP_OBJECT}.panTo($coordinatesString$optionsString);"
     }
 }

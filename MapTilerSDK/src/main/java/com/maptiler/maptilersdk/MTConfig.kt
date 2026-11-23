@@ -17,7 +17,7 @@ object MTConfig {
     /**
      * SDK version
      */
-    const val VERSION = "2.5.0"
+    const val VERSION = "2.6.0"
 
     /**
      * Custom User-Agent string for the SDK

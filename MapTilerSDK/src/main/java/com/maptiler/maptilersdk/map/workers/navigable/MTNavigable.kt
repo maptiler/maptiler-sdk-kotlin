@@ -30,8 +30,12 @@ interface MTNavigable {
      * Pans the map to the specified location with an animated transition.
      *
      * @param coordinates Coordinates to pan to.
+     * @param options Animation options. Set [MTAnimationOptions.experimentalPreload] to preload tiles along the path.
      */
-    fun panTo(coordinates: LngLat)
+    fun panTo(
+        coordinates: LngLat,
+        options: MTAnimationOptions? = null,
+    )
 
     /**
      * Stops any animated transition underway.
@@ -81,8 +85,12 @@ interface MTNavigable {
      * Changes any combination of center, zoom, bearing and pitch with an animated transition between old and new values.
      *
      * @param cameraOptions Options for controlling the desired location, zoom, bearing, and pitch of the camera.
+     * @param options Animation options. Set [MTAnimationOptions.experimentalPreload] to preload tiles along the path.
      */
-    fun easeTo(cameraOptions: MTCameraOptions)
+    fun easeTo(
+        cameraOptions: MTCameraOptions,
+        options: MTAnimationOptions? = null,
+    )
 
     /**
      * Rotates the map to a given bearing, with an animated transition.

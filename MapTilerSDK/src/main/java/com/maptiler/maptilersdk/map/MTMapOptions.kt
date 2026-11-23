@@ -439,6 +439,18 @@ class MTMapOptions {
     var cooperativeGestures: Boolean? = null
         private set
 
+    /**
+     * Experimental: enables tile preloading.
+     *
+     * When true, camera animations (fly, ease, pan, zoom, fit bounds) honor their `experimentalPreload` option
+     * and fetch the needed tiles before the animation starts.
+     *
+     * **API Key Usage**: every preloaded tile counts against your MapTiler Cloud API key quota.
+     * Defaults to false.
+     */
+    var useExperimentalTilePreloading: Boolean? = null
+        private set
+
     /** Initializes map options with center, zoom, bearing, and pitch. */
     constructor(center: LngLat?, zoom: Double?, bearing: Double?, pitch: Double?) {
         this.center = center
@@ -484,6 +496,11 @@ class MTMapOptions {
 
     fun setMapTilerLogoIsVisible(isVisible: Boolean) {
         maptilerLogoIsVisible = isVisible
+    }
+
+    /** Enables or disables experimental tile preloading. Must be set before the map is initialized. */
+    fun setUseExperimentalTilePreloading(isEnabled: Boolean) {
+        useExperimentalTilePreloading = isEnabled
     }
 
     /** Initializes map options with projection and space option. */
@@ -592,6 +609,7 @@ class MTMapOptions {
         maxCanvasSize: MTSize? = null,
         transformRequest: List<com.maptiler.maptilersdk.map.options.MTRequestTransformRule>? = null,
         cooperativeGestures: Boolean? = null,
+        useExperimentalTilePreloading: Boolean? = null,
     ) {
         this.language = language
         this.center = center
@@ -648,5 +666,6 @@ class MTMapOptions {
         this.maxCanvasSize = maxCanvasSize
         this.transformRequest = transformRequest
         this.cooperativeGestures = cooperativeGestures
+        this.useExperimentalTilePreloading = useExperimentalTilePreloading
     }
 }
