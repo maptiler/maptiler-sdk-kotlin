@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [2.6.0](https://github.com/maptiler/maptiler-sdk-swift/releases/tag/2.6.0)
+## [2.6.0](https://github.com/maptiler/maptiler-sdk-kotlin/releases/tag/2.6.0)
 Released on 2026-11-23.
 ### Added
 - Map navigation methods now contain experimental tile preloading feature.
