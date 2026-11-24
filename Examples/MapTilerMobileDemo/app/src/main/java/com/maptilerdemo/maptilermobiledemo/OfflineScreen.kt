@@ -159,6 +159,10 @@ class OfflineViewModel(private val context: Context) : ViewModel() {
     private val _isTerrainEnabled = MutableStateFlow(false)
     val isTerrainEnabled: StateFlow<Boolean> = _isTerrainEnabled.asStateFlow()
 
+    // Terrain is always available online, but offline only when the loaded pack contains terrain tiles.
+    private val _isTerrainAvailable = MutableStateFlow(true)
+    val isTerrainAvailable: StateFlow<Boolean> = _isTerrainAvailable.asStateFlow()
+
     private val _showingRedownloadAlert = MutableStateFlow(false)
     val showingRedownloadAlert: StateFlow<Boolean> = _showingRedownloadAlert.asStateFlow()
 
@@ -174,6 +178,7 @@ class OfflineViewModel(private val context: Context) : ViewModel() {
     }
 
     fun toggleTerrain() {
+        if (!_isTerrainAvailable.value) return
         val current = _isTerrainEnabled.value
         if (current) {
             mapController.style?.disableTerrain()
@@ -288,7 +293,12 @@ class OfflineViewModel(private val context: Context) : ViewModel() {
                 val name = getPackName(pack)
                 // Limit region rigidly but allow interaction via the definition's padding and zoom range
                 mapController.loadOfflinePack(pack, limitToRegion = true)
-                
+
+                // The offline style replaces the current one: terrain is on exactly when the pack includes it.
+                val packHasTerrain = pack.region.isTerrainEnabled
+                _isTerrainAvailable.value = packHasTerrain
+                _isTerrainEnabled.value = packHasTerrain
+
                 val center = when (name) {
                     OfflineConstants.PackName.BRNO -> OfflineConstants.BRNO_COORDINATES
                     OfflineConstants.PackName.YELLOWSTONE -> OfflineConstants.YELLOWSTONE_COORDINATES
@@ -355,8 +365,7 @@ class OfflineViewModel(private val context: Context) : ViewModel() {
         performDownload(
             OfflineConstants.PackName.YELLOWSTONE,
             MTBoundingBox(-111.15, 44.12, -109.81, 45.10),
-            7, 13, MTMapReferenceStyle.STREETS,
-            isTerrainEnabled = true
+            7, 13, MTMapReferenceStyle.STREETS
         )
     }
 
@@ -521,6 +530,7 @@ fun OfflineScreen(navController: androidx.navigation.NavController) {
     val routePack by viewModel.routePack.collectAsState()
     
     val isTerrainEnabled by viewModel.isTerrainEnabled.collectAsState()
+    val isTerrainAvailable by viewModel.isTerrainAvailable.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
         MTMapView(
@@ -537,6 +547,7 @@ fun OfflineScreen(navController: androidx.navigation.NavController) {
         // Terrain Toggle Button (Top Right)
         Button(
             onClick = { viewModel.toggleTerrain() },
+            enabled = isTerrainAvailable,
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(16.dp),
@@ -546,7 +557,14 @@ fun OfflineScreen(navController: androidx.navigation.NavController) {
             ),
             elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
         ) {
-            Text(text = if (isTerrainEnabled) "3D On" else "3D Off", fontWeight = FontWeight.Bold)
+            Text(
+                text = when {
+                    !isTerrainAvailable -> "No 3D in pack"
+                    isTerrainEnabled -> "3D On"
+                    else -> "3D Off"
+                },
+                fontWeight = FontWeight.Bold
+            )
         }
 
         Column(
