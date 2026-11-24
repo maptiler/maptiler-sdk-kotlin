@@ -1269,6 +1269,68 @@ class MTMapViewController(
     }
 
     /**
+     * Returns an array of GeoJSON Feature objects representing visible features within a bounding box.
+     *
+     * @param bbox The bounding box within which to query for features.
+     * @param layers Optional list of layer IDs to filter the query.
+     * @param filter Optional filter to apply to the query (MapLibre filter expression as JSON string).
+     * @return A JSON string representing the array of features.
+     */
+    suspend fun queryRenderedFeatures(
+        bbox: com.maptiler.maptilersdk.offline.MTBoundingBox,
+        layers: List<String>? = null,
+        filter: String? = null,
+    ): String? {
+        val br = bridge ?: return null
+        val returnTypeValue = br.execute(com.maptiler.maptilersdk.commands.style.QueryRenderedFeatures(bbox, layers, filter))
+
+        return when (returnTypeValue) {
+            is com.maptiler.maptilersdk.bridge.MTBridgeReturnType.StringValue ->
+                returnTypeValue.value.trim('"').replace("\\\"", "\"")
+            else -> null
+        }
+    }
+
+    /**
+     * Returns an array of GeoJSON Feature objects representing features in a source.
+     *
+     * @param sourceId The ID of the source to query.
+     * @param sourceLayer Optional source layer to filter the query.
+     * @param filter Optional filter to apply to the query (MapLibre filter expression as JSON string).
+     * @return A JSON string representing the array of features.
+     */
+    suspend fun querySourceFeatures(
+        sourceId: String,
+        sourceLayer: String? = null,
+        filter: String? = null,
+    ): String? {
+        val br = bridge ?: return null
+        val returnTypeValue = br.execute(com.maptiler.maptilersdk.commands.style.QuerySourceFeatures(sourceId, sourceLayer, filter))
+
+        return when (returnTypeValue) {
+            is com.maptiler.maptilersdk.bridge.MTBridgeReturnType.StringValue ->
+                returnTypeValue.value.trim('"').replace("\\\"", "\"")
+            else -> null
+        }
+    }
+
+    /**
+     * Returns the terrain elevation at the given coordinates.
+     *
+     * @param coordinates The coordinates to query.
+     * @return The elevation at the given coordinates in meters, or null if terrain is not enabled or data is missing.
+     */
+    suspend fun queryTerrainElevation(coordinates: com.maptiler.maptilersdk.map.LngLat): Double? {
+        val br = bridge ?: return null
+        val returnTypeValue = br.execute(com.maptiler.maptilersdk.commands.style.QueryTerrainElevation(coordinates))
+
+        return when (returnTypeValue) {
+            is com.maptiler.maptilersdk.bridge.MTBridgeReturnType.DoubleValue -> returnTypeValue.value
+            else -> null
+        }
+    }
+
+    /**
      * Changes any combination of center, zoom, bearing, and pitch, animating the transition along a curve that evokes flight.
      *
      * @param cameraOptions Options for controlling the desired location, zoom, bearing, and pitch of the camera.
