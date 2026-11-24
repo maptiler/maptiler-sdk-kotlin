@@ -85,7 +85,7 @@ internal class MTOfflineResourcePlan(
 
         for (sourcePlan in sources) {
             val template = sourcePlan.source.tileUrlTemplate
-            val ext = detectExtension(template)
+            val ext = detectExtension(template, sourcePlan.source.type)
             val isTms = template.contains("{-y}")
 
             for (coverage in sourcePlan.coverages) {
@@ -164,12 +164,20 @@ internal class MTOfflineResourcePlan(
             return if (effectiveMin <= effectiveMax) effectiveMin..effectiveMax else null
         }
 
-        fun detectExtension(template: String): String {
+        /**
+         * The file extension tiles of a source are stored under. Terrain tile URLs carry no extension, but
+         * the offline style serves `raster-dem` sources as `.webp`, so they are stored that way too.
+         */
+        fun detectExtension(
+            template: String,
+            type: String? = null,
+        ): String {
             val lower = template.lowercase()
             return when {
                 lower.contains(".png") -> "png"
                 lower.contains(".jpg") || lower.contains(".jpeg") -> "jpg"
                 lower.contains(".webp") -> "webp"
+                type == "raster-dem" -> "webp"
                 else -> "pbf"
             }
         }
