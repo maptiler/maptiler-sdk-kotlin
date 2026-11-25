@@ -144,11 +144,17 @@ internal class MTOfflineRouter(internal val context: Context) {
         val zDir = File(sourceDir, z)
         val xDir = File(zDir, x)
         val file = File(xDir, yWithExt)
-
-        if (!file.exists()) return null
-
         val ext = file.extension.lowercase()
-        return ResolvedResource(file, getMimeType(ext))
+
+        if (file.exists()) return ResolvedResource(file, getMimeType(ext))
+
+        // Packs downloaded before terrain tiles were stored as `.webp` hold them under `.pbf`.
+        val y = file.nameWithoutExtension
+        val stored =
+            TILE_EXTENSIONS.firstNotNullOfOrNull { candidate ->
+                File(xDir, "$y.$candidate").takeIf { candidate != ext && it.exists() }
+            } ?: return null
+        return ResolvedResource(stored, getMimeType(ext))
     }
 
     private fun getMimeType(extension: String): String {
@@ -160,5 +166,9 @@ internal class MTOfflineRouter(internal val context: Context) {
             "jpg", "jpeg" -> "image/jpeg"
             else -> "application/octet-stream"
         }
+    }
+
+    private companion object {
+        val TILE_EXTENSIONS = listOf("pbf", "png", "jpg", "jpeg", "webp")
     }
 }
